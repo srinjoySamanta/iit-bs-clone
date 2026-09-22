@@ -1,8 +1,8 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { 
   ArrowLeft, Lock, Mail, User, ShieldCheck, Key, 
   HelpCircle, Eye, EyeOff, CheckCircle2, Award, ExternalLink,
-  Sparkles, Phone, ChevronRight, Check, Search, AlertCircle
+  Sparkles, Phone, ChevronRight, Check, X
 } from 'lucide-react';
 import { IIT_KGP_INFO } from '../data/portalData';
 import iitKgpLogo from '../assets/logo';
@@ -11,107 +11,53 @@ export default function StudentLoginPage({
   onLoginSuccess, 
   onBackToHome, 
   onOpenSignUp, 
-  onOpenQualifier 
+  onOpenQualifier,
+  onGoogleLogin 
 }) {
-  // Mode: 'apply' (Apply for Qualifier) | 'login' (Student Login) | 'status' (Check Status)
-  const [activeTab, setActiveTab] = useState('apply');
-  
-  // Login Form States
+  // Google Sign-In Modal state
+  const [showGoogleModal, setShowGoogleModal] = useState(false);
+  const [studentEmail, setStudentEmail] = useState('');
+  const [studentName, setStudentName] = useState('');
+
+  // Fallback direct roll login toggle (minimal & unobtrusive)
+  const [showRollLogin, setShowRollLogin] = useState(false);
   const [identifier, setIdentifier] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
-  const [captchaInput, setCaptchaInput] = useState('');
-  const [captchaCode, setCaptchaCode] = useState('8K4P9');
-  const [rememberMe, setRememberMe] = useState(true);
 
-  // Application / Qualifier Intake Form States
-  const [applicantName, setApplicantName] = useState('');
-  const [applicantEmail, setApplicantEmail] = useState('');
-  const [applicantPhone, setApplicantPhone] = useState('');
-  const [applicantCategory, setApplicantCategory] = useState('General');
-  const [applicantIncome, setApplicantIncome] = useState('below_1lpa');
-
-  // Status Search State
-  const [statusRoll, setStatusRoll] = useState('');
-  const [statusResult, setStatusResult] = useState(null);
-
-  // Check query param or hash for initial tab
-  useEffect(() => {
-    const hash = window.location.hash;
-    if (hash.includes('login')) {
-      setActiveTab('login');
-    } else {
-      setActiveTab('apply');
-    }
-  }, []);
-
-  const fillDemoStudent = () => {
-    setActiveTab('login');
-    setIdentifier('24BS0941');
-    setPassword('KgpStudent@2026');
-    setCaptchaInput(captchaCode);
-  };
-
-  const fillDemoApplicant = () => {
-    setActiveTab('apply');
-    setApplicantName('Srinjoy Samanta');
-    setApplicantEmail('srinjoy.candidate@example.com');
-    setApplicantPhone('9876543210');
-    setApplicantCategory('General');
-    setApplicantIncome('below_1lpa');
-  };
-
-  const handleGoogleSignIn = () => {
-    // Simulated Google Auth Flow
-    const confirmed = window.confirm(
-      "Simulated Google Sign-In:\n\nSigned in as: srinjoy.samanta@gmail.com (Google Account)\n\nClick OK to proceed to the Qualifier Application & CBT Exam."
-    );
-    if (confirmed) {
-      if (activeTab === 'login') {
-        onLoginSuccess();
-      } else {
-        if (onOpenQualifier) onOpenQualifier();
-        else if (onOpenSignUp) onOpenSignUp();
-      }
-    }
-  };
-
-  const handleStudentLogin = (e) => {
+  const handleGoogleSubmit = (e) => {
     e.preventDefault();
-    if (captchaInput.toUpperCase() !== captchaCode.toUpperCase()) {
-      alert("CAPTCHA code mismatch! Please enter: " + captchaCode);
+    if (!studentEmail.trim() || !studentName.trim()) {
+      alert("Please enter both your Full Name and Google Email.");
       return;
     }
+
+    const userData = {
+      name: studentName.trim(),
+      email: studentEmail.trim()
+    };
+
+    setShowGoogleModal(false);
+
+    if (onGoogleLogin) {
+      onGoogleLogin(userData);
+    } else if (onOpenQualifier) {
+      onOpenQualifier();
+    }
+  };
+
+  const handleQuickDemo = () => {
+    setStudentName('Srinjoy Samanta');
+    setStudentEmail('srinjoy.student@gmail.com');
+  };
+
+  const handleRollLoginSubmit = (e) => {
+    e.preventDefault();
     onLoginSuccess();
   };
 
-  const handleApplicantSubmit = (e) => {
-    e.preventDefault();
-    if (onOpenQualifier) {
-      onOpenQualifier();
-    } else if (onOpenSignUp) {
-      onOpenSignUp();
-    }
-  };
-
-  const handleCheckStatus = (e) => {
-    e.preventDefault();
-    if (!statusRoll.trim()) return;
-    setStatusResult({
-      roll: statusRoll.trim().toUpperCase(),
-      name: 'Srinjoy Samanta',
-      program: 'BS in Data Science & Artificial Intelligence',
-      batch: 'Qualifier Batch 2026 (Term 1)',
-      feeStatus: 'Paid (₹375 - 75% Income Waiver Applied)',
-      examStatus: 'CBT Examination Completed',
-      score: '88 / 100 (94th Percentile)',
-      admitStatus: 'QUALIFIED FOR ADMISSION TO FOUNDATION LEVEL',
-      verificationDate: '22 September 2026'
-    });
-  };
-
   return (
-    <div className="min-h-screen bg-slate-50 flex flex-col font-sans text-slate-900 selection:bg-amber-500 selection:text-white">
+    <div className="min-h-screen bg-slate-50 flex flex-col font-sans text-slate-900 selection:bg-amber-500 selection:text-white relative">
       
       {/* 1. Header (Navbar style exact to IIT Madras Portal) */}
       <header className="bg-[#f8f9fa] border-b border-slate-200 shadow-sm py-2 px-4 sm:px-8">
@@ -152,344 +98,99 @@ export default function StudentLoginPage({
         </div>
       </header>
 
-      {/* 2. Main Login & Apply Split Hero Section */}
-      <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8 lg:py-12">
+      {/* 2. Main Login & Apply Split Hero Section (Verbatim IIT Madras layout) */}
+      <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-10 lg:py-16">
         <div className="flex flex-col lg:flex-row gap-8 items-stretch">
           
-          {/* LEFT CARD: Authentication & Application Form Card */}
-          <div className="w-full lg:w-5/12 bg-white rounded-2xl border border-slate-200 shadow-xl p-6 sm:p-8 flex flex-col justify-between">
-            <div>
+          {/* LEFT CARD: Pure IIT Madras Auth Card (No manual clutter, just clean Google Auth) */}
+          <div className="w-full lg:w-5/12 bg-white rounded-2xl border border-slate-200 shadow-xl p-6 sm:p-10 flex flex-col justify-between">
+            <div className="space-y-6 my-auto">
+              
               {/* Header Title verbatim like IIT Madras */}
-              <div className="text-center mb-5">
-                <h2 className="text-xl sm:text-2xl font-bold font-serif-title text-slate-900 leading-tight">
+              <div className="text-center space-y-2">
+                <h2 className="text-2xl sm:text-3xl font-bold font-serif-title text-slate-900 leading-tight">
                   If you wish to apply or check your application status
                 </h2>
-                <p className="text-slate-500 text-xs sm:text-sm mt-1.5">
+                <p className="text-slate-600 text-sm sm:text-base pt-1">
                   New user? Sign-up or register with your Google account.
                 </p>
               </div>
 
               {/* Authentic Google Sign-In Button */}
-              <div className="mb-5">
+              <div className="pt-3">
                 <button
-                  onClick={handleGoogleSignIn}
+                  onClick={() => setShowGoogleModal(true)}
                   type="button"
-                  className="w-full py-3 px-4 bg-white hover:bg-slate-50 border border-slate-300 hover:border-slate-400 rounded-xl shadow-sm hover:shadow transition flex items-center justify-center gap-3 text-sm font-semibold text-slate-700 group"
+                  className="w-full py-4 px-6 bg-white hover:bg-slate-50 border-2 border-slate-200 hover:border-slate-300 rounded-xl shadow-md hover:shadow-lg transition flex items-center justify-center gap-3 text-sm sm:text-base font-semibold text-slate-700 group ring-1 ring-slate-100"
                 >
-                  <svg className="w-5 h-5" viewBox="0 0 48 48">
+                  <svg className="w-6 h-6 flex-shrink-0" viewBox="0 0 48 48">
                     <path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/>
                     <path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/>
                     <path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/>
                     <path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/>
                   </svg>
-                  <span className="group-hover:text-slate-900">Sign in with Google</span>
+                  <span className="group-hover:text-slate-900 font-bold">Sign in with Google</span>
                 </button>
               </div>
 
-              {/* Divider */}
-              <div className="relative flex py-2 items-center mb-5">
-                <div className="flex-grow border-t border-slate-200"></div>
-                <span className="flex-shrink mx-3 text-[11px] font-bold text-slate-400 uppercase tracking-wider">
-                  OR CHOOSE OPTION
-                </span>
-                <div className="flex-grow border-t border-slate-200"></div>
-              </div>
-
-              {/* Tab Selector: Apply vs Login vs Status */}
-              <div className="flex rounded-xl bg-slate-100 p-1 mb-5 text-xs">
-                <button
-                  type="button"
-                  onClick={() => setActiveTab('apply')}
-                  className={`flex-1 py-2 rounded-lg font-bold transition flex items-center justify-center gap-1 ${
-                    activeTab === 'apply' 
-                      ? 'bg-emerald-600 text-white shadow-sm' 
-                      : 'text-slate-600 hover:text-slate-900'
-                  }`}
-                >
-                  <Sparkles className="w-3.5 h-3.5" />
-                  <span>Apply Qualifier</span>
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setActiveTab('login')}
-                  className={`flex-1 py-2 rounded-lg font-bold transition flex items-center justify-center gap-1 ${
-                    activeTab === 'login' 
-                      ? 'bg-kgp-crimson text-white shadow-sm' 
-                      : 'text-slate-600 hover:text-slate-900'
-                  }`}
-                >
-                  <Lock className="w-3.5 h-3.5" />
-                  <span>Student Login</span>
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setActiveTab('status')}
-                  className={`flex-1 py-2 rounded-lg font-bold transition flex items-center justify-center gap-1 ${
-                    activeTab === 'status' 
-                      ? 'bg-slate-800 text-white shadow-sm' 
-                      : 'text-slate-600 hover:text-slate-900'
-                  }`}
-                >
-                  <Search className="w-3.5 h-3.5" />
-                  <span>Check Status</span>
-                </button>
-              </div>
-
-              {/* TAB 1: APPLY FOR QUALIFIER 2026 */}
-              {activeTab === 'apply' && (
-                <form onSubmit={handleApplicantSubmit} className="space-y-3.5 text-xs">
-                  <div className="bg-emerald-50 border border-emerald-200 p-2.5 rounded-xl text-[11px] text-emerald-800 flex items-center justify-between">
-                    <span className="font-semibold">Batch 2026 Qualifier Registration Open</span>
-                    <button
-                      type="button"
-                      onClick={fillDemoApplicant}
-                      className="text-emerald-700 underline font-bold"
-                    >
-                      Fill Demo
-                    </button>
-                  </div>
-
-                  <div>
-                    <label className="block text-slate-700 font-semibold mb-1">Candidate Full Name *</label>
-                    <input
-                      type="text"
-                      required
-                      placeholder="e.g. Srinjoy Samanta"
-                      value={applicantName}
-                      onChange={(e) => setApplicantName(e.target.value)}
-                      className="w-full px-3 py-2 rounded-lg border border-slate-300 focus:outline-none focus:border-emerald-600 font-medium"
-                    />
-                  </div>
-
-                  <div className="grid grid-cols-2 gap-3">
-                    <div>
-                      <label className="block text-slate-700 font-semibold mb-1">Email Address *</label>
-                      <input
-                        type="email"
-                        required
-                        placeholder="srinjoy@example.com"
-                        value={applicantEmail}
-                        onChange={(e) => setApplicantEmail(e.target.value)}
-                        className="w-full px-3 py-2 rounded-lg border border-slate-300 focus:outline-none focus:border-emerald-600"
-                      />
-                    </div>
-                    <div>
-                      <label className="block text-slate-700 font-semibold mb-1">Mobile Number *</label>
-                      <input
-                        type="tel"
-                        required
-                        placeholder="9876543210"
-                        value={applicantPhone}
-                        onChange={(e) => setApplicantPhone(e.target.value)}
-                        className="w-full px-3 py-2 rounded-lg border border-slate-300 focus:outline-none focus:border-emerald-600"
-                      />
-                    </div>
-                  </div>
-
-                  <div className="grid grid-cols-2 gap-3">
-                    <div>
-                      <label className="block text-slate-700 font-semibold mb-1">Category *</label>
-                      <select
-                        value={applicantCategory}
-                        onChange={(e) => setApplicantCategory(e.target.value)}
-                        className="w-full px-2.5 py-2 rounded-lg border border-slate-300 bg-white"
-                      >
-                        <option value="General">General / Open</option>
-                        <option value="EWS">GEN-EWS</option>
-                        <option value="OBC-NCL">OBC-NCL</option>
-                        <option value="SC">SC</option>
-                        <option value="ST">ST</option>
-                      </select>
-                    </div>
-                    <div>
-                      <label className="block text-slate-700 font-semibold mb-1">Family Income *</label>
-                      <select
-                        value={applicantIncome}
-                        onChange={(e) => setApplicantIncome(e.target.value)}
-                        className="w-full px-2.5 py-2 rounded-lg border border-slate-300 bg-white"
-                      >
-                        <option value="below_1lpa">&lt; 1 LPA (75% Waiver - ₹375)</option>
-                        <option value="1_to_5lpa">1 to 5 LPA (50% Waiver - ₹750)</option>
-                        <option value="above_5lpa">&gt; 5 LPA (Standard - ₹1,500)</option>
-                      </select>
-                    </div>
-                  </div>
-
-                  <button
-                    type="submit"
-                    className="w-full py-3 bg-gradient-to-r from-emerald-600 to-teal-700 hover:from-emerald-500 hover:to-teal-600 text-white font-bold rounded-xl shadow-lg transition flex items-center justify-center gap-2 text-sm mt-3"
+              {/* Verbatim Note from IIT Madras Portal */}
+              <div className="pt-6 border-t border-slate-200 text-center">
+                <p className="text-slate-500 text-xs sm:text-sm leading-relaxed">
+                  If you do not have a Google Account —{' '}
+                  <a
+                    href="https://support.google.com/accounts/answer/27441?hl=en#existingemail"
+                    target="_blank"
+                    rel="noreferrer"
+                    className="text-kgp-crimson font-semibold underline hover:text-red-700"
                   >
-                    <span>Proceed to Qualifier Round &amp; CBT Exam</span>
-                    <ChevronRight className="w-4 h-4" />
-                  </button>
-                </form>
-              )}
+                    enable your email with Google
+                  </a>{' '}
+                  first before signing in here.
+                </p>
+              </div>
 
-              {/* TAB 2: ENROLLED STUDENT LOGIN */}
-              {activeTab === 'login' && (
-                <form onSubmit={handleStudentLogin} className="space-y-3.5 text-xs">
-                  <div className="bg-red-50 border border-red-200 p-2.5 rounded-xl text-[11px] text-red-900 flex items-center justify-between">
-                    <span className="font-semibold">Registered Student / Candidate Login</span>
-                    <button
-                      type="button"
-                      onClick={fillDemoStudent}
-                      className="text-kgp-crimson underline font-bold"
-                    >
-                      Fill Demo (24BS0941)
-                    </button>
-                  </div>
+              {/* Discreet option for enrolled student password login */}
+              <div className="pt-2 text-center">
+                <button
+                  type="button"
+                  onClick={() => setShowRollLogin(!showRollLogin)}
+                  className="text-xs text-slate-400 hover:text-slate-600 underline"
+                >
+                  {showRollLogin ? 'Hide Student Roll Login' : 'Enrolled Student? Sign in with Roll ID & Password'}
+                </button>
 
-                  <div>
-                    <label className="block text-slate-700 font-semibold mb-1">
-                      Roll Number / Application ID / Registered Email *
-                    </label>
-                    <div className="relative">
-                      <User className="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" />
+                {showRollLogin && (
+                  <form onSubmit={handleRollLoginSubmit} className="mt-4 p-4 bg-slate-50 rounded-xl border border-slate-200 space-y-3 text-left animate-in fade-in">
+                    <div>
+                      <label className="block text-[11px] font-semibold text-slate-700 mb-1">Student Roll ID</label>
                       <input
                         type="text"
-                        required
-                        placeholder="e.g. 24BS0941 or candidate email"
+                        placeholder="e.g. 24BS0941"
                         value={identifier}
                         onChange={(e) => setIdentifier(e.target.value)}
-                        className="w-full pl-9 pr-3 py-2 rounded-lg border border-slate-300 focus:outline-none focus:border-kgp-crimson font-medium"
+                        className="w-full px-3 py-2 text-xs rounded-lg border border-slate-300"
                       />
                     </div>
-                  </div>
-
-                  <div>
-                    <div className="flex items-center justify-between mb-1">
-                      <label className="text-slate-700 font-semibold">Account Password *</label>
-                      <button 
-                        type="button" 
-                        onClick={() => alert("Password reset link will be sent to your registered email.")}
-                        className="text-[11px] text-kgp-crimson hover:underline"
-                      >
-                        Forgot Password?
-                      </button>
-                    </div>
-                    <div className="relative">
-                      <Lock className="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" />
+                    <div>
+                      <label className="block text-[11px] font-semibold text-slate-700 mb-1">Password</label>
                       <input
                         type={showPassword ? 'text' : 'password'}
-                        required
-                        placeholder="Enter account password"
+                        placeholder="Password"
                         value={password}
                         onChange={(e) => setPassword(e.target.value)}
-                        className="w-full pl-9 pr-10 py-2 rounded-lg border border-slate-300 focus:outline-none focus:border-kgp-crimson"
+                        className="w-full px-3 py-2 text-xs rounded-lg border border-slate-300"
                       />
-                      <button
-                        type="button"
-                        onClick={() => setShowPassword(!showPassword)}
-                        className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600"
-                      >
-                        {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
-                      </button>
-                    </div>
-                  </div>
-
-                  <div>
-                    <label className="block text-slate-700 font-semibold mb-1">Security Code (CAPTCHA) *</label>
-                    <div className="flex items-center gap-3">
-                      <div className="bg-slate-200 px-3.5 py-1.5 rounded-lg font-mono font-bold tracking-widest text-slate-800 select-none text-sm line-through decoration-slate-400">
-                        {captchaCode}
-                      </div>
-                      <input
-                        type="text"
-                        required
-                        placeholder="Enter code"
-                        value={captchaInput}
-                        onChange={(e) => setCaptchaInput(e.target.value)}
-                        className="flex-1 px-3 py-2 rounded-lg border border-slate-300 uppercase font-mono"
-                      />
-                    </div>
-                  </div>
-
-                  <div className="flex items-center justify-between">
-                    <label className="flex items-center text-slate-600 cursor-pointer">
-                      <input
-                        type="checkbox"
-                        checked={rememberMe}
-                        onChange={(e) => setRememberMe(e.target.checked)}
-                        className="w-3.5 h-3.5 rounded text-kgp-crimson mr-2"
-                      />
-                      Remember this terminal
-                    </label>
-                  </div>
-
-                  <button
-                    type="submit"
-                    className="w-full py-3 bg-gradient-to-r from-kgp-crimson to-red-800 hover:from-kgp-darkred hover:to-kgp-crimson text-white font-bold rounded-xl shadow-lg transition flex items-center justify-center gap-2 text-sm"
-                  >
-                    <span>Sign In to Student Learning Portal</span>
-                    <ChevronRight className="w-4 h-4" />
-                  </button>
-                </form>
-              )}
-
-              {/* TAB 3: CHECK APPLICATION STATUS */}
-              {activeTab === 'status' && (
-                <div className="space-y-3.5 text-xs">
-                  <form onSubmit={handleCheckStatus} className="space-y-3">
-                    <div>
-                      <label className="block text-slate-700 font-semibold mb-1">
-                        Enter Qualifier Roll Number / Application ID *
-                      </label>
-                      <div className="relative">
-                        <Search className="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" />
-                        <input
-                          type="text"
-                          required
-                          placeholder="e.g. KGP-QUAL-2026-0842"
-                          value={statusRoll}
-                          onChange={(e) => setStatusRoll(e.target.value)}
-                          className="w-full pl-9 pr-3 py-2 rounded-lg border border-slate-300 uppercase font-mono font-medium"
-                        />
-                      </div>
                     </div>
                     <button
                       type="submit"
-                      className="w-full py-2.5 bg-slate-800 hover:bg-slate-900 text-white font-bold rounded-xl shadow transition"
+                      className="w-full py-2 bg-kgp-crimson text-white rounded-lg font-bold text-xs hover:bg-red-800"
                     >
-                      Search Application &amp; Exam Status
+                      Sign In to Student Portal
                     </button>
                   </form>
+                )}
+              </div>
 
-                  {statusResult && (
-                    <div className="bg-slate-50 border border-slate-300 rounded-xl p-3.5 space-y-2 text-[11px] animate-in fade-in">
-                      <div className="font-bold text-slate-900 text-xs flex items-center justify-between border-b pb-1.5">
-                        <span>Roll: {statusResult.roll}</span>
-                        <span className="text-emerald-700 bg-emerald-100 px-2 py-0.5 rounded font-extrabold text-[10px]">
-                          QUALIFIED
-                        </span>
-                      </div>
-                      <div><strong>Name:</strong> {statusResult.name}</div>
-                      <div><strong>Program:</strong> {statusResult.program}</div>
-                      <div><strong>Fee Status:</strong> {statusResult.feeStatus}</div>
-                      <div><strong>Exam Score:</strong> {statusResult.score}</div>
-                      <div className="text-emerald-800 font-bold bg-emerald-50 p-2 rounded border border-emerald-200">
-                        {statusResult.admitStatus}
-                      </div>
-                    </div>
-                  )}
-                </div>
-              )}
-
-            </div>
-
-            {/* Verbatim Note from IIT Madras Portal */}
-            <div className="pt-5 mt-5 border-t border-slate-200 text-center">
-              <p className="text-slate-500 text-xs leading-relaxed">
-                If you do not have a Google Account —{' '}
-                <a
-                  href="https://support.google.com/accounts/answer/27441?hl=en#existingemail"
-                  target="_blank"
-                  rel="noreferrer"
-                  className="text-kgp-crimson font-medium underline hover:text-red-700"
-                >
-                  enable your email with Google
-                </a>{' '}
-                first before signing in here.
-              </p>
             </div>
           </div>
 
@@ -684,6 +385,106 @@ export default function StudentLoginPage({
           </div>
         </div>
       </footer>
+
+      {/* 6. AUTHENTIC GOOGLE ACCOUNT SIGN-IN DIALOG (Any student enters THEIR OWN Gmail) */}
+      {showGoogleModal && (
+        <div className="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4 animate-in fade-in">
+          <div className="bg-white rounded-3xl max-w-md w-full p-6 sm:p-8 shadow-2xl border border-slate-200 relative animate-in zoom-in-95">
+            
+            {/* Close Button */}
+            <button
+              onClick={() => setShowGoogleModal(false)}
+              className="absolute top-5 right-5 text-slate-400 hover:text-slate-700 p-1.5 rounded-full hover:bg-slate-100 transition"
+              aria-label="Close"
+            >
+              <X className="w-5 h-5" />
+            </button>
+
+            {/* Google Logo & Branding */}
+            <div className="text-center space-y-2 mb-6">
+              <div className="flex justify-center">
+                <svg className="w-10 h-10" viewBox="0 0 48 48">
+                  <path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/>
+                  <path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/>
+                  <path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/>
+                  <path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/>
+                </svg>
+              </div>
+              <h3 className="text-xl font-bold text-slate-800">
+                Sign in with Google
+              </h3>
+              <p className="text-xs text-slate-500">
+                to continue to <strong className="text-slate-700">IIT Kharagpur BS Portal</strong>
+              </p>
+            </div>
+
+            {/* Student's Own Gmail & Name Input Form */}
+            <form onSubmit={handleGoogleSubmit} className="space-y-4 text-xs">
+              <div>
+                <label className="block text-slate-700 font-bold mb-1">
+                  Enter your Google Account (Gmail) *
+                </label>
+                <input
+                  type="email"
+                  required
+                  placeholder="e.g. yourname@gmail.com"
+                  value={studentEmail}
+                  onChange={(e) => setStudentEmail(e.target.value)}
+                  className="w-full px-3.5 py-2.5 rounded-xl border-2 border-slate-300 focus:border-[#1a73e8] focus:outline-none text-sm font-medium transition"
+                  autoFocus
+                />
+                <p className="text-[11px] text-slate-400 mt-1">
+                  Enter your personal Gmail address to receive confirmation & admit card.
+                </p>
+              </div>
+
+              <div>
+                <label className="block text-slate-700 font-bold mb-1">
+                  Your Full Legal Name *
+                </label>
+                <input
+                  type="text"
+                  required
+                  placeholder="e.g. Rahul Sharma"
+                  value={studentName}
+                  onChange={(e) => setStudentName(e.target.value)}
+                  className="w-full px-3.5 py-2.5 rounded-xl border-2 border-slate-300 focus:border-[#1a73e8] focus:outline-none text-sm font-medium transition"
+                />
+              </div>
+
+              {/* Quick Auto-fill Option for convenience */}
+              <div className="flex justify-end">
+                <button
+                  type="button"
+                  onClick={handleQuickDemo}
+                  className="text-[11px] font-semibold text-[#1a73e8] hover:underline"
+                >
+                  Quick Fill Test Credentials
+                </button>
+              </div>
+
+              {/* Action Buttons */}
+              <div className="pt-2 flex items-center justify-between gap-3">
+                <button
+                  type="button"
+                  onClick={() => setShowGoogleModal(false)}
+                  className="px-4 py-2.5 rounded-xl border border-slate-300 text-slate-700 hover:bg-slate-100 font-semibold transition"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  className="flex-1 py-2.5 px-4 bg-[#1a73e8] hover:bg-blue-700 text-white font-bold rounded-xl shadow-md transition flex items-center justify-center gap-2"
+                >
+                  <span>Continue with Google</span>
+                  <ChevronRight className="w-4 h-4" />
+                </button>
+              </div>
+            </form>
+
+          </div>
+        </div>
+      )}
 
     </div>
   );

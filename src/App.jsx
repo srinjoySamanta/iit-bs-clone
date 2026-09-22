@@ -24,7 +24,8 @@ import { Layers, ShieldCheck, UserCheck, Award, Home, Sparkles, BookOpen } from 
 export default function App() {
   // Navigation View: 'home' | 'student-login' | 'admin-login' | 'qualifier' | 'exam'
   const [currentView, setCurrentView] = useState('home');
-  const [examCandidate, setExamCandidate] = useState({ name: 'Srinjoy Samanta', roll: 'KGP-QUAL-2026-0842' });
+  const [examCandidate, setExamCandidate] = useState({ name: 'Candidate', roll: 'KGP-QUAL-2026-0842' });
+  const [loggedInStudent, setLoggedInStudent] = useState(null);
 
   const [showDiagram, setShowDiagram] = useState(false);
   const [showStudentModal, setShowStudentModal] = useState(false);
@@ -71,12 +72,23 @@ export default function App() {
     navigateTo('exam');
   };
 
+  const handleGoogleLogin = (studentData) => {
+    setLoggedInStudent(studentData);
+    setExamCandidate(prev => ({
+      ...prev,
+      name: studentData.name || prev.name,
+      email: studentData.email || ''
+    }));
+    navigateTo('qualifier');
+  };
+
   return (
     <div className="min-h-screen flex flex-col bg-slate-50 text-slate-900 font-sans selection:bg-amber-500 selection:text-white">
       
       {/* VIEW 1: DEDICATED QUALIFIER ROUND EXAMINATION PORTAL (Details + Payment + Roster) */}
       {currentView === 'qualifier' && (
         <QualifierRoundPortal
+          initialCandidate={loggedInStudent}
           onStartExam={handleStartExam}
           onBackToHome={() => navigateTo('home')}
         />
@@ -98,6 +110,7 @@ export default function App() {
           onBackToHome={() => navigateTo('home')}
           onOpenSignUp={() => navigateTo('student-login')}
           onOpenQualifier={() => navigateTo('qualifier')}
+          onGoogleLogin={handleGoogleLogin}
         />
       )}
 

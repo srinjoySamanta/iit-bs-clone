@@ -6,18 +6,29 @@ import {
 import { IIT_KGP_INFO, SAMPLE_QUALIFIER_CANDIDATES } from '../../data/portalData';
 import iitKgpLogo from '../../assets/logo';
 
-export default function QualifierRoundPortal({ onStartExam, onBackToHome }) {
+export default function QualifierRoundPortal({ initialCandidate, onStartExam, onBackToHome }) {
   const [step, setStep] = useState(1); // 1: Details, 2: Payment, 3: Exam Ready
   const [candidates, setCandidates] = useState(SAMPLE_QUALIFIER_CANDIDATES);
 
   const [formData, setFormData] = useState({
-    name: 'Srinjoy Samanta',
-    email: 'srinjoy@example.com',
-    phone: '+91 98300 12345',
+    name: initialCandidate?.name || '',
+    email: initialCandidate?.email || '',
+    phone: '',
     category: 'General',
     income: '< 1 LPA (75% Waiver)',
     mode: 'Online AI-Proctored Test'
   });
+
+  // Sync with initialCandidate if passed/updated
+  React.useEffect(() => {
+    if (initialCandidate) {
+      setFormData(prev => ({
+        ...prev,
+        name: initialCandidate.name || prev.name,
+        email: initialCandidate.email || prev.email
+      }));
+    }
+  }, [initialCandidate]);
 
   const [rollNo, setRollNo] = useState('');
   const [paymentSuccess, setPaymentSuccess] = useState(false);
