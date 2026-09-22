@@ -135,56 +135,24 @@ export default function Navbar({
 
           {/* Action CTAs */}
           <div className="hidden lg:flex items-center space-x-2 flex-shrink-0">
-            {/* Standout Qualifier Exam Button */}
-            <button
-              onClick={() => onNavigate('qualifier')}
-              className={`flex items-center space-x-1.5 px-3 py-2 text-xs sm:text-sm font-bold rounded-xl shadow transition ${
-                currentView === 'qualifier'
-                  ? 'bg-emerald-700 text-white ring-2 ring-amber-400'
-                  : 'bg-emerald-600 hover:bg-emerald-700 text-white'
-              }`}
-            >
-              <Sparkles className="w-3.5 h-3.5 text-amber-300" />
-              <span>Qualifier Portal</span>
-            </button>
-
-            {/* Student Login */}
-            <button
-              onClick={() => onNavigate('student-login')}
-              className={`flex items-center space-x-1.5 px-3 py-2 text-xs sm:text-sm font-semibold rounded-xl transition ${
-                currentView === 'student-login'
-                  ? 'bg-kgp-crimson text-white shadow'
-                  : 'text-kgp-crimson border border-kgp-crimson/40 hover:border-kgp-crimson hover:bg-red-50/50'
-              }`}
-            >
-              <LogIn className="w-3.5 h-3.5" />
-              <span>Student Login</span>
-            </button>
-
             {/* Apply Now */}
             <button
               onClick={() => onNavigate('student-login')}
-              className="flex items-center space-x-1.5 px-4 py-2 text-xs sm:text-sm font-semibold text-white bg-gradient-to-r from-kgp-crimson to-red-800 hover:from-kgp-darkred hover:to-kgp-crimson rounded-xl shadow-md hover:shadow-lg transition transform hover:-translate-y-0.5"
+              className="flex items-center space-x-1.5 px-5 py-2.5 text-xs sm:text-sm font-bold text-white bg-gradient-to-r from-kgp-crimson to-red-800 hover:from-kgp-darkred hover:to-kgp-crimson rounded-xl shadow-md hover:shadow-lg transition transform hover:-translate-y-0.5"
             >
-              <UserPlus className="w-3.5 h-3.5" />
+              <UserPlus className="w-4 h-4" />
               <span>Apply Now</span>
             </button>
           </div>
 
           {/* Mobile Navigation Controls */}
-          <div className="lg:hidden flex items-center space-x-1.5">
-            <button
-              onClick={() => onNavigate('qualifier')}
-              className="px-2 py-1.5 text-xs font-bold text-white bg-emerald-600 rounded-lg flex items-center gap-1"
-            >
-              <Sparkles className="w-3 h-3 text-amber-300" />
-              <span>Exam</span>
-            </button>
+          <div className="lg:hidden flex items-center space-x-2">
             <button
               onClick={() => onNavigate('student-login')}
-              className="px-2 py-1.5 text-xs font-semibold text-kgp-crimson border border-kgp-crimson/40 rounded-lg"
+              className="px-3 py-1.5 text-xs font-bold text-white bg-gradient-to-r from-kgp-crimson to-red-800 rounded-lg shadow flex items-center gap-1"
             >
-              Student
+              <UserPlus className="w-3.5 h-3.5" />
+              <span>Apply</span>
             </button>
             <button
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
