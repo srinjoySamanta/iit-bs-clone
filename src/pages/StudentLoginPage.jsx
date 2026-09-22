@@ -37,8 +37,8 @@ export default function StudentLoginPage({ onLoginSuccess, onBackToHome, onOpenS
       <header className="bg-kgp-navy text-white py-3.5 px-4 sm:px-8 border-b border-amber-500/30">
         <div className="max-w-7xl mx-auto flex items-center justify-between">
           <div className="flex items-center space-x-3">
-            <div className="w-10 h-10 rounded-full bg-kgp-crimson border border-amber-400 flex items-center justify-center font-bold text-amber-400">
-              IIT
+            <div className="w-11 h-11 rounded-full bg-white border border-amber-400 p-1 flex items-center justify-center overflow-hidden shadow">
+              <img src="/iitkgp-logo.png" alt="IIT KGP" className="w-full h-full object-contain" />
             </div>
             <div>
               <div className="text-[11px] font-semibold text-amber-300 uppercase tracking-wider">

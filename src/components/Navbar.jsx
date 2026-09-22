@@ -66,16 +66,13 @@ export default function Navbar({
             onClick={() => onNavigate('home')}
             className="flex items-center space-x-3 group text-left"
           >
-            {/* IIT KGP Emblem SVG Replica */}
-            <div className="w-13 h-13 sm:w-14 sm:h-14 rounded-full bg-kgp-crimson p-1 border-2 border-kgp-gold shadow-md flex items-center justify-center flex-shrink-0 group-hover:scale-105 transition-transform">
-              <svg className="w-10 h-10 text-amber-400" viewBox="0 0 100 100" fill="currentColor">
-                <circle cx="50" cy="50" r="46" fill="#7A1C1C" stroke="#D4AF37" strokeWidth="3"/>
-                <path d="M50 12 L56 26 L70 20 L68 35 L82 38 L74 50 L82 62 L68 65 L70 80 L56 74 L50 88 L44 74 L30 80 L32 65 L18 62 L26 50 L18 38 L32 35 L30 20 L44 26 Z" fill="#D4AF37" opacity="0.4"/>
-                <circle cx="50" cy="50" r="28" fill="#5E0000" stroke="#FFFFFF" strokeWidth="1.5"/>
-                <polygon points="50,26 62,64 38,64" fill="#E6BE53"/>
-                <circle cx="50" cy="46" r="6" fill="#FFFFFF"/>
-                <text x="50" y="73" textAnchor="middle" fill="#FFFFFF" fontSize="10" fontFamily="serif" fontWeight="bold">1951</text>
-              </svg>
+            {/* Official IIT KGP Logo Image */}
+            <div className="w-13 h-13 sm:w-14 sm:h-14 rounded-full bg-white p-1 border-2 border-kgp-gold shadow-md flex items-center justify-center flex-shrink-0 group-hover:scale-105 transition-transform overflow-hidden">
+              <img 
+                src="/iitkgp-logo.png" 
+                alt="IIT Kharagpur Official Crest" 
+                className="w-11 h-11 sm:w-12 sm:h-12 object-contain"
+              />
             </div>
             <div className="flex flex-col">
               <div className="flex items-baseline gap-2">

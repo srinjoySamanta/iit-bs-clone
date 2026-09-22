@@ -12,8 +12,8 @@ export default function Footer({ onOpenDiagram, onOpenStudentLogin, onOpenAdminL
           {/* Col 1 & 2: Branding & Address */}
           <div className="lg:col-span-2 space-y-4">
             <div className="flex items-center space-x-3">
-              <div className="w-12 h-12 rounded-full bg-kgp-crimson p-1 border border-amber-400 flex items-center justify-center">
-                <span className="text-amber-400 font-bold text-xs font-serif">KGP</span>
+              <div className="w-12 h-12 rounded-full bg-white p-1 border border-amber-400 flex items-center justify-center overflow-hidden">
+                <img src="/iitkgp-logo.png" alt="IIT KGP" className="w-full h-full object-contain" />
               </div>
               <div>
                 <div className="text-xs text-amber-300 font-bold uppercase tracking-wider">

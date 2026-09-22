@@ -47,14 +47,13 @@ export default function SampleCertificateModal({ isOpen, onClose }) {
             {/* Inner Border */}
             <div className="border border-amber-700/30 p-6 sm:p-8 relative">
               
-              {/* Seal / Crest */}
-              <div className="w-20 h-20 mx-auto rounded-full bg-kgp-crimson border-2 border-amber-400 p-1.5 flex items-center justify-center shadow-lg mb-4">
-                <svg className="w-16 h-16 text-amber-400" viewBox="0 0 100 100" fill="currentColor">
-                  <circle cx="50" cy="50" r="46" fill="#7A1C1C" stroke="#D4AF37" strokeWidth="3"/>
-                  <polygon points="50,22 65,68 35,68" fill="#D4AF37"/>
-                  <circle cx="50" cy="48" r="8" fill="#FFFFFF"/>
-                  <text x="50" y="80" textAnchor="middle" fill="#FFFFFF" fontSize="9" fontWeight="bold">1951</text>
-                </svg>
+              {/* Official Seal / Crest */}
+              <div className="w-22 h-22 mx-auto rounded-full bg-white border-2 border-amber-600 p-1.5 flex items-center justify-center shadow-lg mb-4 overflow-hidden">
+                <img 
+                  src="/iitkgp-logo.png" 
+                  alt="IIT Kharagpur Official Seal" 
+                  className="w-18 h-18 object-contain"
+                />
               </div>
 
               {/* Bilingual Institute Name */}

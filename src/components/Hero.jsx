@@ -57,6 +57,17 @@ export default function Hero({ onOpenSignUp, onOpenDiagram, onOpenCertificate })
           </span>
         </div>
 
+        {/* Center Official Crest */}
+        <div className="flex justify-center mb-5">
+          <div className="w-20 h-20 sm:w-24 sm:h-24 rounded-full bg-white p-2 shadow-2xl border-4 border-amber-400/80 flex items-center justify-center group hover:scale-105 transition-transform">
+            <img 
+              src="/iitkgp-logo.png" 
+              alt="Indian Institute of Technology Kharagpur" 
+              className="w-full h-full object-contain"
+            />
+          </div>
+        </div>
+
         {/* Main Headline */}
         <div className="text-center max-w-4xl mx-auto space-y-4">
           <h1 className="text-3xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight font-serif-title leading-tight sm:leading-none">

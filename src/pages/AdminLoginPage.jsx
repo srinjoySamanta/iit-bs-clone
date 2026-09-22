@@ -35,8 +35,8 @@ export default function AdminLoginPage({ onLoginSuccess, onBackToHome }) {
       <header className="bg-kgp-darknavy py-4 px-4 sm:px-8 border-b border-slate-800">
         <div className="max-w-7xl mx-auto flex items-center justify-between">
           <div className="flex items-center space-x-3">
-            <div className="w-10 h-10 rounded-xl bg-amber-500 text-kgp-darknavy flex items-center justify-center font-bold">
-              <ShieldCheck className="w-6 h-6" />
+            <div className="w-11 h-11 rounded-full bg-white p-1 border border-amber-400 flex items-center justify-center overflow-hidden shadow">
+              <img src="/iitkgp-logo.png" alt="IIT KGP" className="w-full h-full object-contain" />
             </div>
             <div>
               <div className="text-[11px] font-semibold text-amber-400 uppercase tracking-wider">
