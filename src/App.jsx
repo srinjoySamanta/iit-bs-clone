@@ -36,15 +36,23 @@ export default function App() {
   useEffect(() => {
     const handleHashChange = () => {
       const hash = window.location.hash.replace('#', '');
-      if (hash === 'student-login') setCurrentView('student-login');
-      else if (hash === 'admin' || hash === 'admin-login') setCurrentView('admin-login');
-      else if (hash === 'qualifier') setCurrentView('qualifier');
-      else if (hash === 'exam') setCurrentView('exam');
-      else if (hash === 'student-portal') setShowStudentModal(true);
-      else if (hash === 'admin-portal') setShowAdminModal(true);
-      else if (hash === 'diagram') setShowDiagram(true);
-      else if (hash === 'signup') setShowSignUp(true);
-      else if (hash === 'home' || hash === '') setCurrentView('home');
+      if (hash.startsWith('student-login') || hash.startsWith('auth') || hash.startsWith('login') || hash.startsWith('apply') || hash.startsWith('signup')) {
+        setCurrentView('student-login');
+      } else if (hash === 'admin' || hash === 'admin-login') {
+        setCurrentView('admin-login');
+      } else if (hash === 'qualifier') {
+        setCurrentView('qualifier');
+      } else if (hash === 'exam') {
+        setCurrentView('exam');
+      } else if (hash === 'student-portal') {
+        setShowStudentModal(true);
+      } else if (hash === 'admin-portal') {
+        setShowAdminModal(true);
+      } else if (hash === 'diagram') {
+        setShowDiagram(true);
+      } else if (hash === 'home' || hash === '') {
+        setCurrentView('home');
+      }
     };
 
     window.addEventListener('hashchange', handleHashChange);
@@ -66,63 +74,6 @@ export default function App() {
   return (
     <div className="min-h-screen flex flex-col bg-slate-50 text-slate-900 font-sans selection:bg-amber-500 selection:text-white">
       
-      {/* Floating Fast Switcher Bar (Positioned on bottom-left, hidden during exam) */}
-      {currentView !== 'exam' && (
-        <aside aria-label="Portal quick actions" className="fixed bottom-4 left-4 z-40 flex flex-col items-start gap-2">
-          <div className="bg-slate-900/95 text-white backdrop-blur-md p-1.5 rounded-2xl shadow-2xl border border-slate-700 flex items-center gap-1.5">
-            
-            <button
-              onClick={() => navigateTo('home')}
-              className={`px-3 py-1.5 rounded-xl font-bold text-xs flex items-center gap-1.5 transition ${
-                currentView === 'home' 
-                  ? 'bg-amber-500 text-kgp-darknavy shadow' 
-                  : 'hover:bg-slate-800 text-slate-300'
-              }`}
-              title="Single Page for Everyone"
-            >
-              <Home className="w-3.5 h-3.5" />
-              <span className="hidden sm:inline">Main Website</span>
-            </button>
-
-            <button
-              onClick={() => navigateTo('qualifier')}
-              className={`px-3 py-1.5 rounded-xl font-bold text-xs flex items-center gap-1.5 transition ${
-                currentView === 'qualifier'
-                  ? 'bg-emerald-600 text-white shadow'
-                  : 'hover:bg-slate-800 text-emerald-400 font-bold'
-              }`}
-              title="Qualifier Round Portal"
-            >
-              <Sparkles className="w-3.5 h-3.5 text-amber-400" />
-              <span>Qualifier Portal</span>
-            </button>
-
-            <button
-              onClick={() => navigateTo('student-login')}
-              className={`px-3 py-1.5 rounded-xl font-bold text-xs flex items-center gap-1.5 transition ${
-                currentView === 'student-login'
-                  ? 'bg-kgp-crimson text-white shadow'
-                  : 'hover:bg-slate-800 text-slate-300'
-              }`}
-              title="Dedicated Student Login Page"
-            >
-              <UserCheck className="w-3.5 h-3.5" />
-              <span>Student</span>
-            </button>
-
-
-
-            <button
-              onClick={() => setShowDiagram(prev => !prev)}
-              className="p-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-amber-400 transition"
-              title="Toggle Portal Block Diagram"
-            >
-              <Layers className="w-4 h-4" />
-            </button>
-          </div>
-        </aside>
-      )}
-
       {/* VIEW 1: DEDICATED QUALIFIER ROUND EXAMINATION PORTAL (Details + Payment + Roster) */}
       {currentView === 'qualifier' && (
         <QualifierRoundPortal
@@ -140,12 +91,13 @@ export default function App() {
         />
       )}
 
-      {/* VIEW 3: DEDICATED STUDENT LOGIN PAGE */}
+      {/* VIEW 3: DEDICATED STUDENT LOGIN & QUALIFIER APPLY PAGE (IIT MADRAS STYLE) */}
       {currentView === 'student-login' && (
         <StudentLoginPage
           onLoginSuccess={() => setShowStudentModal(true)}
           onBackToHome={() => navigateTo('home')}
-          onOpenSignUp={() => setShowSignUp(true)}
+          onOpenSignUp={() => navigateTo('student-login')}
+          onOpenQualifier={() => navigateTo('qualifier')}
         />
       )}
 
@@ -164,14 +116,14 @@ export default function App() {
           <Navbar
             onNavigate={navigateTo}
             onOpenDiagram={() => setShowDiagram(true)}
-            onOpenSignUp={() => setShowSignUp(true)}
+            onOpenSignUp={() => navigateTo('student-login')}
             onOpenCertificate={() => setShowCertificate(true)}
             currentView={currentView}
           />
 
           {/* Hero Section */}
           <Hero
-            onOpenSignUp={() => setShowSignUp(true)}
+            onOpenSignUp={() => navigateTo('student-login')}
             onOpenDiagram={() => setShowDiagram(true)}
             onOpenCertificate={() => setShowCertificate(true)}
             onOpenQualifier={() => navigateTo('qualifier')}
@@ -185,7 +137,7 @@ export default function App() {
                   onClose={() => setShowDiagram(false)}
                   onOpenStudentLogin={() => setShowStudentModal(true)}
                   onOpenAdminLogin={() => setShowAdminModal(true)}
-                  onOpenSignUp={() => setShowSignUp(true)}
+                  onOpenSignUp={() => navigateTo('student-login')}
                   onOpenCertificate={() => setShowCertificate(true)}
                 />
               </div>
@@ -199,7 +151,7 @@ export default function App() {
           <CourseStructure onOpenCertificate={() => setShowCertificate(true)} />
 
           {/* Direct Admission & Regular Qualifier Pathways */}
-          <EligibilityPathways onOpenSignUp={() => setShowSignUp(true)} />
+          <EligibilityPathways onOpenSignUp={() => navigateTo('student-login')} />
 
           {/* Fee Structure & Real-time Scholarship Calculator */}
           <FeesStructure />

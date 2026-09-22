@@ -163,7 +163,7 @@ export default function Navbar({
 
             {/* Apply Now */}
             <button
-              onClick={onOpenSignUp}
+              onClick={() => onNavigate('student-login')}
               className="flex items-center space-x-1.5 px-4 py-2 text-xs sm:text-sm font-semibold text-white bg-gradient-to-r from-kgp-crimson to-red-800 hover:from-kgp-darkred hover:to-kgp-crimson rounded-xl shadow-md hover:shadow-lg transition transform hover:-translate-y-0.5"
             >
               <UserPlus className="w-3.5 h-3.5" />
@@ -215,6 +215,14 @@ export default function Navbar({
               Student Login
             </button>
           </div>
+
+          <button
+            onClick={() => { onNavigate('student-login'); setMobileMenuOpen(false); }}
+            className="w-full py-2.5 px-4 bg-gradient-to-r from-kgp-crimson to-red-800 text-white rounded-xl font-bold text-xs flex items-center justify-center gap-1.5 shadow"
+          >
+            <UserPlus className="w-4 h-4" />
+            <span>Apply Now (IIT Portal)</span>
+          </button>
 
           <div className="space-y-1 text-sm font-medium text-slate-700 divide-y divide-slate-100">
             <button 
