@@ -1,53 +1,75 @@
-# 24x7 Live Access Guide — IIT Kharagpur BS Portal
+# 24x7 Live Access & Google Cloud Deployment Guide
 
-Your website is now configured for **24/7 Live Availability** across three tiers:
-
----
-
-## 🌐 1. Live Public Internet URL (Active Right Now)
-
-Your local development server is securely tunneled to the public internet:
-
-- **Public URL**: [https://upset-ways-drum.loca.lt](https://upset-ways-drum.loca.lt)
-- **Tunnel Password / IP**: `203.110.242.51`
-  *(When prompted on your first visit, enter `203.110.242.51` and click "Click to Submit" to view the live site from any device, mobile phone, or laptop worldwide).*
-
-- **Local Network / LAN URLs**:
-  - `http://localhost:5173/`
-  - `http://10.35.1.205:5173/`
-  - `http://10.148.6.213:5173/`
+Your **IIT Kharagpur BS Programme Portal** is configured with:
+1. **Dedicated Student Login Page** (`#student-login`)
+2. **Dedicated Admin Login Page** (`#admin-login`)
+3. **All-in-One Single Page Website for Everyone** (`#home` or `/`)
+4. **Live Public Internet Tunnel**
+5. **Git Repository & GitHub Push Tool**
+6. **Google Cloud 24/7 Enterprise Deployment**
 
 ---
 
-## 💻 2. Run 24/7 on Windows (Silent Background Service)
+## 🌐 1. Live URLs (Active Right Now)
 
-To keep the website running 24/7 on your local machine even when terminals are closed:
+| Interface | URL |
+| :--- | :--- |
+| **All-in-One Single Page (Public Portal)** | [http://localhost:5173/](http://localhost:5173/) |
+| **Dedicated Student Login Page** | [http://localhost:5173/#student-login](http://localhost:5173/#student-login) |
+| **Dedicated Admin Login Page** | [http://localhost:5173/#admin-login](http://localhost:5173/#admin-login) |
+| **Public 24/7 Internet URL** | [https://silent-hands-tell.loca.lt](https://silent-hands-tell.loca.lt) |
 
-1. **Silent Background Launch**:
-   - Double-click [`start-24x7-background.vbs`](file:///e:/IIT%20kgp%20bs/start-24x7-background.vbs).
-   - This starts the Vite dev server silently without keeping any command prompt window open.
-
-2. **Auto-Start on Windows Boot (24/7 Persistence)**:
-   - Press `Win + R`, type `shell:startup`, and press Enter.
-   - Right-click [`start-24x7-background.vbs`](file:///e:/IIT%20kgp%20bs/start-24x7-background.vbs) -> Create Shortcut.
-   - Move the shortcut into the Windows Startup folder.
-   - Every time your computer boots, your portal will automatically start and run 24/7 in the background!
+> **Tunnel Verification Password**: `203.110.242.51`  
+> *(When visiting the public tunnel URL on mobile/PC for the first time, enter `203.110.242.51` and click "Click to Submit").*
 
 ---
 
-## ☁️ 3. Permanent Global Cloud Hosting (100% Free, 24/7/365, Never Goes Down)
+## 🐙 2. How to Add to Your GitHub
 
-Because a local PC can lose internet or go to sleep, the industry standard for a permanent 24/7 website is free static hosting:
+Your project is already initialized as a clean Git repository with `main` branch and initial commit ready!
 
-### Option A: Drag-and-Drop to Netlify (Fastest — 30 Seconds)
-1. Open [https://app.netlify.com/drop](https://app.netlify.com/drop).
-2. Drag and drop the `e:\IIT kgp bs\dist` folder directly onto the browser window.
-3. Your site will instantly be given a permanent 24/7 HTTPS address like `https://iitkgp-bs-portal.netlify.app`.
+To push to your GitHub:
+1. Go to [https://github.com/new](https://github.com/new) and create a repository (e.g., `iit-kgp-bs`).
+2. Double-click the helper script in your project folder:
+   👉 [**`push-to-github.bat`**](file:///e:/IIT%20kgp%20bs/push-to-github.bat)
+3. Paste your GitHub repository URL (e.g., `https://github.com/YourUsername/iit-kgp-bs.git`) and press Enter!
 
-### Option B: Deploy with Vercel CLI
-Run this command in terminal:
-```bash
+*Or manually in terminal:*
+```powershell
 cd "e:\IIT kgp bs"
-npx vercel
+git remote add origin https://github.com/<YourUsername>/<YourRepo>.git
+git push -u origin main
 ```
-Follow the 3 prompts to deploy directly to a permanent free `.vercel.app` URL with global CDN and SSL.
+
+---
+
+## ☁️ 3. Deploy 24/7 on Google Cloud
+
+We have added enterprise-grade configuration files for all Google Cloud deployment modes:
+
+### Method A: Google Cloud Run (Docker Container — Most Powerful)
+- Uses the included [`Dockerfile`](file:///e:/IIT%20kgp%20bs/Dockerfile) and [`nginx.conf`](file:///e:/IIT%20kgp%20bs/nginx.conf).
+- Run:
+  ```bash
+  gcloud run deploy iitkgp-bs-portal --source . --region asia-south1 --allow-unauthenticated --min-instances 1
+  ```
+  *(`--min-instances 1` ensures zero cold-start delay, running 24/7 continuously).*
+
+### Method B: Google App Engine (Simplest Google Cloud Service)
+- Uses the included [`app.yaml`](file:///e:/IIT%20kgp%20bs/app.yaml).
+- Run:
+  ```bash
+  gcloud app deploy app.yaml
+  ```
+
+### Method C: Firebase Hosting by Google Cloud (100% Free Forever 24/7)
+- Uses the included [`firebase.json`](file:///e:/IIT%20kgp%20bs/firebase.json).
+- Run:
+  ```bash
+  npx firebase-tools login
+  npx firebase-tools init hosting
+  npx firebase-tools deploy
+  ```
+
+### Method D: Automated GitHub Actions CI/CD to Google Cloud
+- The automated workflow at [`.github/workflows/deploy-gcp.yml`](file:///e:/IIT%20kgp%20bs/.github/workflows/deploy-gcp.yml) automatically compiles and deploys your website to Google Cloud on every `git push` to your repository!
