@@ -16,23 +16,29 @@ import SignUpWizardModal from './components/student/SignUpWizardModal';
 import SampleCertificateModal from './components/SampleCertificateModal';
 import StudentLoginPage from './pages/StudentLoginPage';
 import AdminLoginPage from './pages/AdminLoginPage';
-import { Layers, ShieldCheck, UserCheck, Award, Home, LogIn } from 'lucide-react';
+import QualifierRoundPortal from './components/qualifier/QualifierRoundPortal';
+import QualifierExamEngine from './components/exam/QualifierExamEngine';
+import { Layers, ShieldCheck, UserCheck, Award, Home, Sparkles, BookOpen } from 'lucide-react';
 
 export default function App() {
-  // Navigation View: 'home' | 'student-login' | 'admin-login'
+  // Navigation View: 'home' | 'student-login' | 'admin-login' | 'qualifier' | 'exam'
   const [currentView, setCurrentView] = useState('home');
+  const [examCandidate, setExamCandidate] = useState({ name: 'Srinjoy Samanta', roll: 'KGP-QUAL-2026-0842' });
+
   const [showDiagram, setShowDiagram] = useState(false);
   const [showStudentModal, setShowStudentModal] = useState(false);
   const [showAdminModal, setShowAdminModal] = useState(false);
   const [showSignUp, setShowSignUp] = useState(false);
   const [showCertificate, setShowCertificate] = useState(false);
 
-  // Sync with browser hash (e.g. #student-login, #admin-login, #home)
+  // Sync with browser hash
   useEffect(() => {
     const handleHashChange = () => {
       const hash = window.location.hash.replace('#', '');
       if (hash === 'student-login') setCurrentView('student-login');
       else if (hash === 'admin-login') setCurrentView('admin-login');
+      else if (hash === 'qualifier') setCurrentView('qualifier');
+      else if (hash === 'exam') setCurrentView('exam');
       else if (hash === 'student-portal') setShowStudentModal(true);
       else if (hash === 'admin-portal') setShowAdminModal(true);
       else if (hash === 'diagram') setShowDiagram(true);
@@ -41,7 +47,7 @@ export default function App() {
     };
 
     window.addEventListener('hashchange', handleHashChange);
-    handleHashChange(); // initial check
+    handleHashChange();
     return () => window.removeEventListener('hashchange', handleHashChange);
   }, []);
 
@@ -51,84 +57,117 @@ export default function App() {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
+  const handleStartExam = (candidate) => {
+    setExamCandidate(candidate);
+    navigateTo('exam');
+  };
+
   return (
     <div className="min-h-screen flex flex-col bg-slate-50 text-slate-900 font-sans selection:bg-amber-500 selection:text-white">
       
-      {/* Floating Fast Switcher Bar */}
-      <aside aria-label="Portal quick actions" className="fixed bottom-4 right-4 z-40 flex flex-col items-end gap-2">
-        <div className="bg-slate-900/95 text-white backdrop-blur-md p-1.5 rounded-2xl shadow-2xl border border-slate-700 flex items-center gap-1.5">
-          
-          <button
-            onClick={() => navigateTo('home')}
-            className={`px-3 py-1.5 rounded-xl font-bold text-xs flex items-center gap-1.5 transition ${
-              currentView === 'home' 
-                ? 'bg-amber-500 text-kgp-darknavy shadow' 
-                : 'hover:bg-slate-800 text-slate-300'
-            }`}
-            title="Single Page for Everyone"
-          >
-            <Home className="w-3.5 h-3.5" />
-            <span className="hidden sm:inline">Single Page (All)</span>
-          </button>
+      {/* Floating Fast Switcher Bar (Hidden during full exam) */}
+      {currentView !== 'exam' && (
+        <aside aria-label="Portal quick actions" className="fixed bottom-4 right-4 z-40 flex flex-col items-end gap-2">
+          <div className="bg-slate-900/95 text-white backdrop-blur-md p-1.5 rounded-2xl shadow-2xl border border-slate-700 flex items-center gap-1.5">
+            
+            <button
+              onClick={() => navigateTo('home')}
+              className={`px-3 py-1.5 rounded-xl font-bold text-xs flex items-center gap-1.5 transition ${
+                currentView === 'home' 
+                  ? 'bg-amber-500 text-kgp-darknavy shadow' 
+                  : 'hover:bg-slate-800 text-slate-300'
+              }`}
+              title="Single Page for Everyone"
+            >
+              <Home className="w-3.5 h-3.5" />
+              <span className="hidden sm:inline">Main Website</span>
+            </button>
 
-          <button
-            onClick={() => navigateTo('student-login')}
-            className={`px-3 py-1.5 rounded-xl font-bold text-xs flex items-center gap-1.5 transition ${
-              currentView === 'student-login'
-                ? 'bg-kgp-crimson text-white shadow'
-                : 'hover:bg-slate-800 text-slate-300'
-            }`}
-            title="Dedicated Student Login Page"
-          >
-            <UserCheck className="w-3.5 h-3.5" />
-            <span>Student Login</span>
-          </button>
+            <button
+              onClick={() => navigateTo('qualifier')}
+              className={`px-3 py-1.5 rounded-xl font-bold text-xs flex items-center gap-1.5 transition ${
+                currentView === 'qualifier'
+                  ? 'bg-emerald-600 text-white shadow'
+                  : 'hover:bg-slate-800 text-emerald-400 font-bold'
+              }`}
+              title="Qualifier Round Portal"
+            >
+              <Sparkles className="w-3.5 h-3.5 text-amber-400" />
+              <span>Qualifier Portal</span>
+            </button>
 
-          <button
-            onClick={() => navigateTo('admin-login')}
-            className={`px-3 py-1.5 rounded-xl font-bold text-xs flex items-center gap-1.5 transition ${
-              currentView === 'admin-login'
-                ? 'bg-blue-600 text-white shadow'
-                : 'hover:bg-slate-800 text-slate-300'
-            }`}
-            title="Dedicated Admin Login Page"
-          >
-            <ShieldCheck className="w-3.5 h-3.5" />
-            <span>Admin Login</span>
-          </button>
+            <button
+              onClick={() => navigateTo('student-login')}
+              className={`px-3 py-1.5 rounded-xl font-bold text-xs flex items-center gap-1.5 transition ${
+                currentView === 'student-login'
+                  ? 'bg-kgp-crimson text-white shadow'
+                  : 'hover:bg-slate-800 text-slate-300'
+              }`}
+              title="Dedicated Student Login Page"
+            >
+              <UserCheck className="w-3.5 h-3.5" />
+              <span>Student</span>
+            </button>
 
-          <button
-            onClick={() => setShowDiagram(prev => !prev)}
-            className="p-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-amber-400 transition"
-            title="Toggle Portal Block Diagram"
-          >
-            <Layers className="w-4 h-4" />
-          </button>
-        </div>
-      </aside>
+            <button
+              onClick={() => navigateTo('admin-login')}
+              className={`px-3 py-1.5 rounded-xl font-bold text-xs flex items-center gap-1.5 transition ${
+                currentView === 'admin-login'
+                  ? 'bg-blue-600 text-white shadow'
+                  : 'hover:bg-slate-800 text-slate-300'
+              }`}
+              title="Dedicated Admin Login Page"
+            >
+              <ShieldCheck className="w-3.5 h-3.5" />
+              <span>Admin</span>
+            </button>
 
-      {/* VIEW 1: DEDICATED STUDENT LOGIN PAGE */}
+            <button
+              onClick={() => setShowDiagram(prev => !prev)}
+              className="p-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-amber-400 transition"
+              title="Toggle Portal Block Diagram"
+            >
+              <Layers className="w-4 h-4" />
+            </button>
+          </div>
+        </aside>
+      )}
+
+      {/* VIEW 1: DEDICATED QUALIFIER ROUND EXAMINATION PORTAL (Details + Payment + Roster) */}
+      {currentView === 'qualifier' && (
+        <QualifierRoundPortal
+          onStartExam={handleStartExam}
+          onBackToHome={() => navigateTo('home')}
+        />
+      )}
+
+      {/* VIEW 2: LIVE COMPUTER-BASED QUALIFIER EXAM ENGINE (Actual Test Engine) */}
+      {currentView === 'exam' && (
+        <QualifierExamEngine
+          candidateName={examCandidate.name}
+          candidateRoll={examCandidate.roll}
+          onExit={() => navigateTo('qualifier')}
+        />
+      )}
+
+      {/* VIEW 3: DEDICATED STUDENT LOGIN PAGE */}
       {currentView === 'student-login' && (
         <StudentLoginPage
-          onLoginSuccess={() => {
-            setShowStudentModal(true);
-          }}
+          onLoginSuccess={() => setShowStudentModal(true)}
           onBackToHome={() => navigateTo('home')}
           onOpenSignUp={() => setShowSignUp(true)}
         />
       )}
 
-      {/* VIEW 2: DEDICATED ADMIN LOGIN PAGE */}
+      {/* VIEW 4: DEDICATED ADMIN LOGIN PAGE */}
       {currentView === 'admin-login' && (
         <AdminLoginPage
-          onLoginSuccess={() => {
-            setShowAdminModal(true);
-          }}
+          onLoginSuccess={() => setShowAdminModal(true)}
           onBackToHome={() => navigateTo('home')}
         />
       )}
 
-      {/* VIEW 3: SINGLE PAGE FOR ALL (THE COMPLETE PUBLIC WEBSITE) */}
+      {/* VIEW 5: SINGLE PAGE FOR ALL (THE COMPLETE PUBLIC WEBSITE) */}
       {currentView === 'home' && (
         <>
           {/* Main Navbar */}
@@ -145,6 +184,7 @@ export default function App() {
             onOpenSignUp={() => setShowSignUp(true)}
             onOpenDiagram={() => setShowDiagram(true)}
             onOpenCertificate={() => setShowCertificate(true)}
+            onOpenQualifier={() => navigateTo('qualifier')}
           />
 
           {/* Block Diagram Section (toggled) */}
@@ -165,7 +205,7 @@ export default function App() {
           {/* About IIT KGP & Director's Message */}
           <AboutKgpDirector />
 
-          {/* Course Structure & Syllabus (Foundation, Diploma, BSc, BS) */}
+          {/* Course Structure & Syllabus (Exclusively Data Science & AI) */}
           <CourseStructure onOpenCertificate={() => setShowCertificate(true)} />
 
           {/* Direct Admission & Regular Qualifier Pathways */}

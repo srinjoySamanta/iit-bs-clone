@@ -164,7 +164,19 @@ export default function Navbar({
           </nav>
 
           {/* Action CTAs */}
-          <div className="hidden lg:flex items-center space-x-2.5">
+          <div className="hidden lg:flex items-center space-x-2">
+            <button
+              onClick={() => onNavigate('qualifier')}
+              className={`flex items-center space-x-1.5 px-3.5 py-2 text-sm font-bold rounded-lg shadow transition ${
+                currentView === 'qualifier'
+                  ? 'bg-emerald-700 text-white ring-2 ring-amber-400'
+                  : 'bg-emerald-600 hover:bg-emerald-700 text-white'
+              }`}
+            >
+              <span className="w-2 h-2 rounded-full bg-amber-300 animate-ping" />
+              <span>Qualifier Exam Portal</span>
+            </button>
+
             <button
               onClick={() => onNavigate('student-login')}
               className={`flex items-center space-x-1.5 px-3.5 py-2 text-sm font-semibold rounded-lg transition ${

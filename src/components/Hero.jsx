@@ -124,21 +124,22 @@ export default function Hero({ onOpenSignUp, onOpenDiagram, onOpenCertificate })
         </div>
 
         {/* Primary Call to Actions */}
-        <div className="mt-8 flex flex-col sm:flex-row items-center justify-center gap-4">
+        <div className="mt-8 flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-4">
           <button
-            onClick={onOpenSignUp}
-            className="w-full sm:w-auto px-8 py-4 bg-gradient-to-r from-kgp-crimson via-red-700 to-amber-600 hover:from-kgp-darkred hover:to-amber-500 text-white font-bold rounded-xl shadow-xl hover:shadow-2xl flex items-center justify-center gap-2 group transition transform hover:-translate-y-0.5"
+            onClick={onOpenQualifier}
+            className="w-full sm:w-auto px-8 py-4 bg-gradient-to-r from-emerald-600 via-teal-600 to-emerald-700 hover:from-emerald-500 hover:to-teal-600 text-white font-extrabold rounded-xl shadow-2xl flex items-center justify-center gap-2 group transition transform hover:-translate-y-0.5 ring-2 ring-amber-400"
           >
-            <span>Apply for 2026 Batch</span>
+            <Sparkles className="w-5 h-5 text-amber-300" />
+            <span>Qualifier Exam (Register, Pay & Give Exam)</span>
             <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
           </button>
 
-          <a
-            href="#eligibility"
-            className="w-full sm:w-auto px-7 py-4 bg-slate-800/90 hover:bg-slate-700/90 text-slate-200 hover:text-white font-semibold rounded-xl border border-slate-700 flex items-center justify-center gap-2 transition"
+          <button
+            onClick={onOpenSignUp}
+            className="w-full sm:w-auto px-7 py-4 bg-gradient-to-r from-kgp-crimson to-red-800 hover:from-kgp-darkred hover:to-kgp-crimson text-white font-bold rounded-xl shadow-xl flex items-center justify-center gap-2 transition"
           >
-            <span>Direct Admission (WBJEE / JEE)</span>
-          </a>
+            <span>Direct Admission (WBJEE/JEE)</span>
+          </button>
 
           <button
             onClick={onOpenDiagram}
