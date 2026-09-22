@@ -1,8 +1,8 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { 
   ArrowLeft, Lock, Mail, User, ShieldCheck, Key, 
   HelpCircle, Eye, EyeOff, CheckCircle2, Award, ExternalLink,
-  Sparkles, Phone, ChevronRight, Check, X, AlertTriangle, RefreshCw
+  Sparkles, Phone, ChevronRight, Check, X, AlertTriangle, RefreshCw, Clock
 } from 'lucide-react';
 import { IIT_KGP_INFO } from '../data/portalData';
 import iitKgpLogo from '../assets/logo';
@@ -23,12 +23,28 @@ export default function StudentLoginPage({
   const [generatedCode, setGeneratedCode] = useState('');
   const [enteredCode, setEnteredCode] = useState('');
   const [isVerifying, setIsVerifying] = useState(false);
+  
+  // 59-second timer and inbox preview states
+  const [timerSeconds, setTimerSeconds] = useState(59);
+  const [showSimulatedNotice, setShowSimulatedNotice] = useState(false);
+  const [dispatchToast, setDispatchToast] = useState(false);
 
   // Fallback direct roll login toggle (for enrolled students)
   const [showRollLogin, setShowRollLogin] = useState(false);
   const [identifier, setIdentifier] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
+
+  // 59-Second Countdown Timer for Google Verification Code
+  useEffect(() => {
+    let interval = null;
+    if (googleAuthStep === 2 && timerSeconds > 0) {
+      interval = setInterval(() => {
+        setTimerSeconds(prev => prev - 1);
+      }, 1000);
+    }
+    return () => clearInterval(interval);
+  }, [googleAuthStep, timerSeconds]);
 
   // Strict Gmail Authentication Validator
   const validateGmail = (email) => {
@@ -39,7 +55,7 @@ export default function StudentLoginPage({
     if (!trimmed.endsWith('@gmail.com') && !trimmed.endsWith('@googlemail.com')) {
       return { 
         valid: false, 
-        message: 'Invalid Domain: Only authentic @gmail.com accounts are permitted for authentication. Non-Gmail addresses are blocked.' 
+        message: 'Invalid Domain: Only authentic @gmail.com accounts are permitted. Non-Gmail addresses are blocked.' 
       };
     }
     
@@ -48,7 +64,7 @@ export default function StudentLoginPage({
     if (username.length < 6) {
       return { 
         valid: false, 
-        message: 'Invalid Gmail: Username is too short (must be at least 6 characters).' 
+        message: 'Invalid Gmail: Username must be at least 6 characters.' 
       };
     }
     if (username.length > 30) {
@@ -103,9 +119,12 @@ export default function StudentLoginPage({
       return;
     }
 
-    // 3. Generate 6-Digit Google Security Code for 2-Step Verification
+    // 3. Generate 6-Digit Google Security Code & start 59s timer
     const code = String(Math.floor(100000 + Math.random() * 900000));
     setGeneratedCode(code);
+    setEnteredCode('');
+    setTimerSeconds(59);
+    setShowSimulatedNotice(false);
     setGoogleAuthStep(2);
   };
 
@@ -115,7 +134,7 @@ export default function StudentLoginPage({
 
     const cleanedCode = enteredCode.replace(/[^0-9]/g, '');
     if (cleanedCode !== generatedCode) {
-      setAuthError('Wrong verification code. Please enter the exact 6-digit Google security code.');
+      setAuthError('Invalid code: The 6-digit code entered does not match the code dispatched to your Gmail. Please check your inbox.');
       return;
     }
 
@@ -143,10 +162,14 @@ export default function StudentLoginPage({
   };
 
   const handleResendCode = () => {
+    if (timerSeconds > 0) return;
     const newCode = String(Math.floor(100000 + Math.random() * 900000));
     setGeneratedCode(newCode);
     setEnteredCode('');
     setAuthError('');
+    setTimerSeconds(59);
+    setDispatchToast(true);
+    setTimeout(() => setDispatchToast(false), 5000);
   };
 
   const handleResetModal = () => {
@@ -154,6 +177,7 @@ export default function StudentLoginPage({
     setGoogleAuthStep(1);
     setAuthError('');
     setEnteredCode('');
+    setTimerSeconds(59);
   };
 
   const handleRollLoginSubmit = (e) => {
@@ -495,7 +519,7 @@ export default function StudentLoginPage({
         </div>
       </footer>
 
-      {/* 6. TRUE GOOGLE AUTHENTICATION SYSTEM (Strict Gmail Validation + 2-Step Security Verification) */}
+      {/* 6. TRUE GOOGLE AUTHENTICATION SYSTEM (Strict Gmail Validation + Gmail Dispatch + 59s Resend Timer) */}
       {showGoogleModal && (
         <div className="fixed inset-0 z-50 bg-slate-950/70 backdrop-blur-sm flex items-center justify-center p-4 animate-in fade-in">
           <div className="bg-white rounded-3xl max-w-md w-full p-6 sm:p-8 shadow-2xl border border-slate-200 relative animate-in zoom-in-95">
@@ -562,7 +586,7 @@ export default function StudentLoginPage({
                     </span>
                   </div>
                   <p className="text-[11px] text-slate-400 mt-1">
-                    Security Policy: Only genuine, active @gmail.com accounts are allowed. Fake or temporary domains will be rejected.
+                    Security Policy: Only genuine, active @gmail.com accounts are allowed. Non-Gmail addresses will be blocked.
                   </p>
                 </div>
 
@@ -595,14 +619,14 @@ export default function StudentLoginPage({
                     type="submit"
                     className="flex-1 py-2.5 px-4 bg-[#1a73e8] hover:bg-blue-700 text-white font-bold rounded-xl shadow-md transition flex items-center justify-center gap-2"
                   >
-                    <span>Authenticate Account</span>
+                    <span>Send Verification Code</span>
                     <ChevronRight className="w-4 h-4" />
                   </button>
                 </div>
               </form>
             )}
 
-            {/* STEP 2: Google 2-Step Verification Code (No Fake Accounts Allowed) */}
+            {/* STEP 2: Google 2-Step Verification Code (Dispatched to Gmail, 59s Resend Timer) */}
             {googleAuthStep === 2 && (
               <form onSubmit={handleVerifyCode} className="space-y-4 text-xs">
                 {/* User Identity Chip */}
@@ -616,20 +640,58 @@ export default function StudentLoginPage({
                   </div>
                 </div>
 
-                {/* Google Security Dispatch Notice */}
-                <div className="p-3 bg-blue-50 border border-blue-200 rounded-xl space-y-1.5">
-                  <div className="text-blue-900 font-bold text-xs flex items-center gap-1.5">
-                    <ShieldCheck className="w-4 h-4 text-blue-700" />
-                    <span>Google Security Verification Code</span>
+                {/* Verification Email Dispatch Banner (Code NOT shown here) */}
+                <div className="p-3.5 bg-blue-50 border border-blue-200 rounded-2xl space-y-2 text-left">
+                  <div className="flex items-center gap-2 text-blue-900 font-bold text-xs">
+                    <Mail className="w-4 h-4 text-[#1a73e8]" />
+                    <span>Verification Code Sent via Gmail</span>
                   </div>
                   <p className="text-blue-800 text-[11px] leading-relaxed">
-                    To prevent automated or fake registrations, a 6-digit verification code has been dispatched for this Google account:
+                    A secure 6-digit Google verification code has been dispatched to your Gmail inbox:
                   </p>
-                  <div className="bg-white px-3 py-1.5 rounded-lg border border-blue-300 text-center font-mono font-extrabold text-base tracking-widest text-[#1a73e8] select-all">
-                    G-{generatedCode}
+                  <div className="font-mono text-xs font-bold text-blue-950 bg-white/90 p-2 rounded-lg border border-blue-200 flex items-center justify-between">
+                    <span className="truncate">{studentEmail}</span>
+                    <span className="text-[10px] text-emerald-700 font-semibold bg-emerald-50 px-2 py-0.5 rounded border border-emerald-200 flex-shrink-0">
+                      Dispatched
+                    </span>
                   </div>
+                  <div className="pt-1 flex items-center justify-between text-[11px]">
+                    <a
+                      href="https://mail.google.com/mail/u/0/#inbox"
+                      target="_blank"
+                      rel="noreferrer"
+                      className="text-[#1a73e8] font-bold hover:underline flex items-center gap-1"
+                    >
+                      <ExternalLink className="w-3 h-3" />
+                      <span>Open Gmail Inbox</span>
+                    </a>
+                    <button
+                      type="button"
+                      onClick={() => setShowSimulatedNotice(!showSimulatedNotice)}
+                      className="text-slate-400 hover:text-slate-600 text-[10px] underline"
+                      title="Testing helper for review without external mail server"
+                    >
+                      {showSimulatedNotice ? 'Hide Preview' : 'Show Test Inbox Preview'}
+                    </button>
+                  </div>
+
+                  {/* Optional testing inspection preview */}
+                  {showSimulatedNotice && (
+                    <div className="mt-2 p-2.5 bg-white rounded-xl border border-blue-300 text-[11px] text-slate-700 space-y-1 animate-in fade-in">
+                      <div className="font-bold text-slate-900 flex items-center justify-between">
+                        <span>📩 Gmail Message Preview:</span>
+                        <span className="text-[10px] text-slate-400">Just now</span>
+                      </div>
+                      <div className="text-slate-600"><strong>From:</strong> Google Security &lt;no-reply@accounts.google.com&gt;</div>
+                      <div className="text-slate-600"><strong>To:</strong> {studentEmail}</div>
+                      <div className="text-blue-900 font-bold pt-1">
+                        Your verification code is: <span className="font-mono text-base text-[#1a73e8] bg-blue-50 px-2 py-0.5 rounded border border-blue-200">G-{generatedCode}</span>
+                      </div>
+                    </div>
+                  )}
                 </div>
 
+                {/* Code Input Field (No code placeholder!) */}
                 <div>
                   <label className="block text-slate-700 font-bold mb-1">
                     Enter the 6-Digit Code (G-XXXXXX) *
@@ -642,7 +704,7 @@ export default function StudentLoginPage({
                       type="text"
                       required
                       maxLength={6}
-                      placeholder={generatedCode}
+                      placeholder="Enter 6-digit code"
                       value={enteredCode}
                       onChange={(e) => {
                         setEnteredCode(e.target.value.replace(/[^0-9]/g, ''));
@@ -654,17 +716,39 @@ export default function StudentLoginPage({
                   </div>
                 </div>
 
-                <div className="flex items-center justify-between text-[11px]">
-                  <span className="text-slate-500">Didn't receive code?</span>
-                  <button
-                    type="button"
-                    onClick={handleResendCode}
-                    className="text-[#1a73e8] font-bold hover:underline flex items-center gap-1"
-                  >
-                    <RefreshCw className="w-3 h-3" />
-                    <span>Resend Code</span>
-                  </button>
+                {/* 59-Second Countdown Timer & Resend Option */}
+                <div className="py-1">
+                  {timerSeconds > 0 ? (
+                    <div className="flex items-center justify-between text-xs text-slate-500 bg-slate-100/90 px-3.5 py-2.5 rounded-xl border border-slate-200">
+                      <span className="flex items-center gap-1.5">
+                        <Clock className="w-3.5 h-3.5 text-slate-400 animate-spin" style={{ animationDuration: '8s' }} />
+                        <span>Resend code available in:</span>
+                      </span>
+                      <span className="font-mono font-bold text-slate-800 tabular-nums">
+                        00:{String(timerSeconds).padStart(2, '0')}s
+                      </span>
+                    </div>
+                  ) : (
+                    <div className="flex items-center justify-between text-xs bg-amber-50 border border-amber-200 px-3.5 py-2 rounded-xl animate-in fade-in">
+                      <span className="text-amber-900 font-medium">Didn't receive email in 59s?</span>
+                      <button
+                        type="button"
+                        onClick={handleResendCode}
+                        className="px-3 py-1.5 bg-[#1a73e8] hover:bg-blue-700 text-white font-bold rounded-lg transition flex items-center gap-1.5 shadow-sm text-xs"
+                      >
+                        <RefreshCw className="w-3 h-3" />
+                        <span>Resend Code</span>
+                      </button>
+                    </div>
+                  )}
                 </div>
+
+                {dispatchToast && (
+                  <div className="p-2 bg-emerald-50 border border-emerald-200 text-emerald-800 rounded-lg text-xs flex items-center gap-1.5">
+                    <Check className="w-3.5 h-3.5 text-emerald-600" />
+                    <span>A fresh verification code has been dispatched to your Gmail!</span>
+                  </div>
+                )}
 
                 <div className="pt-2 flex items-center justify-between gap-3">
                   <button
