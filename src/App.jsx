@@ -18,6 +18,7 @@ import StudentLoginPage from './pages/StudentLoginPage';
 import AdminLoginPage from './pages/AdminLoginPage';
 import QualifierRoundPortal from './components/qualifier/QualifierRoundPortal';
 import QualifierExamEngine from './components/exam/QualifierExamEngine';
+import AdmissionsChatbot from './components/chat/AdmissionsChatbot';
 import { Layers, ShieldCheck, UserCheck, Award, Home, Sparkles, BookOpen } from 'lucide-react';
 
 export default function App() {
@@ -65,9 +66,9 @@ export default function App() {
   return (
     <div className="min-h-screen flex flex-col bg-slate-50 text-slate-900 font-sans selection:bg-amber-500 selection:text-white">
       
-      {/* Floating Fast Switcher Bar (Hidden during full exam) */}
+      {/* Floating Fast Switcher Bar (Positioned on bottom-left, hidden during exam) */}
       {currentView !== 'exam' && (
-        <aside aria-label="Portal quick actions" className="fixed bottom-4 right-4 z-40 flex flex-col items-end gap-2">
+        <aside aria-label="Portal quick actions" className="fixed bottom-4 left-4 z-40 flex flex-col items-start gap-2">
           <div className="bg-slate-900/95 text-white backdrop-blur-md p-1.5 rounded-2xl shadow-2xl border border-slate-700 flex items-center gap-1.5">
             
             <button
@@ -257,6 +258,13 @@ export default function App() {
         isOpen={showCertificate}
         onClose={() => setShowCertificate(false)}
       />
+
+      {/* 5. Bottom-Right Floating AI Admissions Chatbot */}
+      {currentView !== 'exam' && (
+        <AdmissionsChatbot
+          onOpenQualifier={() => navigateTo('qualifier')}
+        />
+      )}
 
     </div>
   );
