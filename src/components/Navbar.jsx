@@ -19,46 +19,6 @@ export default function Navbar({
 
   return (
     <header className="sticky top-0 z-50 bg-white/95 backdrop-blur-md shadow-md border-b border-slate-200 transition-all">
-      {/* Top Announcement & Quick Links Bar */}
-      <div className="bg-[#081528] text-white text-xs py-1.5 px-4 border-b border-amber-500/20">
-        <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-1.5">
-          
-          {/* Announcement Ticker */}
-          <div className="flex items-center space-x-2.5 overflow-hidden w-full md:w-auto">
-            <span className="bg-gradient-to-r from-amber-500 to-amber-600 text-slate-950 font-extrabold px-2 py-0.5 rounded text-[10px] tracking-wider uppercase flex-shrink-0 shadow-sm animate-pulse">
-              ANNOUNCEMENT
-            </span>
-            <div className="truncate text-slate-200 text-[11px] sm:text-xs font-medium">
-              🚨 Admissions Open for Qualifier Batch 2026! Last Date to Apply: 30 October 2026
-            </div>
-          </div>
-
-          {/* Quick Header Utilities */}
-          <div className="flex items-center space-x-3 text-slate-300 text-xs flex-shrink-0">
-            <button
-              onClick={() => onNavigate('home')}
-              className={`hover:text-white flex items-center gap-1 transition ${currentView === 'home' ? 'text-amber-400 font-semibold' : ''}`}
-            >
-              <Home className="w-3.5 h-3.5" />
-              <span className="hidden sm:inline">Main Website</span>
-            </button>
-            <span className="text-slate-600">|</span>
-            <button 
-              onClick={onOpenDiagram}
-              className="text-amber-400 hover:text-amber-300 font-semibold flex items-center gap-1 transition"
-            >
-              <Layers className="w-3.5 h-3.5" />
-              <span>Portal Diagram</span>
-            </button>
-            <span className="text-slate-600 hidden md:inline">|</span>
-            <span className="text-slate-300 text-[11px] flex items-center gap-1">
-              <Phone className="w-3 h-3 text-amber-400" />
-              <span>Helpdesk: +91 (03222) 282000</span>
-            </span>
-          </div>
-
-        </div>
-      </div>
 
       {/* Main Brand & Navigation Header */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
