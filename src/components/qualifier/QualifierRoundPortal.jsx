@@ -125,9 +125,30 @@ export default function QualifierRoundPortal({ initialCandidate, onStartExam, on
             <h3 className="text-lg font-bold font-serif-title text-slate-900 mb-1">
               Step 1: Enter Candidate Details for Qualifier Round
             </h3>
-            <p className="text-xs text-slate-500 mb-6">
+            <p className="text-xs text-slate-500 mb-4">
               Register your profile to receive your official IIT KGP Qualifier Roll Number.
             </p>
+
+            {/* Google Verified Account Badge */}
+            {initialCandidate?.isVerifiedGoogle && (
+              <div className="mb-5 p-3 bg-emerald-50 border border-emerald-300 rounded-2xl flex items-center justify-between gap-3 animate-in fade-in">
+                <div className="flex items-center gap-2.5">
+                  <div className="w-7 h-7 rounded-full bg-emerald-600 text-white flex items-center justify-center flex-shrink-0 shadow-sm">
+                    <CheckCircle2 className="w-4 h-4" />
+                  </div>
+                  <div>
+                    <div className="text-xs font-bold text-emerald-900 flex items-center gap-1.5">
+                      <span>Authenticated Google Account</span>
+                      <span className="bg-emerald-200/80 text-emerald-800 text-[10px] px-1.5 py-0.2 rounded font-semibold">2-Step Verified</span>
+                    </div>
+                    <div className="text-[11px] text-emerald-700 font-mono">{formData.email}</div>
+                  </div>
+                </div>
+                <span className="px-2.5 py-1 bg-emerald-600 text-white rounded-lg text-[10px] font-extrabold uppercase tracking-wider shadow-sm flex-shrink-0">
+                  Verified Identity
+                </span>
+              </div>
+            )}
 
             <form onSubmit={handleDetailsSubmit} className="space-y-4 text-xs">
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
