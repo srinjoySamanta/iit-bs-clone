@@ -37,7 +37,7 @@ export default function App() {
     const handleHashChange = () => {
       const hash = window.location.hash.replace('#', '');
       if (hash === 'student-login') setCurrentView('student-login');
-      else if (hash === 'admin-login') setCurrentView('admin-login');
+      else if (hash === 'admin' || hash === 'admin-login') setCurrentView('admin-login');
       else if (hash === 'qualifier') setCurrentView('qualifier');
       else if (hash === 'exam') setCurrentView('exam');
       else if (hash === 'student-portal') setShowStudentModal(true);
@@ -110,18 +110,7 @@ export default function App() {
               <span>Student</span>
             </button>
 
-            <button
-              onClick={() => navigateTo('admin-login')}
-              className={`px-3 py-1.5 rounded-xl font-bold text-xs flex items-center gap-1.5 transition ${
-                currentView === 'admin-login'
-                  ? 'bg-blue-600 text-white shadow'
-                  : 'hover:bg-slate-800 text-slate-300'
-              }`}
-              title="Dedicated Admin Login Page"
-            >
-              <ShieldCheck className="w-3.5 h-3.5" />
-              <span>Admin</span>
-            </button>
+
 
             <button
               onClick={() => setShowDiagram(prev => !prev)}

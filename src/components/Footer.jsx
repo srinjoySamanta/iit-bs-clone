@@ -95,13 +95,13 @@ export default function Footer({ onOpenDiagram, onOpenStudentLogin, onOpenAdminL
                 <span className="text-[10px] bg-emerald-900/60 text-emerald-300 px-1.5 py-0.5 rounded">Active</span>
               </button>
 
-              <button
-                onClick={onOpenAdminLogin}
-                className="w-full text-left p-2 rounded-lg bg-slate-800 hover:bg-slate-700 text-xs font-semibold text-slate-200 transition flex items-center justify-between"
+              <a
+                href="#qualifier"
+                className="w-full text-left p-2 rounded-lg bg-emerald-950/60 hover:bg-emerald-900/80 border border-emerald-500/30 text-xs font-semibold text-emerald-300 transition flex items-center justify-between"
               >
-                <span>Admin Console</span>
-                <span className="text-[10px] bg-blue-900/60 text-blue-300 px-1.5 py-0.5 rounded">Staff</span>
-              </button>
+                <span>Qualifier Exam Portal</span>
+                <span className="text-[10px] bg-emerald-700 text-white px-1.5 py-0.5 rounded">CBT Live</span>
+              </a>
 
               <button
                 onClick={onOpenDiagram}

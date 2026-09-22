@@ -50,17 +50,10 @@ export default function Navbar({
               <Layers className="w-3.5 h-3.5" />
               <span>Portal Diagram</span>
             </button>
-            <span className="text-slate-600">|</span>
-            <button 
-              onClick={() => onNavigate('admin-login')}
-              className={`hover:text-white flex items-center gap-1 transition ${currentView === 'admin-login' ? 'text-amber-400 font-semibold' : ''}`}
-            >
-              <ShieldCheck className="w-3.5 h-3.5 text-amber-400" />
-              <span>Admin Gateway</span>
-            </button>
             <span className="text-slate-600 hidden md:inline">|</span>
-            <span className="text-slate-400 hidden lg:inline font-mono text-[11px]">
-              Desk: +91 (03222) 282000
+            <span className="text-slate-300 text-[11px] flex items-center gap-1">
+              <Phone className="w-3 h-3 text-amber-400" />
+              <span>Helpdesk: +91 (03222) 282000</span>
             </span>
           </div>
 
@@ -208,23 +201,10 @@ export default function Navbar({
               <span>Student Login</span>
             </button>
 
-            {/* Admin Login */}
-            <button
-              onClick={() => onNavigate('admin-login')}
-              className={`flex items-center space-x-1.5 px-3 py-2 text-xs sm:text-sm font-semibold rounded-xl transition ${
-                currentView === 'admin-login'
-                  ? 'bg-slate-900 text-amber-400 shadow'
-                  : 'text-slate-800 border border-slate-300 hover:border-slate-400 hover:bg-slate-50'
-              }`}
-            >
-              <ShieldCheck className="w-3.5 h-3.5 text-amber-600" />
-              <span>Admin</span>
-            </button>
-
             {/* Apply Now */}
             <button
               onClick={onOpenSignUp}
-              className="flex items-center space-x-1.5 px-3.5 py-2 text-xs sm:text-sm font-semibold text-white bg-gradient-to-r from-kgp-crimson to-red-800 hover:from-kgp-darkred hover:to-kgp-crimson rounded-xl shadow-md hover:shadow-lg transition transform hover:-translate-y-0.5"
+              className="flex items-center space-x-1.5 px-4 py-2 text-xs sm:text-sm font-semibold text-white bg-gradient-to-r from-kgp-crimson to-red-800 hover:from-kgp-darkred hover:to-kgp-crimson rounded-xl shadow-md hover:shadow-lg transition transform hover:-translate-y-0.5"
             >
               <UserPlus className="w-3.5 h-3.5" />
               <span>Apply Now</span>
@@ -261,24 +241,18 @@ export default function Navbar({
       {/* Mobile Drawer */}
       {mobileMenuOpen && (
         <div className="lg:hidden border-t border-slate-200 bg-white px-4 pt-3 pb-6 space-y-3 shadow-2xl animate-in slide-in-from-top-2">
-          <div className="grid grid-cols-3 gap-2 pt-1 pb-2">
+          <div className="grid grid-cols-2 gap-2 pt-1 pb-2">
             <button
               onClick={() => { onNavigate('home'); setMobileMenuOpen(false); }}
-              className="w-full py-2 text-xs font-bold text-slate-800 border border-slate-300 rounded-lg bg-slate-50"
+              className="w-full py-2 text-xs font-bold text-slate-800 border border-slate-300 rounded-lg bg-slate-50 text-center"
             >
               Home Page
             </button>
             <button
               onClick={() => { onNavigate('student-login'); setMobileMenuOpen(false); }}
-              className="w-full py-2 text-xs font-bold text-kgp-crimson border border-kgp-crimson/40 rounded-lg bg-red-50/50"
+              className="w-full py-2 text-xs font-bold text-kgp-crimson border border-kgp-crimson/40 rounded-lg bg-red-50/50 text-center"
             >
               Student Login
-            </button>
-            <button
-              onClick={() => { onNavigate('admin-login'); setMobileMenuOpen(false); }}
-              className="w-full py-2 text-xs font-bold text-kgp-navy border border-kgp-navy/40 rounded-lg bg-blue-50/50"
-            >
-              Admin Login
             </button>
           </div>
 
