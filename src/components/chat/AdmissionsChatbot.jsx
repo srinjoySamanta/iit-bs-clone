@@ -4,6 +4,7 @@ import {
   RotateCcw, Minimize2, ExternalLink, HelpCircle, ArrowRight 
 } from 'lucide-react';
 import { IIT_KGP_INFO } from '../../data/portalData';
+import iitKgpLogo from '../../assets/logo';
 
 export default function AdmissionsChatbot({ onOpenQualifier, onOpenFees, onOpenEligibility }) {
   const [isOpen, setIsOpen] = useState(false);
@@ -174,7 +175,7 @@ Feel free to ask about fees, courses, or the test!`;
           >
             <div className="relative">
               <div className="w-8 h-8 rounded-full bg-white p-0.5 flex items-center justify-center overflow-hidden">
-                <img src="/iitkgp-logo.png" alt="IIT KGP" className="w-full h-full object-contain" />
+                <img src={iitKgpLogo} alt="IIT KGP" className="w-full h-full object-contain" />
               </div>
               <span className="absolute -top-1 -right-1 w-3 h-3 bg-emerald-400 border-2 border-slate-900 rounded-full animate-ping" />
               <span className="absolute -top-1 -right-1 w-3 h-3 bg-emerald-400 border-2 border-slate-900 rounded-full" />
@@ -199,7 +200,7 @@ Feel free to ask about fees, courses, or the test!`;
           <div className="bg-gradient-to-r from-kgp-navy via-slate-900 to-kgp-crimson text-white p-4 flex items-center justify-between flex-shrink-0">
             <div className="flex items-center space-x-3">
               <div className="w-10 h-10 rounded-full bg-white p-0.5 flex items-center justify-center overflow-hidden shadow border border-amber-400">
-                <img src="/iitkgp-logo.png" alt="IIT KGP" className="w-full h-full object-contain" />
+                <img src={iitKgpLogo} alt="IIT KGP" className="w-full h-full object-contain" />
               </div>
               <div>
                 <div className="text-xs font-bold text-amber-300 flex items-center gap-1 font-serif-title">

@@ -1,6 +1,7 @@
 import React from 'react';
 import { X, Award, Download, CheckCircle2, ShieldCheck, Printer } from 'lucide-react';
 import { IIT_KGP_INFO } from '../data/portalData';
+import iitKgpLogo from '../assets/logo';
 
 export default function SampleCertificateModal({ isOpen, onClose }) {
   if (!isOpen) return null;
@@ -50,7 +51,7 @@ export default function SampleCertificateModal({ isOpen, onClose }) {
               {/* Official Seal / Crest */}
               <div className="w-22 h-22 mx-auto rounded-full bg-white border-2 border-amber-600 p-1.5 flex items-center justify-center shadow-lg mb-4 overflow-hidden">
                 <img 
-                  src="/iitkgp-logo.png" 
+                  src={iitKgpLogo} 
                   alt="IIT Kharagpur Official Seal" 
                   className="w-18 h-18 object-contain"
                 />

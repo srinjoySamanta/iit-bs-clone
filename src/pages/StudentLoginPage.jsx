@@ -4,6 +4,7 @@ import {
   HelpCircle, Eye, EyeOff, CheckCircle2, Award, ExternalLink 
 } from 'lucide-react';
 import { IIT_KGP_INFO } from '../data/portalData';
+import iitKgpLogo from '../assets/logo';
 
 export default function StudentLoginPage({ onLoginSuccess, onBackToHome, onOpenSignUp }) {
   const [loginMethod, setLoginMethod] = useState('password'); // 'password' or 'otp'
@@ -38,7 +39,7 @@ export default function StudentLoginPage({ onLoginSuccess, onBackToHome, onOpenS
         <div className="max-w-7xl mx-auto flex items-center justify-between">
           <div className="flex items-center space-x-3">
             <div className="w-11 h-11 rounded-full bg-white border border-amber-400 p-1 flex items-center justify-center overflow-hidden shadow">
-              <img src="/iitkgp-logo.png" alt="IIT KGP" className="w-full h-full object-contain" />
+              <img src={iitKgpLogo} alt="IIT KGP" className="w-full h-full object-contain" />
             </div>
             <div>
               <div className="text-[11px] font-semibold text-amber-300 uppercase tracking-wider">

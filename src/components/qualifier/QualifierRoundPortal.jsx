@@ -4,6 +4,7 @@ import {
   Award, QrCode, FileText, Sparkles, Users, Lock, ChevronRight 
 } from 'lucide-react';
 import { IIT_KGP_INFO, SAMPLE_QUALIFIER_CANDIDATES } from '../../data/portalData';
+import iitKgpLogo from '../../assets/logo';
 
 export default function QualifierRoundPortal({ onStartExam, onBackToHome }) {
   const [step, setStep] = useState(1); // 1: Details, 2: Payment, 3: Exam Ready
@@ -60,7 +61,7 @@ export default function QualifierRoundPortal({ onStartExam, onBackToHome }) {
         <div className="bg-gradient-to-r from-kgp-navy to-slate-900 text-white rounded-3xl p-6 sm:p-8 shadow-xl flex flex-col md:flex-row md:items-center justify-between gap-6 border border-amber-500/30">
           <div className="flex items-center space-x-4">
             <div className="w-14 h-14 rounded-full bg-white p-1 flex items-center justify-center overflow-hidden shadow-lg flex-shrink-0">
-              <img src="/iitkgp-logo.png" alt="IIT KGP" className="w-full h-full object-contain" />
+              <img src={iitKgpLogo} alt="IIT KGP" className="w-full h-full object-contain" />
             </div>
             <div>
               <div className="text-xs font-bold text-amber-400 uppercase tracking-wider">

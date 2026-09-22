@@ -1,6 +1,7 @@
 import React from 'react';
 import { Layers, Mail, Phone, MapPin, ExternalLink, ShieldCheck, Award } from 'lucide-react';
 import { IIT_KGP_INFO } from '../data/portalData';
+import iitKgpLogo from '../assets/logo';
 
 export default function Footer({ onOpenDiagram, onOpenStudentLogin, onOpenAdminLogin, onOpenCertificate }) {
   return (
@@ -13,7 +14,7 @@ export default function Footer({ onOpenDiagram, onOpenStudentLogin, onOpenAdminL
           <div className="lg:col-span-2 space-y-4">
             <div className="flex items-center space-x-3">
               <div className="w-12 h-12 rounded-full bg-white p-1 border border-amber-400 flex items-center justify-center overflow-hidden">
-                <img src="/iitkgp-logo.png" alt="IIT KGP" className="w-full h-full object-contain" />
+                <img src={iitKgpLogo} alt="IIT KGP" className="w-full h-full object-contain" />
               </div>
               <div>
                 <div className="text-xs text-amber-300 font-bold uppercase tracking-wider">

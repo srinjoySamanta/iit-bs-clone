@@ -4,6 +4,7 @@ import {
   Sparkles, Download, Layers, Users, BookOpen, Clock, ChevronRight 
 } from 'lucide-react';
 import { IIT_KGP_INFO, STATS } from '../data/portalData';
+import iitKgpLogo from '../assets/logo';
 
 export default function Hero({ onOpenSignUp, onOpenDiagram, onOpenCertificate, onOpenQualifier }) {
   // Countdown to application deadline
@@ -64,6 +65,25 @@ export default function Hero({ onOpenSignUp, onOpenDiagram, onOpenCertificate, o
         {/* Main Headline & Degree Title (Prominent, High-Contrast & Centered) */}
         <div className="text-center max-w-4xl mx-auto space-y-3">
           
+          {/* Official IIT Kharagpur Crest Display */}
+          <div className="flex items-center justify-center gap-3.5 mb-1">
+            <div className="w-13 h-13 sm:w-15 sm:h-15 rounded-2xl bg-white p-1.5 shadow-2xl border-2 border-amber-400 flex items-center justify-center">
+              <img 
+                src={iitKgpLogo} 
+                alt="Indian Institute of Technology Kharagpur" 
+                className="w-10 h-10 sm:w-12 sm:h-12 object-contain"
+              />
+            </div>
+            <div className="text-left">
+              <div className="text-sm sm:text-base font-bold font-serif-title text-white leading-tight">
+                Indian Institute of Technology Kharagpur
+              </div>
+              <div className="text-xs text-amber-300 font-semibold leading-tight mt-0.5">
+                भारतीय प्रौद्योगिकी संस्थान खड़गपुर
+              </div>
+            </div>
+          </div>
+
           <div className="text-xs sm:text-sm uppercase tracking-widest text-amber-400 font-bold font-sans">
             Official 4-Year Undergraduate Degree Programme
           </div>

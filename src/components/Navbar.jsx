@@ -4,6 +4,7 @@ import {
   LogIn, UserPlus, BookOpen, Layers, Phone, HelpCircle, User, Home, Sparkles 
 } from 'lucide-react';
 import { IIT_KGP_INFO, ANNOUNCEMENT_TICKER } from '../data/portalData';
+import iitKgpLogo from '../assets/logo';
 
 export default function Navbar({ 
   onNavigate,
@@ -78,7 +79,7 @@ export default function Navbar({
             {/* Official IIT KGP Logo Image */}
             <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-full bg-white p-1 border-2 border-amber-500/60 shadow-md flex items-center justify-center flex-shrink-0 group-hover:scale-105 transition-transform overflow-hidden">
               <img 
-                src="/iitkgp-logo.png" 
+                src={iitKgpLogo} 
                 alt="IIT Kharagpur Official Crest" 
                 className="w-10 h-10 sm:w-12 sm:h-12 object-contain"
               />

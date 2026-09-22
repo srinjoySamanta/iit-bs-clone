@@ -5,6 +5,7 @@ import {
   Download, Award, X, Sparkles, Video, UserCheck 
 } from 'lucide-react';
 import { QUALIFIER_QUESTIONS, IIT_KGP_INFO } from '../../data/portalData';
+import iitKgpLogo from '../../assets/logo';
 
 export default function QualifierExamEngine({ candidateName, candidateRoll, onExit }) {
   const [currentQIndex, setCurrentQIndex] = useState(0);
@@ -91,7 +92,7 @@ export default function QualifierExamEngine({ candidateName, candidateRoll, onEx
           <div className="flex items-center justify-between pb-4 border-b border-slate-200">
             <div className="flex items-center space-x-3">
               <div className="w-12 h-12 rounded-full bg-white border-2 border-amber-400 p-1 flex items-center justify-center shadow">
-                <img src="/iitkgp-logo.png" alt="IIT KGP" className="w-full h-full object-contain" />
+                <img src={iitKgpLogo} alt="IIT KGP" className="w-full h-full object-contain" />
               </div>
               <div>
                 <div className="text-xs font-bold text-kgp-crimson uppercase tracking-wider">
@@ -196,7 +197,7 @@ export default function QualifierExamEngine({ candidateName, candidateRoll, onEx
       <header className="bg-kgp-darknavy px-4 sm:px-6 py-3 border-b border-slate-800 flex items-center justify-between flex-shrink-0">
         <div className="flex items-center space-x-3">
           <div className="w-10 h-10 rounded-full bg-white p-1 flex items-center justify-center overflow-hidden shadow">
-            <img src="/iitkgp-logo.png" alt="IIT KGP" className="w-full h-full object-contain" />
+            <img src={iitKgpLogo} alt="IIT KGP" className="w-full h-full object-contain" />
           </div>
           <div>
             <div className="text-xs font-bold text-amber-400">
