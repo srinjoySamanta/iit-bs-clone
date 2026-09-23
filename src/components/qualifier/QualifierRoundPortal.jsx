@@ -84,7 +84,7 @@ export default function QualifierRoundPortal({ initialCandidate, onStartExam, on
   // Section 1: Personal Details State
   const [formData, setFormData] = useState({
     // Section 1 of 2
-    program: "BS in Data Science and Applications",
+    program: "BS in Data Science and Artificial Intelligence (AI)",
     fullName: (initialCandidate?.name || "SRINJOY SAMANTA").toUpperCase(),
     email: initialCandidate?.email || "",
     dob: "2002-10-25",
@@ -394,7 +394,6 @@ export default function QualifierRoundPortal({ initialCandidate, onStartExam, on
                   onChange={(e) => setFormData({ ...formData, program: e.target.value })}
                   className="w-full px-4 py-2.5 rounded-xl border border-slate-300 bg-white font-semibold text-slate-800 text-sm focus:border-kgp-crimson focus:outline-none"
                 >
-                  <option value="BS in Data Science and Applications">BS in Data Science and Applications</option>
                   <option value="BS in Data Science and Artificial Intelligence (AI)">BS in Data Science and Artificial Intelligence (AI)</option>
                   <option value="Diploma in Data Science and AI">Diploma in Data Science and AI</option>
                 </select>
