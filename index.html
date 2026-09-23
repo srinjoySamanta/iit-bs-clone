@@ -12,10 +12,47 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600;700;800;900&family=Inter:wght@300;400;500;600;700;800&family=Merriweather:ital,wght@0,300;0,400;0,700;1,300&display=swap" rel="stylesheet">
     <style>
-      /* Clean styling for site translator */
-      .goog-te-banner-frame.skiptranslate { display: none !important; }
-      body { top: 0px !important; }
-      #google_translate_element { position: absolute; left: -9999px; top: -9999px; width: 1px; height: 1px; overflow: hidden; }
+      /* Complete, permanent suppression of Google Translate top banner, toolbar, and balloon popups */
+      .goog-te-banner-frame,
+      .goog-te-banner-frame.skiptranslate,
+      iframe.goog-te-banner-frame,
+      iframe[class*="goog-te-banner"],
+      iframe[id^=":"][class*="skiptranslate"],
+      iframe.skiptranslate,
+      .VIpgJd-ZVi9od-aHeUd-OwkiMe-hTkFd,
+      .VIpgJd-ZVi9od-ORHb-OEVmcd,
+      .VIpgJd-ZVi9od-l4eHX-hSRGPd,
+      #goog-gt-tt,
+      .goog-te-balloon-frame {
+        display: none !important;
+        visibility: hidden !important;
+        opacity: 0 !important;
+        height: 0px !important;
+        width: 0px !important;
+        position: absolute !important;
+        top: -9999px !important;
+        left: -9999px !important;
+        pointer-events: none !important;
+        z-index: -9999 !important;
+        clip: rect(0 0 0 0) !important;
+      }
+
+      body {
+        top: 0px !important;
+        position: static !important;
+      }
+
+      #google_translate_element {
+        position: absolute !important;
+        left: -9999px !important;
+        top: -9999px !important;
+        width: 1px !important;
+        height: 1px !important;
+        overflow: hidden !important;
+        opacity: 0 !important;
+        pointer-events: none !important;
+      }
+
       .goog-tooltip { display: none !important; }
       .goog-tooltip:hover { display: none !important; }
       .goog-text-highlight { background-color: transparent !important; border: none !important; box-shadow: none !important; }
@@ -34,6 +71,39 @@
           }, 'google_translate_element');
         }
       }
+
+      // Continuously suppress Google Translate banner & prevent body pushdown
+      (function() {
+        function suppressGoogleBanner() {
+          if (document.body && document.body.style && document.body.style.top && document.body.style.top !== '0px') {
+            document.body.style.top = '0px';
+          }
+          var frames = document.querySelectorAll('.goog-te-banner-frame, iframe[class*="goog-te-banner"], iframe.skiptranslate, .VIpgJd-ZVi9od-aHeUd-OwkiMe-hTkFd, .VIpgJd-ZVi9od-ORHb-OEVmcd');
+          for (var i = 0; i < frames.length; i++) {
+            var f = frames[i];
+            if (f && (f.style.display !== 'none' || f.style.visibility !== 'hidden' || f.offsetHeight > 0)) {
+              f.style.setProperty('display', 'none', 'important');
+              f.style.setProperty('visibility', 'hidden', 'important');
+              f.style.setProperty('height', '0px', 'important');
+              f.style.setProperty('width', '0px', 'important');
+              f.style.setProperty('opacity', '0', 'important');
+              f.style.setProperty('pointer-events', 'none', 'important');
+              f.style.setProperty('position', 'absolute', 'important');
+              f.style.setProperty('top', '-9999px', 'important');
+              f.style.setProperty('z-index', '-9999', 'important');
+            }
+          }
+        }
+        setInterval(suppressGoogleBanner, 50);
+        if (window.MutationObserver) {
+          new MutationObserver(suppressGoogleBanner).observe(document.documentElement, {
+            childList: true,
+            subtree: true,
+            attributes: true,
+            attributeFilter: ['style', 'class']
+          });
+        }
+      })();
     </script>
     <script type="text/javascript" src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
     <script type="module" src="/src/main.jsx"></script>

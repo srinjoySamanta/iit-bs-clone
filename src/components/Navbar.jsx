@@ -27,6 +27,15 @@ export default function Navbar({
         combo.value = newLang;
         combo.dispatchEvent(new Event('change'));
       }
+      if (document.body && document.body.style) {
+        document.body.style.top = '0px';
+      }
+      const frames = document.querySelectorAll('.goog-te-banner-frame, iframe[class*="goog-te-banner"], iframe.skiptranslate, .VIpgJd-ZVi9od-aHeUd-OwkiMe-hTkFd, .VIpgJd-ZVi9od-ORHb-OEVmcd');
+      frames.forEach(f => {
+        f.style.setProperty('display', 'none', 'important');
+        f.style.setProperty('visibility', 'hidden', 'important');
+        f.style.setProperty('height', '0px', 'important');
+      });
     } catch (e) {
       console.error(e);
     }

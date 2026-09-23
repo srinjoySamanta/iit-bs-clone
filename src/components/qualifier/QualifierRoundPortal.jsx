@@ -55,7 +55,7 @@ const EXAM_STATES = ["West Bengal", "Tripura"];
 // Trilingual Dictionary for Institutional Scrutiny Portal (English, Bengali, Hindi)
 const TRANSLATIONS = {
   en: {
-    govHeader: "Government of India • Ministry of Education Admissions Architecture",
+    govHeader: "IIT KGP",
     translateLabel: "Translate / ভাষা / भाषा",
     portalTitle: "IIT Kharagpur Admissions Directorate",
     qualifierRound: "Qualifier Round 2026",
@@ -147,7 +147,7 @@ const TRANSLATIONS = {
     confirmPayment: "Confirm Payment"
   },
   bn: {
-    govHeader: "ভারত সরকার • শিক্ষা মন্ত্রক প্রবেশিকা স্থাপত্য",
+    govHeader: "আইআইটি খড়গপুর (IIT KGP)",
     translateLabel: "অনুবাদ / ভাষা / Translate",
     portalTitle: "আইআইটি খড়গপুর ভর্তি নির্দেশালয়",
     qualifierRound: "কোয়ালিফায়ার রাউন্ড ২০২৬",
@@ -239,7 +239,7 @@ const TRANSLATIONS = {
     confirmPayment: "ফি প্রদান নিশ্চিত করুন"
   },
   hi: {
-    govHeader: "भारत सरकार • शिक्षा मंत्रालय प्रवेश वास्तुकला",
+    govHeader: "आईआईटी खड़गपुर (IIT KGP)",
     translateLabel: "अनुवाद / भाषा / Translate",
     portalTitle: "आईआईटी खड़गपुर प्रवेश निदेशालय",
     qualifierRound: "क्वालिफायर राउंड 2026",
@@ -347,7 +347,7 @@ export default function QualifierRoundPortal({ initialCandidate, onStartExam, on
   const [lang, setLang] = useState('en');
   const t = TRANSLATIONS[lang] || TRANSLATIONS.en;
 
-  // Language switch handler with Google Translate synchronization
+  // Language switch handler with Google Translate synchronization and banner suppression
   const changeLanguage = (newLang) => {
     setLang(newLang);
     try {
@@ -357,6 +357,15 @@ export default function QualifierRoundPortal({ initialCandidate, onStartExam, on
         combo.value = newLang;
         combo.dispatchEvent(new Event('change'));
       }
+      if (document.body && document.body.style) {
+        document.body.style.top = '0px';
+      }
+      const frames = document.querySelectorAll('.goog-te-banner-frame, iframe[class*="goog-te-banner"], iframe.skiptranslate, .VIpgJd-ZVi9od-aHeUd-OwkiMe-hTkFd, .VIpgJd-ZVi9od-ORHb-OEVmcd');
+      frames.forEach(f => {
+        f.style.setProperty('display', 'none', 'important');
+        f.style.setProperty('visibility', 'hidden', 'important');
+        f.style.setProperty('height', '0px', 'important');
+      });
     } catch {
       // ignore
     }
@@ -855,8 +864,9 @@ export default function QualifierRoundPortal({ initialCandidate, onStartExam, on
       <div className="bg-slate-900 text-slate-300 text-[11px] py-1.5 px-4 sm:px-6 lg:px-8 border-b border-slate-800">
         <div className="max-w-[1720px] mx-auto flex flex-wrap items-center justify-between gap-2">
           <div className="flex items-center gap-3">
-            <span className="font-semibold tracking-wider text-slate-400 uppercase text-[10px]">
-              {t.govHeader}
+            <span className="font-extrabold tracking-wider text-amber-400 uppercase text-xs flex items-center gap-1.5">
+              <span className="w-1.5 h-1.5 rounded-full bg-amber-400 animate-pulse"></span>
+              <span>{t.govHeader}</span>
             </span>
             <span className="hidden sm:inline text-slate-600">|</span>
             <span className="hidden sm:inline text-emerald-400 font-mono text-[10px] font-semibold">
