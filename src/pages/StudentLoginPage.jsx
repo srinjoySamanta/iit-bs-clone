@@ -106,20 +106,14 @@ export default function StudentLoginPage({
     e.preventDefault();
     setAuthError('');
 
-    // 1. Strict Name Check
-    if (!studentName.trim() || studentName.trim().length < 3) {
-      setAuthError('Please enter your full legal candidate name (minimum 3 letters).');
-      return;
-    }
-
-    // 2. Strict Gmail Check
+    // Strict Gmail Check
     const check = validateGmail(studentEmail);
     if (!check.valid) {
       setAuthError(check.message);
       return;
     }
 
-    // 3. Generate 6-Digit Google Security Code & start 59s timer
+    // Generate 6-Digit Google Security Code & start 59s timer
     const code = String(Math.floor(100000 + Math.random() * 900000));
     setGeneratedCode(code);
     setEnteredCode('');
@@ -145,8 +139,9 @@ export default function StudentLoginPage({
 
       setTimeout(() => {
         setShowGoogleModal(false);
+        const derivedName = studentName.trim() || studentEmail.split('@')[0].replace(/[._-]/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
         const verifiedStudent = {
-          name: studentName.trim(),
+          name: derivedName,
           email: studentEmail.trim().toLowerCase(),
           isVerifiedGoogle: true,
           authTime: new Date().toLocaleTimeString()
@@ -590,23 +585,6 @@ export default function StudentLoginPage({
                   </p>
                 </div>
 
-                <div>
-                  <label className="block text-slate-700 font-bold mb-1">
-                    Candidate Full Legal Name *
-                  </label>
-                  <input
-                    type="text"
-                    required
-                    placeholder="e.g. Srinjoy Samanta"
-                    value={studentName}
-                    onChange={(e) => {
-                      setStudentName(e.target.value);
-                      setAuthError('');
-                    }}
-                    className="w-full px-3.5 py-2.5 rounded-xl border-2 border-slate-300 focus:border-[#1a73e8] focus:outline-none text-sm font-medium transition"
-                  />
-                </div>
-
                 <div className="pt-2 flex items-center justify-between gap-3">
                   <button
                     type="button"
@@ -632,11 +610,11 @@ export default function StudentLoginPage({
                 {/* User Identity Chip */}
                 <div className="p-3 bg-slate-100 rounded-xl flex items-center gap-3 border border-slate-200">
                   <div className="w-9 h-9 rounded-full bg-[#1a73e8] text-white font-bold flex items-center justify-center text-sm shadow">
-                    {studentName.charAt(0).toUpperCase()}
+                    {studentEmail.charAt(0).toUpperCase()}
                   </div>
                   <div className="overflow-hidden">
-                    <div className="font-bold text-slate-900 text-xs truncate">{studentName}</div>
-                    <div className="text-slate-600 text-[11px] truncate">{studentEmail}</div>
+                    <div className="font-bold text-slate-900 text-xs truncate">Google Account</div>
+                    <div className="text-slate-600 text-[11px] truncate font-medium">{studentEmail}</div>
                   </div>
                 </div>
 
