@@ -5,7 +5,7 @@ import {
   Check, AlertCircle, Building, BookOpen, MapPin, Calendar, 
   Printer, Info, AlertTriangle, RotateCcw, Upload, FileUp, 
   Camera, Briefcase, GraduationCap, Eye, Trash2, Sparkles, 
-  X, ExternalLink, ShieldAlert, FileCheck, User
+  X, ExternalLink, ShieldAlert, FileCheck, User, Languages, Globe
 } from 'lucide-react';
 import { IIT_KGP_INFO } from '../../data/portalData';
 import iitKgpLogo from '../../assets/logo';
@@ -52,6 +52,286 @@ const DISTRICTS_TRIPURA = [
 // State Options restricted strictly to West Bengal and Tripura
 const EXAM_STATES = ["West Bengal", "Tripura"];
 
+// Trilingual Dictionary for Institutional Scrutiny Portal (English, Bengali, Hindi)
+const TRANSLATIONS = {
+  en: {
+    govHeader: "Government of India • Ministry of Education Admissions Architecture",
+    translateLabel: "Translate / ভাষা / भाषा",
+    portalTitle: "IIT Kharagpur Admissions Directorate",
+    qualifierRound: "Qualifier Round 2026",
+    formTitle: "Online Application Form",
+    cbtDate: "Qualifier CBT Exam: 15 Nov, 2026",
+    sslNote: "256-Bit SSL Encrypted Scrutiny System",
+    back: "Back",
+    exitHome: "Exit to Home",
+    applicantLabel: "Applicant",
+    newApplicant: "New Applicant",
+    appProgress: "Application Progress",
+    degreeTrack: "Degree Track:",
+    appSections: "Application Steps",
+    step1Title: "1. Personal",
+    step1Sub: "Personal details & category",
+    step2Title: "2. Exam Cities",
+    step2Sub: "WB & Tripura preferences",
+    step3Title: "3. Document Uploads",
+    step3Sub: "Biometrics & certificates",
+    step4Title: "4. Review & Pay",
+    step4Sub: "Summary & fee payment",
+    completed: "Completed",
+    current: "Current",
+    paid: "Paid",
+    helpdesk: "Admissions Helpdesk",
+    helpdeskAddr: "IIT Kharagpur Admissions Office, Main Academic Complex, Kharagpur – 721302.",
+    sslSecured: "256-Bit SSL Secured",
+    govtStandards: "Govt of India MoE & DigiLocker Standards",
+    sec1Heading: "Section 1 of 3: Personal Details",
+    sec1Sub: "All fields marked with * are mandatory",
+    programLabel: "Which is the program you are most likely to pursue?",
+    programSub: "You can change it later as per the allowed rules, if you wish.",
+    nameLabel: "Applicant's Full Name",
+    nameSub: "Name should be identical to the Name list on the Std X/Std XII marksheet. This name will be used on your final degree certificate, and no change is possible on this. Only Capital letters are allowed.",
+    namePlaceholder: "ENTER FULL NAME AS ON MARKSHEET",
+    dobLabel: "Date of Birth",
+    dobSub: "Must not exceed today's date.",
+    genderLabel: "Gender",
+    citizenshipLabel: "Country of Citizenship",
+    idTypeLabel: "ID Type",
+    idTypeSub: "ID selected here will need to be uploaded for verification.",
+    idNumberLabel: "ID Number",
+    idNumberSub: "ID number of the ID selected above.",
+    idNumberPlaceholder: "Enter ID number (e.g. 12-digit Aadhaar / PAN)",
+    categoryLabel: "Category",
+    categorySub: "If selecting SC / ST / EWS / OBC-NCL please upload relevant documents to avail waivers in fee / cut-off scores.",
+    jeeLabel: "Did you qualify to appear for JEE Advanced in last 2 years?",
+    jeeSub: "If selecting \"yes\", please upload relevant document in the document upload section.",
+    pwdLabel: "Are you a Person with Disabilities (40% or more)?",
+    pwdSub: "If selecting \"yes\", please upload relevant document in the document upload section.",
+    defenceLabel: "Are you a defence / paramilitary personnel permanently disabled or ward?",
+    defenceSub: "If selecting \"yes\", please upload relevant document in the document upload section.",
+    workingProLabel: "Are you currently an employed working professional?",
+    workingProSub: "If selecting \"yes\", employment verification document will be required.",
+    class12StatusLabel: "Completion of Class 12 or equivalent examination.",
+    class12YearLabel: "Year of Passing Class 12 or Equivalent Exam",
+    phoneLabel: "Mobile Phone number",
+    phonePlaceholder: "Enter 10-digit mobile number",
+    declarationText: "I hereby declare that all personal information furnished above is correct. If any of the details furnished above is found to be false, I agree to have my application / admission cancelled or terminated.",
+    saveContinueCity: "Save Personal Details & Continue to Exam Cities",
+    sec2Heading: "Section 2 of 3: Exam City Options",
+    examDateBadge: "Qualifier Exam Date: 15 November, 2026",
+    countryFixed: "Fixed (India)",
+    cityPref1: "Exam City Preference 1",
+    cityPref2: "Exam City Preference 2",
+    stateLabel: "State",
+    cityLabel: "City / District",
+    resetCities: "RESET Exam City Preferences",
+    agreeCityTerms: "I have read the above terms and I agree to them",
+    backPersonal: "Back to Personal Details",
+    saveContinueDocs: "Save Exam Cities & Proceed to Document Uploads",
+    sec3Heading: "Section 3 of 3: File & Document Uploads",
+    sec3Sub: "Submit compliant digital scans for identity verification, reservation quota validation, and official CBT admit card issuance.",
+    biometricHeading: "1. Candidate Biometric Records (Admit Card & Degree Printing)",
+    photoTitle: "Passport Size Photograph",
+    photoSpecs: "3.5 × 4.5 cm • JPEG / JPG • 50 KB – 150 KB • 80% Face Coverage",
+    signTitle: "Official Candidate Signature",
+    signSpecs: "3.5 × 1.5 cm • JPEG / JPG • 4 KB – 150 KB • Blue or Black Ink",
+    uploadDoc: "Upload Document",
+    reuploadDoc: "Re-upload",
+    previewDoc: "Preview",
+    signaturePlaceholder: "Candidate Signature",
+    feeReconciliation: "Qualifier Fee Reconciliation",
+    liveScrutiny: "Live Scrutiny Checklist",
+    cbtSchedule: "Admissions & CBT Schedule",
+    wbTripuraPolicy: "West Bengal & Tripura Centers",
+    sec4Heading: "Section 4: Review Application & Complete Qualifier Fee Payment",
+    backDocs: "Back to Document Uploads",
+    confirmPayment: "Confirm Payment"
+  },
+  bn: {
+    govHeader: "ভারত সরকার • শিক্ষা মন্ত্রক প্রবেশিকা স্থাপত্য",
+    translateLabel: "অনুবাদ / ভাষা / Translate",
+    portalTitle: "আইআইটি খড়গপুর ভর্তি নির্দেশালয়",
+    qualifierRound: "কোয়ালিফায়ার রাউন্ড ২০২৬",
+    formTitle: "অনলাইন আবেদনপত্র",
+    cbtDate: "কোয়ালিফায়ার পরীক্ষা: ১৫ নভেম্বর, ২০২৬",
+    sslNote: "২৫৬-বিট এসএসএল সুরক্ষিত স্ক্রুটিনি ব্যবস্থা",
+    back: "পেছনে",
+    exitHome: "হোমে ফিরুন",
+    applicantLabel: "আবেদনকারী",
+    newApplicant: "নতুন আবেদনকারী",
+    appProgress: "আবেদন অগ্রগতি",
+    degreeTrack: "ডিগ্রি পাঠ্যক্রম:",
+    appSections: "আবেদনের ধাপসমূহ",
+    step1Title: "১. ব্যক্তিগত বিবরণ",
+    step1Sub: "ব্যক্তিগত তথ্য ও সংরক্ষণ কোটা",
+    step2Title: "২. পরীক্ষার শহর",
+    step2Sub: "পশ্চিমবঙ্গ ও ত্রিপুরা কেন্দ্র পছন্দ",
+    step3Title: "৩. নথি আপলোড",
+    step3Sub: "বায়োমেট্রিক ও প্রশংসাপত্র স্ক্যান",
+    step4Title: "৪. পর্যালোচনা ও ফি",
+    step4Sub: "যাচাই ও ফি প্রদান",
+    completed: "সম্পন্ন",
+    current: "চলমান",
+    paid: "প্রদত্ত",
+    helpdesk: "ভর্তি সহায়তা কেন্দ্র",
+    helpdeskAddr: "আইআইটি খড়গপুর ভর্তি কার্যালয়, মেইন একাডেমিক কমপ্লেক্স, খড়গপুর – ৭২১৩০২।",
+    sslSecured: "২৫৬-বিট এসএসএল সুরক্ষিত",
+    govtStandards: "ভারত সরকার শিক্ষা মন্ত্রক ও ডিজিলকার অনুমোদিত",
+    sec1Heading: "বিভাগ ১ / ৩: ব্যক্তিগত বিবরণ",
+    sec1Sub: "* চিহ্নিত সমস্ত ক্ষেত্র পূরণ করা বাধ্যতামূলক",
+    programLabel: "আপনি কোন প্রোগ্রামে ভর্তি হতে ইচ্ছুক?",
+    programSub: "পরবর্তীতে নিয়মাবলী অনুযায়ী পরিবর্তন করা যাবে।",
+    nameLabel: "আবেদনকারীর পুরো নাম",
+    nameSub: "নাম মাধ্যমিক/উচ্চমাধ্যমিক মার্কশিটের সাথে হুবহু মিলতে হবে। শুধুমাত্র বড় হাতের অক্ষর (CAPITAL) গ্রহণযোগ্য।",
+    namePlaceholder: "মার্কশিট অনুযায়ী পুরো নাম লিখুন (CAPITAL)",
+    dobLabel: "জন্ম তারিখ",
+    dobSub: "আজকের তারিখ অতিক্রম করা যাবে না।",
+    genderLabel: "লিঙ্গ",
+    citizenshipLabel: "নাগরিকত্বের দেশ",
+    idTypeLabel: "পরিচয়পত্রের ধরন",
+    idTypeSub: "এখানে নির্বাচিত পরিচয়পত্রটি যাচাইয়ের জন্য আপলোড করতে হবে।",
+    idNumberLabel: "পরিচয়পত্র নম্বর",
+    idNumberSub: "নির্বাচিত পরিচয়পত্রের সঠিক নম্বর লিখুন।",
+    idNumberPlaceholder: "পরিচয়পত্র নম্বর লিখুন (যেমন ১২-সংখ্যার আধার / প্যান)",
+    categoryLabel: "শ্রেণী / সংরক্ষণ কোটা",
+    categorySub: "SC / ST / EWS / OBC-NCL নির্বাচন করলে ফি ও নম্বরে ছাড় পেতে সংশ্লিষ্ট প্রশংসাপত্র আপলোড করুন।",
+    jeeLabel: "আপনি কি বিগত ২ বছরে জেইই অ্যাডভান্সড পরীক্ষায় বসার যোগ্যতা অর্জন করেছেন?",
+    jeeSub: "\"হ্যাঁ\" নির্বাচন করলে সংশ্লিষ্ট প্রমাণপত্র আপলোড করুন।",
+    pwdLabel: "আপনি কি বিশেষ সক্ষম ব্যক্তি (PwD ৪০% বা ততোধিক)?",
+    pwdSub: "\"হ্যাঁ\" নির্বাচন করলে বিশেষ সক্ষমতার মেডিকেল বোর্ড প্রশংসাপত্র আপলোড করুন।",
+    defenceLabel: "আপনি কি প্রতিরক্ষা/আধাসামরিক বাহিনীর স্থায়ীভাবে অক্ষম সদস্য বা তাদের সন্তান?",
+    defenceSub: "\"হ্যাঁ\" নির্বাচন করলে জেলা সৈনিক বোর্ডের প্রমাণপত্র আপলোড করুন।",
+    workingProLabel: "আপনি কি বর্তমানে কর্মরত চাকুরিজীবী?",
+    workingProSub: "\"হ্যাঁ\" নির্বাচন করলে কর্মসংস্থান প্রমাণপত্র / এনওসি প্রয়োজন হবে।",
+    class12StatusLabel: "দ্বাদশ শ্রেণি বা সমমানের পরীক্ষা পাসের অবস্থা",
+    class12YearLabel: "দ্বাদশ শ্রেণি বা সমমান পাসের বছর",
+    phoneLabel: "মোবাইল ফোন নম্বর",
+    phonePlaceholder: "১০-সংখ্যার মোবাইল নম্বর লিখুন",
+    declarationText: "আমি ঘোষণা করছি যে উপরে প্রদত্ত সমস্ত ব্যক্তিগত তথ্য সম্পূর্ণ সত্য ও নির্ভুল। কোন তথ্য অসত্য প্রমাণিত হলে আবেদন বাতিল বলে গণ্য হবে।",
+    saveContinueCity: "বিবরণ সংরক্ষণ করুন ও পরীক্ষার শহর নির্বাচন করুন",
+    sec2Heading: "বিভাগ ২ / ৩: পরীক্ষার শহর পছন্দ",
+    examDateBadge: "কোয়ালিফায়ার পরীক্ষার তারিখ: ১৫ নভেম্বর, ২০২৬",
+    countryFixed: "নির্দিষ্ট (ভারত)",
+    cityPref1: "পরীক্ষার শহর পছন্দ ১",
+    cityPref2: "পরীক্ষার শহর পছন্দ ২",
+    stateLabel: "রাজ্য",
+    cityLabel: "শহর / জেলা",
+    resetCities: "পছন্দ রিসেট করুন",
+    agreeCityTerms: "আমি উপরের শর্তাবলী পড়েছি এবং সম্মত হয়েছি",
+    backPersonal: "ব্যক্তিগত বিবরণে ফিরুন",
+    saveContinueDocs: "শহর সংরক্ষণ করুন ও নথি আপলোডে এগিয়ে যান",
+    sec3Heading: "বিভাগ ৩ / ৩: ফাইল ও নথি আপলোড",
+    sec3Sub: "প্রবেশপত্র ও অফিসিয়াল পরীক্ষার জন্য স্পষ্ট ডিজিটাল স্ক্যান জমা দিন।",
+    biometricHeading: "১. বায়োমেট্রিক রেকর্ড (অ্যাডমিট কার্ড ও ডিগ্রি মুদ্রণ)",
+    photoTitle: "পাসপোর্ট সাইজ ছবি",
+    photoSpecs: "৩.৫ × ৪.৫ সেমি • JPEG / JPG • ৫০KB – ১৫০KB • ৮০% মুখমণ্ডল",
+    signTitle: "আবেদনকারীর ডিজিটাল স্বাক্ষর",
+    signSpecs: "৩.৫ × ১.৫ সেমি • JPEG / JPG • ৪KB – ১৫০KB • নীল বা কালো কালি",
+    uploadDoc: "নথি আপলোড করুন",
+    reuploadDoc: "পুনরায় আপলোড",
+    previewDoc: "প্রাকদর্শন",
+    signaturePlaceholder: "আবেদনকারীর স্বাক্ষর",
+    feeReconciliation: "আবেদন ফি বিবরণ",
+    liveScrutiny: "লাইভ স্ক্রুটিনি চেকলিস্ট",
+    cbtSchedule: "ভর্তি ও সিবিটি সময়সূচি",
+    wbTripuraPolicy: "পশ্চিমবঙ্গ ও ত্রিপুরার জেলা কেন্দ্র",
+    sec4Heading: "বিভাগ ৪: আবেদন পর্যালোচনা ও ফি প্রদান",
+    backDocs: "নথি আপলোডে ফিরুন",
+    confirmPayment: "ফি প্রদান নিশ্চিত করুন"
+  },
+  hi: {
+    govHeader: "भारत सरकार • शिक्षा मंत्रालय प्रवेश वास्तुकला",
+    translateLabel: "अनुवाद / भाषा / Translate",
+    portalTitle: "आईआईटी खड़गपुर प्रवेश निदेशालय",
+    qualifierRound: "क्वालिफायर राउंड 2026",
+    formTitle: "ऑनलाइन आवेदन पत्र",
+    cbtDate: "क्वालिफायर परीक्षा तिथि: 15 नवंबर, 2026",
+    sslNote: "256-बिट एसएसएल सुरक्षित स्क्रूटिनी प्रणाली",
+    back: "वापस",
+    exitHome: "होम पर जाएं",
+    applicantLabel: "आवेदक",
+    newApplicant: "नया आवेदक",
+    appProgress: "आवेदन प्रगति",
+    degreeTrack: "डिग्री पाठ्यक्रम:",
+    appSections: "आवेदन के चरण",
+    step1Title: "1. व्यक्तिगत विवरण",
+    step1Sub: "व्यक्तिगत जानकारी एवं श्रेणी",
+    step2Title: "2. परीक्षा शहर",
+    step2Sub: "पश्चिम बंगाल व त्रिपुरा विकल्प",
+    step3Title: "3. दस्तावेज़ अपलोड",
+    step3Sub: "बायोमेट्रिक्स एवं प्रमाण पत्र",
+    step4Title: "4. समीक्षा एवं शुल्क",
+    step4Sub: "सत्यापन एवं ऑनलाइन शुल्क",
+    completed: "पूर्ण",
+    current: "सक्रिय",
+    paid: "भुगतान हुआ",
+    helpdesk: "प्रवेश सहायता केंद्र",
+    helpdeskAddr: "आईआईटी खड़गपुर प्रवेश कार्यालय, मुख्य शैक्षणिक परिसर, खड़गपुर – 721302।",
+    sslSecured: "256-बिट एसएसएल सुरक्षित",
+    govtStandards: "भारत सरकार शिक्षा मंत्रालय एवं डिजिलॉकर मानकों के अनुरूप",
+    sec1Heading: "भाग 1 / 3: व्यक्तिगत विवरण",
+    sec1Sub: "* चिह्नित सभी फ़ील्ड अनिवार्य हैं",
+    programLabel: "आप किस कार्यक्रम में प्रवेश लेना चाहते हैं?",
+    programSub: "नियमों के अनुसार इसे बाद में बदला जा सकता है।",
+    nameLabel: "आवेदक का पूरा नाम",
+    nameSub: "नाम 10वीं/12वीं की अंकतालिका के अनुसार होना चाहिए। केवल बड़े अक्षर (CAPITAL) ही मान्य हैं।",
+    namePlaceholder: "अंकतालिका के अनुसार पूरा नाम दर्ज करें (CAPITAL)",
+    dobLabel: "जन्म तिथि",
+    dobSub: "आज की तिथि से अधिक नहीं हो सकती।",
+    genderLabel: "लिंग",
+    citizenshipLabel: "नागरिकता का देश",
+    idTypeLabel: "पहचान पत्र का प्रकार",
+    idTypeSub: "सत्यापन के लिए इस पहचान पत्र की प्रति अपलोड करनी होगी।",
+    idNumberLabel: "पहचान पत्र संख्या",
+    idNumberSub: "चयनित पहचान पत्र की वैध संख्या दर्ज करें।",
+    idNumberPlaceholder: "पहचान संख्या दर्ज करें (उदा. 12-अंकीय आधार / पैन)",
+    categoryLabel: "श्रेणी / आरक्षण",
+    categorySub: "SC / ST / EWS / OBC-NCL चुनने पर शुल्क व कट-ऑफ छूट हेतु प्रमाण पत्र अपलोड करें।",
+    jeeLabel: "क्या आप पिछले 2 वर्षों में जेईई एडवांस्ड परीक्षा में शामिल होने के पात्र थे?",
+    jeeSub: "\"हाँ\" चुनने पर दस्तावेज़ अपलोड अनुभाग में प्रमाण पत्र अपलोड करें।",
+    pwdLabel: "क्या आप दिव्यांगजन (PwD 40% या अधिक) हैं?",
+    pwdSub: "\"हाँ\" चुनने पर मेडिकल बोर्ड प्रमाण पत्र अपलोड करें।",
+    defenceLabel: "क्या आप रक्षा/अर्धसैनिक बल के स्थायी रूप से अक्षम सदस्य या उनके आश्रित हैं?",
+    defenceSub: "\"हाँ\" चुनने पर जिला सैनिक बोर्ड प्रमाण पत्र अपलोड करें।",
+    workingProLabel: "क्या आप वर्तमान में कार्यरत पेशेवर हैं?",
+    workingProSub: "\"हाँ\" चुनने पर रोजगार सत्यापन / एनओसी आवश्यक होगा।",
+    class12StatusLabel: "12वीं कक्षा या समकक्ष परीक्षा की स्थिति",
+    class12YearLabel: "12वीं कक्षा उत्तीर्ण करने का वर्ष",
+    phoneLabel: "मोबाइल फ़ोन नंबर",
+    phonePlaceholder: "10-अंकीय मोबाइल नंबर दर्ज करें",
+    declarationText: "मैं एतद्द्वारा घोषणा करता/करती हूँ कि ऊपर दी गई सभी जानकारी पूर्णतः सत्य और सही है। यदि कोई विवरण गलत पाया गया तो आवेदन रद्द किया जा सकता है।",
+    saveContinueCity: "विवरण सहेजें एवं परीक्षा शहर का चयन करें",
+    sec2Heading: "भाग 2 / 3: परीक्षा शहर विकल्प",
+    examDateBadge: "क्वालिफायर परीक्षा तिथि: 15 नवंबर, 2026",
+    countryFixed: "निश्चित (भारत)",
+    cityPref1: "परीक्षा शहर प्राथमिकता 1",
+    cityPref2: "परीक्षा शहर प्राथमिकता 2",
+    stateLabel: "राज्य",
+    cityLabel: "शहर / ज़िला",
+    resetCities: "प्राथमिकताएं रीसेट करें",
+    agreeCityTerms: "मैंने उपरोक्त नियम व शर्तें पढ़ ली हैं और मैं सहमत हूँ",
+    backPersonal: "व्यक्तिगत विवरण पर वापस जाएं",
+    saveContinueDocs: "शहर सहेजें एवं दस्तावेज़ अपलोड पर जाएं",
+    sec3Heading: "भाग 3 / 3: फ़ाइल एवं दस्तावेज़ अपलोड",
+    sec3Sub: "प्रवेश पत्र एवं सत्यापन हेतु मूल दस्तावेज़ों के डिजिटल स्कैन अपलोड करें।",
+    biometricHeading: "1. बायोमेट्रिक रिकॉर्ड (प्रवेश पत्र एवं डिग्री मुद्रण)",
+    photoTitle: "पासपोर्ट आकार का फोटो",
+    photoSpecs: "3.5 × 4.5 सेमी • JPEG / JPG • 50 KB – 150 KB • 80% चेहरा",
+    signTitle: "आवेदक के डिजिटल हस्ताक्षर",
+    signSpecs: "3.5 × 1.5 सेमी • JPEG / JPG • 4 KB – 150 KB • नीली या काली स्याही",
+    uploadDoc: "दस्तावेज़ अपलोड करें",
+    reuploadDoc: "पुनः अपलोड",
+    previewDoc: "पूर्वावलोकन",
+    signaturePlaceholder: "आवेदक के हस्ताक्षर",
+    feeReconciliation: "शुल्क विवरण",
+    liveScrutiny: "लाइव सत्यापन चेकलिस्ट",
+    cbtSchedule: "प्रवेश एवं परीक्षा समय सारणी",
+    wbTripuraPolicy: "पश्चिम बंगाल एवं त्रिपुरा ज़िला केंद्र",
+    sec4Heading: "भाग 4: आवेदन समीक्षा एवं शुल्क भुगतान",
+    backDocs: "दस्तावेज़ अपलोड पर वापस जाएं",
+    confirmPayment: "भुगतान की पुष्टि करें"
+  }
+};
+
 export default function QualifierRoundPortal({ initialCandidate, onStartExam, onBackToHome }) {
   // Wizard steps: 
   // 1 = Section 1: Personal Details
@@ -63,80 +343,72 @@ export default function QualifierRoundPortal({ initialCandidate, onStartExam, on
   const [formError, setFormError] = useState('');
   const [previewModalDoc, setPreviewModalDoc] = useState(null);
 
+  // Active language state ('en' | 'bn' | 'hi')
+  const [lang, setLang] = useState('en');
+  const t = TRANSLATIONS[lang] || TRANSLATIONS.en;
+
+  // Language switch handler with Google Translate synchronization
+  const changeLanguage = (newLang) => {
+    setLang(newLang);
+    try {
+      document.cookie = `googtrans=/en/${newLang}; path=/;`;
+      const combo = document.querySelector('.goog-te-combo');
+      if (combo) {
+        combo.value = newLang;
+        combo.dispatchEvent(new Event('change'));
+      }
+    } catch {
+      // ignore
+    }
+  };
+
   // Dynamically compute today's date in YYYY-MM-DD
   const todayDateString = new Date().toISOString().split('T')[0];
 
-  // Master Form State
+  // Master Form State - completely clean and unpopulated by default
   const [formData, setFormData] = useState({
     // Section 1 of 3: Personal Details
     program: "BS in Data Science and Artificial Intelligence (AI)",
-    fullName: (initialCandidate?.name || "SRINJOY SAMANTA").toUpperCase(),
+    fullName: initialCandidate?.name ? initialCandidate.name.toUpperCase() : "",
     email: initialCandidate?.email || "",
-    dob: "2002-10-25",
+    dob: "",
     gender: "Male",
     citizenship: "India",
     idType: "Aadhar Card",
-    idNumber: "459976368473",
+    idNumber: "",
     category: "General",
     jeeAdvancedQualified: "No",
     isPwd: "No",
     isDefencePersonnel: "No",
     isWorkingProfessional: "No",
     class12Status: "Already completed/ Awaiting result",
-    class12PassingYear: "2020",
+    class12PassingYear: "2024",
     phoneCountryCode: "+91",
-    phone: "7586948359",
+    phone: "",
     declarationPersonal: false,
 
     // Section 2 of 3: Exam City Options
     examCountry: "India",
     pref1State: "West Bengal",
-    pref1City: "Paschim Medinipur (Kharagpur / Midnapore)",
+    pref1City: DISTRICTS_WEST_BENGAL[0],
     pref2State: "West Bengal",
-    pref2City: "Kolkata",
+    pref2City: DISTRICTS_WEST_BENGAL[1],
     agreeExamCityTerms: false,
 
     // Section 3 of 3: Higher Secondary Selection (Option A: Class 12th vs Option B: Polytechnic Diploma)
-    higherSecChoice: "class12", // 'class12' | 'diploma'
+    higherSecChoice: "class12",
 
-    // Document Files Registry with university scrutiny status
+    // Document Files Registry (ALL EMPTY by default for genuine candidate uploads)
     docs: {
-      photo: { 
-        uploaded: true, 
-        name: "passport_photo_applicant.jpg", 
-        size: "78 KB", 
-        type: "image/jpeg",
-        previewUrl: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=400&q=80"
-      },
-      signature: { 
-        uploaded: true, 
-        name: "applicant_signature.jpg", 
-        size: "26 KB", 
-        type: "image/jpeg",
-        previewUrl: null
-      },
-      idProof: { 
-        uploaded: true, 
-        name: "aadhaar_card_front_back.pdf", 
-        size: "450 KB", 
-        type: "application/pdf" 
-      },
+      photo: { uploaded: false, name: "", size: "", type: "", previewUrl: null },
+      signature: { uploaded: false, name: "", size: "", type: "", previewUrl: null },
+      idProof: { uploaded: false, name: "", size: "", type: "" },
       categoryCert: { uploaded: false, name: "", size: "", type: "" },
       pwdCert: { uploaded: false, name: "", size: "", type: "" },
       defenceCert: { uploaded: false, name: "", size: "", type: "" },
       jeeProof: { uploaded: false, name: "", size: "", type: "" },
-      class10: { 
-        uploaded: true, 
-        name: "std_x_secondary_marksheet.pdf", 
-        size: "620 KB", 
-        type: "application/pdf" 
-      },
-      class12: { 
-        uploaded: true, 
-        name: "std_xii_higher_secondary_certificate.pdf", 
-        size: "840 KB", 
-        type: "application/pdf" 
-      },
+      class10: { uploaded: false, name: "", size: "", type: "" },
+      class12: { uploaded: false, name: "", size: "", type: "" },
       diplomaCert: { uploaded: false, name: "", size: "" },
       ugDegree: { uploaded: false, name: "", size: "" },
       pgDegree: { uploaded: false, name: "", size: "" },
@@ -149,12 +421,12 @@ export default function QualifierRoundPortal({ initialCandidate, onStartExam, on
     applicationNo: ""
   });
 
-  // Keep Google verified credentials in sync
+  // Keep verified credentials in sync if candidate logs in via Google
   useEffect(() => {
     if (initialCandidate) {
       setFormData(prev => ({
         ...prev,
-        fullName: prev.fullName || (initialCandidate.name || "").toUpperCase(),
+        fullName: initialCandidate.name ? initialCandidate.name.toUpperCase() : prev.fullName,
         email: initialCandidate.email || prev.email
       }));
     }
@@ -579,6 +851,64 @@ export default function QualifierRoundPortal({ initialCandidate, onStartExam, on
   return (
     <div className="min-h-screen bg-[#f3f4f6] text-slate-800 font-sans selection:bg-amber-500 selection:text-white pb-20">
       
+      {/* 0. INSTITUTIONAL TOP GOVERNMENT BAR & SITE TRANSLATOR */}
+      <div className="bg-slate-900 text-slate-300 text-[11px] py-1.5 px-4 sm:px-6 lg:px-8 border-b border-slate-800">
+        <div className="max-w-[1720px] mx-auto flex flex-wrap items-center justify-between gap-2">
+          <div className="flex items-center gap-3">
+            <span className="font-semibold tracking-wider text-slate-400 uppercase text-[10px]">
+              {t.govHeader}
+            </span>
+            <span className="hidden sm:inline text-slate-600">|</span>
+            <span className="hidden sm:inline text-emerald-400 font-mono text-[10px] font-semibold">
+              🔒 {t.sslSecured}
+            </span>
+          </div>
+
+          {/* Trilingual Language Selector (English, Bengali, Hindi) */}
+          <div className="flex items-center gap-2">
+            <div className="flex items-center gap-1.5 text-amber-300 font-bold text-[11px] mr-1">
+              <Globe className="w-3.5 h-3.5" />
+              <span className="hidden sm:inline">{t.translateLabel}:</span>
+            </div>
+            <div className="inline-flex rounded-lg p-0.5 bg-slate-800 border border-slate-700">
+              <button
+                type="button"
+                onClick={() => changeLanguage('en')}
+                className={`px-2.5 py-0.5 rounded-md text-[11px] font-bold transition ${
+                  lang === 'en'
+                    ? 'bg-amber-500 text-slate-950 shadow-xs'
+                    : 'text-slate-300 hover:text-white hover:bg-slate-700/50'
+                }`}
+              >
+                English
+              </button>
+              <button
+                type="button"
+                onClick={() => changeLanguage('bn')}
+                className={`px-2.5 py-0.5 rounded-md text-[11px] font-bold transition ${
+                  lang === 'bn'
+                    ? 'bg-amber-500 text-slate-950 shadow-xs'
+                    : 'text-slate-300 hover:text-white hover:bg-slate-700/50'
+                }`}
+              >
+                বাংলা
+              </button>
+              <button
+                type="button"
+                onClick={() => changeLanguage('hi')}
+                className={`px-2.5 py-0.5 rounded-md text-[11px] font-bold transition ${
+                  lang === 'hi'
+                    ? 'bg-amber-500 text-slate-950 shadow-xs'
+                    : 'text-slate-300 hover:text-white hover:bg-slate-700/50'
+                }`}
+              >
+                हिन्दी
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
       {/* 1. TOP NAVBAR (FULL WIDESCREEN) */}
       <header className="bg-white border-b border-slate-200 sticky top-0 z-30 shadow-xs">
         <div className="max-w-[1720px] mx-auto px-4 sm:px-6 lg:px-8 py-3 flex items-center justify-between gap-4">
@@ -591,9 +921,9 @@ export default function QualifierRoundPortal({ initialCandidate, onStartExam, on
                 {IIT_KGP_INFO.hindiName}
               </div>
               <div className="text-sm sm:text-base font-extrabold text-slate-900 tracking-tight flex items-center gap-2">
-                <span>IIT Kharagpur Admissions Directorate</span>
+                <span>{t.portalTitle}</span>
                 <span className="hidden sm:inline-block px-2 py-0.5 bg-amber-100 text-amber-900 text-[10px] font-bold rounded-full border border-amber-300">
-                  Qualifier Round 2026
+                  {t.qualifierRound}
                 </span>
               </div>
             </div>
@@ -607,14 +937,14 @@ export default function QualifierRoundPortal({ initialCandidate, onStartExam, on
               title="Go back to previous step"
             >
               <ArrowLeft className="w-3.5 h-3.5 text-slate-600" />
-              <span>Back</span>
+              <span>{t.back}</span>
             </button>
 
             <button
               onClick={onBackToHome}
               className="px-3.5 py-1.5 rounded-xl border border-slate-300 text-slate-700 hover:bg-slate-100 text-xs font-semibold transition"
             >
-              Exit to Home
+              {t.exitHome}
             </button>
           </div>
         </div>
@@ -625,12 +955,12 @@ export default function QualifierRoundPortal({ initialCandidate, onStartExam, on
         <div className="max-w-[1720px] mx-auto flex flex-col sm:flex-row sm:items-center justify-between gap-2 text-xs">
           <div className="flex items-center gap-2 font-bold">
             <BookOpen className="w-4 h-4 text-amber-300" />
-            <span>Online Application Form — {formData.program}</span>
+            <span>{t.formTitle} — {formData.program}</span>
           </div>
           <div className="flex items-center gap-4 text-amber-200 text-[11px] font-mono">
-            <span>Qualifier CBT Exam: 15 Nov, 2026</span>
+            <span>{t.cbtDate}</span>
             <span className="hidden md:inline text-white/40">•</span>
-            <span className="hidden md:inline">256-Bit SSL Encrypted Scrutiny System</span>
+            <span className="hidden md:inline">{t.sslNote}</span>
           </div>
         </div>
       </div>
@@ -655,19 +985,19 @@ export default function QualifierRoundPortal({ initialCandidate, onStartExam, on
                       className="w-full h-full object-cover"
                     />
                   ) : (
-                    <span className="font-extrabold text-kgp-crimson text-sm font-mono">
-                      {formData.fullName ? formData.fullName.split(' ').map(n => n[0]).join('').slice(0, 2) : 'SS'}
+                    <span className="font-extrabold text-kgp-crimson text-sm font-mono flex items-center justify-center">
+                      {formData.fullName ? formData.fullName.trim().split(/\s+/).map(n => n[0]).join('').slice(0, 2).toUpperCase() : <User className="w-5 h-5 text-slate-400" />}
                     </span>
                   )}
                 </div>
                 <div className="min-w-0 flex-1">
-                  <div className="text-[10px] uppercase font-bold text-slate-400">Applicant</div>
+                  <div className="text-[10px] uppercase font-bold text-slate-400">{t.applicantLabel}</div>
                   <div className="font-extrabold text-slate-900 text-sm truncate uppercase">
-                    {formData.fullName || "SRINJOY SAMANTA"}
+                    {formData.fullName || t.newApplicant}
                   </div>
                   <div className="text-[10px] text-emerald-700 font-mono flex items-center gap-1 font-semibold">
                     <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
-                    <span>{formData.applicationNo || "KGP-2026-BS-7821"}</span>
+                    <span>{formData.applicationNo || "KGP-2026-BS-DRAFT"}</span>
                   </div>
                 </div>
               </div>
@@ -675,7 +1005,7 @@ export default function QualifierRoundPortal({ initialCandidate, onStartExam, on
               {/* Progress bar */}
               <div className="space-y-1.5">
                 <div className="flex justify-between text-[11px] font-bold">
-                  <span className="text-slate-600">Application Progress</span>
+                  <span className="text-slate-600">{t.appProgress}</span>
                   <span className="text-kgp-crimson font-mono">{calculateProgress()}%</span>
                 </div>
                 <div className="w-full h-2 rounded-full bg-slate-100 overflow-hidden">
@@ -688,7 +1018,7 @@ export default function QualifierRoundPortal({ initialCandidate, onStartExam, on
 
               {/* Target Program Badge */}
               <div className="text-[11px] p-2.5 rounded-xl bg-slate-50 border border-slate-200 text-slate-700 font-semibold leading-snug">
-                <span className="text-[9px] uppercase font-extrabold text-slate-400 block mb-0.5">Degree Track:</span>
+                <span className="text-[9px] uppercase font-extrabold text-slate-400 block mb-0.5">{t.degreeTrack}</span>
                 {formData.program}
               </div>
             </div>
@@ -696,7 +1026,7 @@ export default function QualifierRoundPortal({ initialCandidate, onStartExam, on
             {/* THE 4 STEPS ON THE LEFT SIDE */}
             <div className="bg-white rounded-3xl border border-slate-200 p-3 shadow-xs space-y-2">
               <div className="px-3 pt-2 pb-1 text-[10px] font-extrabold uppercase tracking-wider text-slate-400">
-                Application Steps
+                {t.appSections}
               </div>
 
               {/* 1. Personal */}
@@ -722,20 +1052,20 @@ export default function QualifierRoundPortal({ initialCandidate, onStartExam, on
                 </div>
                 <div className="min-w-0 flex-1">
                   <div className="font-extrabold text-xs flex items-center justify-between">
-                    <span>1. Personal</span>
+                    <span>{t.step1Title}</span>
                     {section > 1 && (
                       <span className="text-[9px] px-1.5 py-0.5 rounded font-bold bg-emerald-50 text-emerald-700 border border-emerald-200">
-                        Completed
+                        {t.completed}
                       </span>
                     )}
                     {section === 1 && (
                       <span className="text-[9px] px-1.5 py-0.5 rounded font-black bg-amber-400 text-slate-950">
-                        Current
+                        {t.current}
                       </span>
                     )}
                   </div>
                   <div className={`text-[11px] truncate ${section === 1 ? 'text-amber-200' : 'text-slate-500'}`}>
-                    Personal details &amp; category
+                    {t.step1Sub}
                   </div>
                 </div>
               </button>
@@ -763,20 +1093,20 @@ export default function QualifierRoundPortal({ initialCandidate, onStartExam, on
                 </div>
                 <div className="min-w-0 flex-1">
                   <div className="font-extrabold text-xs flex items-center justify-between">
-                    <span>2. Exam Cities</span>
+                    <span>{t.step2Title}</span>
                     {section > 2 && (
                       <span className="text-[9px] px-1.5 py-0.5 rounded font-bold bg-emerald-50 text-emerald-700 border border-emerald-200">
-                        Completed
+                        {t.completed}
                       </span>
                     )}
                     {section === 2 && (
                       <span className="text-[9px] px-1.5 py-0.5 rounded font-black bg-amber-400 text-slate-950">
-                        Current
+                        {t.current}
                       </span>
                     )}
                   </div>
                   <div className={`text-[11px] truncate ${section === 2 ? 'text-amber-200' : 'text-slate-500'}`}>
-                    WB &amp; Tripura preferences
+                    {t.step2Sub}
                   </div>
                 </div>
               </button>
@@ -804,20 +1134,20 @@ export default function QualifierRoundPortal({ initialCandidate, onStartExam, on
                 </div>
                 <div className="min-w-0 flex-1">
                   <div className="font-extrabold text-xs flex items-center justify-between">
-                    <span>3. Document Uploads</span>
+                    <span>{t.step3Title}</span>
                     {section > 3 && (
                       <span className="text-[9px] px-1.5 py-0.5 rounded font-bold bg-emerald-50 text-emerald-700 border border-emerald-200">
-                        Completed
+                        {t.completed}
                       </span>
                     )}
                     {section === 3 && (
                       <span className="text-[9px] px-1.5 py-0.5 rounded font-black bg-amber-400 text-slate-950">
-                        Current
+                        {t.current}
                       </span>
                     )}
                   </div>
                   <div className={`text-[11px] truncate ${section === 3 ? 'text-amber-200' : 'text-slate-500'}`}>
-                    Biometrics &amp; certificates
+                    {t.step3Sub}
                   </div>
                 </div>
               </button>
@@ -845,20 +1175,20 @@ export default function QualifierRoundPortal({ initialCandidate, onStartExam, on
                 </div>
                 <div className="min-w-0 flex-1">
                   <div className="font-extrabold text-xs flex items-center justify-between">
-                    <span>4. Review &amp; Pay</span>
+                    <span>{t.step4Title}</span>
                     {section === 5 && (
                       <span className="text-[9px] px-1.5 py-0.5 rounded font-bold bg-emerald-50 text-emerald-700 border border-emerald-200">
-                        Paid
+                        {t.paid}
                       </span>
                     )}
                     {section === 4 && (
                       <span className="text-[9px] px-1.5 py-0.5 rounded font-black bg-amber-400 text-slate-950">
-                        Current
+                        {t.current}
                       </span>
                     )}
                   </div>
                   <div className={`text-[11px] truncate ${section === 4 ? 'text-amber-200' : 'text-slate-500'}`}>
-                    Summary &amp; fee payment
+                    {t.step4Sub}
                   </div>
                 </div>
               </button>
@@ -868,10 +1198,10 @@ export default function QualifierRoundPortal({ initialCandidate, onStartExam, on
             <div className="bg-white rounded-3xl border border-slate-200 p-5 shadow-xs space-y-3 text-xs">
               <div className="font-bold text-slate-900 flex items-center gap-2">
                 <Building className="w-4 h-4 text-kgp-crimson" />
-                <span>Admissions Helpdesk</span>
+                <span>{t.helpdesk}</span>
               </div>
               <p className="text-[11px] text-slate-500 leading-relaxed">
-                IIT Kharagpur Admissions Office, Main Academic Complex, Kharagpur – 721302.
+                {t.helpdeskAddr}
               </p>
               <div className="pt-2 border-t border-slate-100 space-y-1.5 text-[11px] font-mono text-slate-600">
                 <div>📧 admissions@iitkgp.ac.in</div>
@@ -884,8 +1214,8 @@ export default function QualifierRoundPortal({ initialCandidate, onStartExam, on
             <div className="p-4 rounded-2xl bg-white border border-slate-200 flex items-center gap-3 text-slate-600 text-[11px] shadow-xs">
               <Lock className="w-5 h-5 text-emerald-600 flex-shrink-0" />
               <div>
-                <strong className="text-slate-900 block font-bold">256-Bit SSL Secured</strong>
-                <span>Govt of India MoE &amp; DigiLocker Standards</span>
+                <strong className="text-slate-900 block font-bold">{t.sslSecured}</strong>
+                <span>{t.govtStandards}</span>
               </div>
             </div>
 
@@ -963,7 +1293,7 @@ export default function QualifierRoundPortal({ initialCandidate, onStartExam, on
                 <input
                   type="text"
                   required
-                  placeholder="SRINJOY SAMANTA"
+                  placeholder={t.namePlaceholder}
                   value={formData.fullName}
                   onChange={(e) => setFormData({ ...formData, fullName: e.target.value.toUpperCase() })}
                   className="w-full px-4 py-2.5 rounded-xl border-2 border-slate-300 focus:border-kgp-crimson focus:outline-none text-sm font-bold uppercase tracking-wide transition"
@@ -1068,7 +1398,7 @@ export default function QualifierRoundPortal({ initialCandidate, onStartExam, on
                   <input
                     type="text"
                     required
-                    placeholder="459976368473"
+                    placeholder={t.idNumberPlaceholder}
                     value={formData.idNumber}
                     onChange={(e) => setFormData({ ...formData, idNumber: e.target.value })}
                     className="w-full px-4 py-2.5 rounded-xl border border-slate-300 font-mono text-sm font-bold"
@@ -1247,7 +1577,7 @@ export default function QualifierRoundPortal({ initialCandidate, onStartExam, on
                   <input
                     type="tel"
                     required
-                    placeholder="75869 48359"
+                    placeholder={t.phonePlaceholder}
                     value={formData.phone}
                     onChange={(e) => setFormData({ ...formData, phone: e.target.value.replace(/[^0-9]/g, '') })}
                     className="w-full px-4 py-2.5 rounded-r-xl border border-slate-300 focus:border-kgp-crimson focus:outline-none font-mono text-sm font-bold"
@@ -1645,7 +1975,7 @@ export default function QualifierRoundPortal({ initialCandidate, onStartExam, on
                       {/* Signature Box Frame */}
                       <div className="w-36 h-20 rounded-xl bg-white border-2 border-slate-300 flex flex-col items-center justify-center flex-shrink-0 relative shadow-inner overflow-hidden">
                         <div className="font-serif italic font-extrabold text-slate-800 text-base select-none px-2 text-center truncate">
-                          {formData.fullName || "S. Samanta"}
+                          {formData.fullName || t.signaturePlaceholder}
                         </div>
                         <span className="absolute bottom-0 inset-x-0 bg-slate-100 text-slate-500 text-[8px] text-center font-bold py-0.5 border-t border-slate-200">
                           Digital Seal • 3.5 × 1.5 cm
