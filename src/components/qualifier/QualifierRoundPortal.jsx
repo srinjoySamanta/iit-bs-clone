@@ -1,9 +1,10 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { 
   CheckCircle2, CreditCard, ArrowRight, ArrowLeft, ShieldCheck, 
   Award, QrCode, FileText, Lock, ChevronRight, ChevronLeft,
   Check, AlertCircle, Building, BookOpen, MapPin, Calendar, 
-  Printer, Info, AlertTriangle, RotateCcw
+  Printer, Info, AlertTriangle, RotateCcw, Upload, FileUp, 
+  Camera, Briefcase, GraduationCap, Eye, Trash2, Sparkles
 } from 'lucide-react';
 import { IIT_KGP_INFO } from '../../data/portalData';
 import iitKgpLogo from '../../assets/logo';
@@ -58,7 +59,7 @@ const OTHER_STATE_CITIES = {
   "Assam": ["Guwahati", "Silchar", "Dibrugarh", "Jorhat"],
   "Bihar": ["Patna", "Gaya", "Muzaffarpur", "Bhagalpur"],
   "Jharkhand": ["Ranchi", "Jamshedpur", "Dhanbad", "Bokaro"],
-  "Odisha": ["Bhubaneswar", "Cuttack", "Rourkela", "Sambalpur"],
+  "Odisha": ["Bhubaneswar", "Cuctack", "Rourkela", "Sambalpur"],
   "Delhi (NCR)": ["Delhi (Central)", "Delhi (North)", "Delhi (South)", "Noida", "Gurugram"],
   "Maharashtra": ["Mumbai", "Pune", "Nagpur", "Nashik"],
   "Karnataka": ["Bengaluru", "Mysuru", "Mangaluru", "Hubballi"],
@@ -74,16 +75,21 @@ const OTHER_STATE_CITIES = {
 };
 
 export default function QualifierRoundPortal({ initialCandidate, onStartExam, onBackToHome }) {
-  // Wizard steps: 1 = Section 1 (Personal), 2 = Section 2 (Exam City), 3 = Review & Payment, 4 = Completed
+  // Wizard steps: 
+  // 1 = Section 1: Personal Details
+  // 2 = Section 2: Exam City Options
+  // 3 = Section 3: File & Document Uploads
+  // 4 = Review & Pay
+  // 5 = Completed & CBT Engine
   const [section, setSection] = useState(1);
   const [formError, setFormError] = useState('');
 
   // Dynamically compute today's date in YYYY-MM-DD
   const todayDateString = new Date().toISOString().split('T')[0];
 
-  // Section 1: Personal Details State
+  // Master Form State
   const [formData, setFormData] = useState({
-    // Section 1 of 2
+    // Section 1 of 3: Personal Details
     program: "BS in Data Science and Artificial Intelligence (AI)",
     fullName: (initialCandidate?.name || "SRINJOY SAMANTA").toUpperCase(),
     email: initialCandidate?.email || "",
@@ -96,19 +102,41 @@ export default function QualifierRoundPortal({ initialCandidate, onStartExam, on
     jeeAdvancedQualified: "No",
     isPwd: "No",
     isDefencePersonnel: "No",
+    isWorkingProfessional: "No",
     class12Status: "Already completed/ Awaiting result",
     class12PassingYear: "2020",
     phoneCountryCode: "+91",
     phone: "7586948359",
     declarationPersonal: false,
 
-    // Section 2 of 2: Exam City Options
+    // Section 2 of 3: Exam City Options
     examCountry: "India",
     pref1State: "West Bengal",
     pref1City: "Paschim Medinipur (Kharagpur / Midnapore)",
     pref2State: "West Bengal",
     pref2City: "Kolkata",
     agreeExamCityTerms: false,
+
+    // Section 3 of 3: Higher Secondary Selection (Option A: Class 12th vs Option B: Polytechnic Diploma)
+    higherSecChoice: "class12", // 'class12' | 'diploma'
+
+    // Document Files Registry
+    docs: {
+      photo: { uploaded: true, name: "passport_photo_applicant.jpg", size: "78 KB", type: "image/jpeg" },
+      signature: { uploaded: true, name: "applicant_signature.jpg", size: "26 KB", type: "image/jpeg" },
+      idProof: { uploaded: true, name: "aadhaar_card_scan.pdf", size: "450 KB", type: "application/pdf" },
+      categoryCert: { uploaded: false, name: "", size: "", type: "" },
+      pwdCert: { uploaded: false, name: "", size: "", type: "" },
+      defenceCert: { uploaded: false, name: "", size: "" },
+      jeeProof: { uploaded: false, name: "", size: "" },
+      class10: { uploaded: true, name: "std_x_marksheet_certificate.pdf", size: "620 KB", type: "application/pdf" },
+      class12: { uploaded: true, name: "std_xii_senior_secondary_marksheet.pdf", size: "840 KB", type: "application/pdf" },
+      diplomaCert: { uploaded: false, name: "", size: "" },
+      ugDegree: { uploaded: false, name: "", size: "" },
+      pgDegree: { uploaded: false, name: "", size: "" },
+      phdDegree: { uploaded: false, name: "", size: "" },
+      employmentProof: { uploaded: false, name: "", size: "" }
+    },
 
     // Generated Roll & Meta
     finalRollNo: "",
@@ -153,6 +181,50 @@ export default function QualifierRoundPortal({ initialCandidate, onStartExam, on
     if (stateName === "West Bengal") return DISTRICTS_WEST_BENGAL;
     if (stateName === "Tripura") return DISTRICTS_TRIPURA;
     return OTHER_STATE_CITIES[stateName] || ["Main Examination Center (Central)"];
+  };
+
+  // Helper for simulated file upload on each document slot
+  const handleFileUpload = (docKey, file) => {
+    if (!file) return;
+    const formattedSize = file.size > 1024 * 1024 
+      ? (file.size / (1024 * 1024)).toFixed(1) + " MB" 
+      : Math.round(file.size / 1024) + " KB";
+
+    setFormData(prev => ({
+      ...prev,
+      docs: {
+        ...prev.docs,
+        [docKey]: {
+          uploaded: true,
+          name: file.name,
+          size: formattedSize,
+          type: file.type
+        }
+      }
+    }));
+  };
+
+  // Pre-fill sample document attachments for testing
+  const handlePreFillDocuments = () => {
+    setFormData(prev => ({
+      ...prev,
+      docs: {
+        photo: { uploaded: true, name: "passport_photo_applicant.jpg", size: "78 KB", type: "image/jpeg" },
+        signature: { uploaded: true, name: "applicant_signature.jpg", size: "26 KB", type: "image/jpeg" },
+        idProof: { uploaded: true, name: "aadhaar_card_scan.pdf", size: "450 KB", type: "application/pdf" },
+        categoryCert: prev.category !== 'General' ? { uploaded: true, name: `category_certificate_${prev.category}.pdf`, size: "520 KB", type: "application/pdf" } : { uploaded: false, name: "", size: "" },
+        pwdCert: prev.isPwd === 'Yes' ? { uploaded: true, name: "pwd_medical_board_certificate.pdf", size: "480 KB", type: "application/pdf" } : { uploaded: false, name: "", size: "" },
+        defenceCert: prev.isDefencePersonnel === 'Yes' ? { uploaded: true, name: "defence_service_ward_proof.pdf", size: "390 KB", type: "application/pdf" } : { uploaded: false, name: "", size: "" },
+        jeeProof: prev.jeeAdvancedQualified === 'Yes' ? { uploaded: true, name: "jee_advanced_admit_score.pdf", size: "340 KB", type: "application/pdf" } : { uploaded: false, name: "", size: "" },
+        class10: { uploaded: true, name: "std_x_marksheet_certificate.pdf", size: "620 KB", type: "application/pdf" },
+        class12: prev.higherSecChoice === 'class12' ? { uploaded: true, name: "std_xii_senior_secondary_marksheet.pdf", size: "840 KB", type: "application/pdf" } : { uploaded: false, name: "", size: "" },
+        diplomaCert: prev.higherSecChoice === 'diploma' ? { uploaded: true, name: "polytechnic_diploma_certificate.pdf", size: "910 KB", type: "application/pdf" } : { uploaded: false, name: "", size: "" },
+        ugDegree: { uploaded: false, name: "", size: "" },
+        pgDegree: { uploaded: false, name: "", size: "" },
+        phdDegree: { uploaded: false, name: "", size: "" },
+        employmentProof: prev.isWorkingProfessional === 'Yes' ? { uploaded: true, name: "employer_noc_id_card.pdf", size: "420 KB", type: "application/pdf" } : { uploaded: false, name: "", size: "" }
+      }
+    }));
   };
 
   // Section 1 validation
@@ -202,7 +274,7 @@ export default function QualifierRoundPortal({ initialCandidate, onStartExam, on
   };
 
   // Section 2 validation
-  const handleProceedToPayment = (e) => {
+  const handleProceedToSection3 = (e) => {
     e.preventDefault();
     setFormError('');
 
@@ -216,9 +288,68 @@ export default function QualifierRoundPortal({ initialCandidate, onStartExam, on
       return;
     }
 
+    setSection(3);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  // Section 3 (Documents) validation
+  const handleProceedToReview = (e) => {
+    e.preventDefault();
+    setFormError('');
+
+    // Check mandatory core documents
+    if (!formData.docs.photo.uploaded) {
+      setFormError("Missing Document: Please upload your recent passport-size photograph (50KB to 150KB).");
+      return;
+    }
+    if (!formData.docs.signature.uploaded) {
+      setFormError("Missing Document: Please upload your signature (4KB to 150KB).");
+      return;
+    }
+    if (!formData.docs.idProof.uploaded) {
+      setFormError("Missing Document: Please upload your Photo ID Card scan (50KB to 2MB).");
+      return;
+    }
+    if (!formData.docs.class10.uploaded) {
+      setFormError("Missing Document: Please upload your Class 10th / Secondary Marksheet & Certificate (50KB to 2MB).");
+      return;
+    }
+
+    // Higher secondary validation (Class 12 or Diploma)
+    if (formData.higherSecChoice === 'class12' && !formData.docs.class12.uploaded) {
+      setFormError("Missing Document: Please upload your Class 12th / Senior Secondary Marksheet & Passing Certificate (50KB to 2MB).");
+      return;
+    }
+    if (formData.higherSecChoice === 'diploma' && !formData.docs.diplomaCert.uploaded) {
+      setFormError("Missing Document: Please upload your Diploma Completion Certificate & Marksheets (50KB to 2MB).");
+      return;
+    }
+
+    // Conditional checks based on Section 1
+    if (['SC', 'ST', 'OBC-NCL', 'EWS'].includes(formData.category) && !formData.docs.categoryCert.uploaded) {
+      setFormError(`Missing Document: Category Certificate is mandatory for ${formData.category} candidates to avail fee waiver / cutoff relaxations.`);
+      return;
+    }
+    if (formData.isPwd === 'Yes' && !formData.docs.pwdCert.uploaded) {
+      setFormError("Missing Document: PwD Certificate (40% or more disability) is mandatory as indicated in Personal Details.");
+      return;
+    }
+    if (formData.isDefencePersonnel === 'Yes' && !formData.docs.defenceCert.uploaded) {
+      setFormError("Missing Document: Defence Personnel Ward / Disability Certificate is required as indicated in Personal Details.");
+      return;
+    }
+    if (formData.jeeAdvancedQualified === 'Yes' && !formData.docs.jeeProof.uploaded) {
+      setFormError("Missing Document: Proof of eligibility to write JEE Advanced is required as indicated in Personal Details.");
+      return;
+    }
+    if (formData.isWorkingProfessional === 'Yes' && !formData.docs.employmentProof.uploaded) {
+      setFormError("Missing Document: Employment Verification (Employee ID / Letter / NOC) is required for working professionals.");
+      return;
+    }
+
     const generatedAppNo = "IITKGP-BS-2026-" + Math.floor(100000 + Math.random() * 900000);
     setFormData(prev => ({ ...prev, applicationNo: generatedAppNo }));
-    setSection(3);
+    setSection(4);
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
@@ -239,8 +370,123 @@ export default function QualifierRoundPortal({ initialCandidate, onStartExam, on
   const handleCompletePayment = () => {
     const finalRoll = "KGP-QUAL-2026-" + Math.floor(1000 + Math.random() * 9000);
     setFormData(prev => ({ ...prev, finalRollNo: finalRoll }));
-    setSection(4);
+    setSection(5);
     window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  // Document Upload Item Component for reusability & clean UI
+  const DocUploadCard = ({ 
+    docKey, 
+    title, 
+    specs, 
+    requirementType = "Mandatory", 
+    isConditional = false, 
+    conditionalNote = "" 
+  }) => {
+    const docData = formData.docs[docKey] || { uploaded: false, name: "", size: "" };
+    const fileInputRef = useRef(null);
+
+    return (
+      <div className={`p-4.5 rounded-2xl border-2 transition ${
+        docData.uploaded 
+          ? 'bg-emerald-50/40 border-emerald-300' 
+          : requirementType === 'Mandatory' 
+            ? 'bg-white border-slate-300 hover:border-kgp-crimson' 
+            : 'bg-slate-50/60 border-slate-200'
+      }`}>
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-2">
+          <div>
+            <div className="font-bold text-slate-900 text-sm flex items-center gap-2">
+              <span>{title}</span>
+              {requirementType === 'Mandatory' && (
+                <span className="text-[10px] bg-red-100 text-red-700 font-bold px-2 py-0.5 rounded-full">
+                  Mandatory
+                </span>
+              )}
+              {requirementType === 'Conditional' && (
+                <span className="text-[10px] bg-amber-100 text-amber-800 font-bold px-2 py-0.5 rounded-full">
+                  Required if Applicable
+                </span>
+              )}
+              {requirementType === 'Optional' && (
+                <span className="text-[10px] bg-slate-200 text-slate-600 font-bold px-2 py-0.5 rounded-full">
+                  Optional
+                </span>
+              )}
+            </div>
+            <div className="text-[11px] text-slate-500 font-mono mt-0.5">{specs}</div>
+            {conditionalNote && (
+              <div className="text-[11px] text-amber-800 font-medium mt-0.5">{conditionalNote}</div>
+            )}
+          </div>
+
+          {/* Upload Status Badge */}
+          {docData.uploaded ? (
+            <span className="w-fit text-[11px] bg-emerald-100 text-emerald-800 font-bold px-2.5 py-1 rounded-lg flex items-center gap-1.5 flex-shrink-0">
+              <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" />
+              <span>Attached ({docData.size})</span>
+            </span>
+          ) : (
+            <span className="w-fit text-[10px] text-slate-400 font-semibold flex-shrink-0">
+              Not Uploaded
+            </span>
+          )}
+        </div>
+
+        {/* File Actions */}
+        <div className="pt-2 border-t border-slate-200/80 flex flex-wrap items-center justify-between gap-3">
+          <input
+            type="file"
+            ref={fileInputRef}
+            className="hidden"
+            onChange={(e) => handleFileUpload(docKey, e.target.files[0])}
+          />
+
+          {docData.uploaded ? (
+            <div className="flex items-center justify-between w-full">
+              <div className="flex items-center gap-2 text-xs font-semibold text-slate-800 truncate max-w-xs sm:max-w-md">
+                <FileText className="w-4 h-4 text-emerald-600 flex-shrink-0" />
+                <span className="truncate">{docData.name}</span>
+              </div>
+              <div className="flex items-center gap-2 flex-shrink-0">
+                <button
+                  type="button"
+                  onClick={() => fileInputRef.current?.click()}
+                  className="text-[11px] text-kgp-crimson hover:underline font-bold px-2 py-1 rounded-md hover:bg-slate-100"
+                >
+                  Change File
+                </button>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setFormData(prev => ({
+                      ...prev,
+                      docs: { ...prev.docs, [docKey]: { uploaded: false, name: "", size: "" } }
+                    }));
+                  }}
+                  className="text-[11px] text-slate-400 hover:text-red-600 p-1 rounded-md transition"
+                  title="Remove file"
+                >
+                  <Trash2 className="w-3.5 h-3.5" />
+                </button>
+              </div>
+            </div>
+          ) : (
+            <div className="flex items-center justify-between w-full">
+              <span className="text-[11px] text-slate-400">Supported format within specified file size.</span>
+              <button
+                type="button"
+                onClick={() => fileInputRef.current?.click()}
+                className="px-3.5 py-1.5 bg-slate-900 hover:bg-kgp-crimson text-white text-xs font-bold rounded-xl shadow-xs transition flex items-center gap-1.5"
+              >
+                <Upload className="w-3.5 h-3.5" />
+                <span>Upload Document</span>
+              </button>
+            </div>
+          )}
+        </div>
+      </div>
+    );
   };
 
   return (
@@ -285,13 +531,14 @@ export default function QualifierRoundPortal({ initialCandidate, onStartExam, on
         </div>
       </div>
 
-      {/* 3. STEP INDICATOR TABS */}
+      {/* 3. STEPPER PROGRESS TABS (4 Clean Steps) */}
       <div className="max-w-4xl mx-auto px-4 sm:px-6 pt-6">
-        <div className="bg-white rounded-2xl border border-slate-200 shadow-xs p-2.5 flex items-center justify-between text-xs font-bold gap-2">
+        <div className="bg-white rounded-2xl border border-slate-200 shadow-xs p-2 flex items-center justify-between text-xs font-bold gap-1.5 overflow-x-auto">
           
+          {/* Step 1 */}
           <button
             onClick={() => { if (section >= 1) setSection(1); }}
-            className={`flex-1 py-2 px-3 rounded-xl flex items-center justify-center gap-2 transition ${
+            className={`flex-1 py-2 px-2.5 rounded-xl flex items-center justify-center gap-1.5 transition ${
               section === 1 
                 ? 'bg-kgp-crimson text-white shadow-xs' 
                 : section > 1 
@@ -304,14 +551,15 @@ export default function QualifierRoundPortal({ initialCandidate, onStartExam, on
             }`}>
               {section > 1 ? <Check className="w-3.5 h-3.5 stroke-[3]" /> : '1'}
             </span>
-            <span className="truncate">Section 1: Personal Details</span>
+            <span className="truncate">1. Personal</span>
           </button>
 
-          <ChevronRight className="w-4 h-4 text-slate-300 flex-shrink-0" />
+          <ChevronRight className="w-3.5 h-3.5 text-slate-300 flex-shrink-0" />
 
+          {/* Step 2 */}
           <button
             onClick={() => { if (section >= 2) setSection(2); }}
-            className={`flex-1 py-2 px-3 rounded-xl flex items-center justify-center gap-2 transition ${
+            className={`flex-1 py-2 px-2.5 rounded-xl flex items-center justify-center gap-1.5 transition ${
               section === 2 
                 ? 'bg-kgp-crimson text-white shadow-xs' 
                 : section > 2 
@@ -324,21 +572,43 @@ export default function QualifierRoundPortal({ initialCandidate, onStartExam, on
             }`}>
               {section > 2 ? <Check className="w-3.5 h-3.5 stroke-[3]" /> : '2'}
             </span>
-            <span className="truncate">Section 2: Exam City Options</span>
+            <span className="truncate">2. Exam Cities</span>
           </button>
 
-          <ChevronRight className="w-4 h-4 text-slate-300 flex-shrink-0" />
+          <ChevronRight className="w-3.5 h-3.5 text-slate-300 flex-shrink-0" />
 
+          {/* Step 3 (Newly Added: File & Document Uploads) */}
           <button
             onClick={() => { if (section >= 3) setSection(3); }}
-            className={`flex-1 py-2 px-3 rounded-xl flex items-center justify-center gap-2 transition ${
-              section >= 3 ? 'bg-kgp-crimson text-white shadow-xs' : 'text-slate-400'
+            className={`flex-1 py-2 px-2.5 rounded-xl flex items-center justify-center gap-1.5 transition ${
+              section === 3 
+                ? 'bg-kgp-crimson text-white shadow-xs' 
+                : section > 3 
+                  ? 'bg-emerald-50 text-emerald-800 border border-emerald-200' 
+                  : 'text-slate-400'
             }`}
           >
             <span className={`w-5 h-5 rounded-full flex items-center justify-center text-[10px] ${
-              section >= 3 ? 'bg-amber-400 text-slate-950 font-black' : 'bg-slate-200 text-slate-600'
+              section === 3 ? 'bg-amber-400 text-slate-950 font-black' : section > 3 ? 'bg-emerald-600 text-white' : 'bg-slate-200 text-slate-600'
             }`}>
-              3
+              {section > 3 ? <Check className="w-3.5 h-3.5 stroke-[3]" /> : '3'}
+            </span>
+            <span className="truncate">3. Document Uploads</span>
+          </button>
+
+          <ChevronRight className="w-3.5 h-3.5 text-slate-300 flex-shrink-0" />
+
+          {/* Step 4 */}
+          <button
+            onClick={() => { if (section >= 4) setSection(4); }}
+            className={`flex-1 py-2 px-2.5 rounded-xl flex items-center justify-center gap-1.5 transition ${
+              section >= 4 ? 'bg-kgp-crimson text-white shadow-xs' : 'text-slate-400'
+            }`}
+          >
+            <span className={`w-5 h-5 rounded-full flex items-center justify-center text-[10px] ${
+              section >= 4 ? 'bg-amber-400 text-slate-950 font-black' : 'bg-slate-200 text-slate-600'
+            }`}>
+              4
             </span>
             <span className="truncate">Review &amp; Pay</span>
           </button>
@@ -361,7 +631,7 @@ export default function QualifierRoundPortal({ initialCandidate, onStartExam, on
         )}
 
         {/* ========================================================================= */}
-        {/* SECTION 1 OF 2: PERSONAL DETAILS                                          */}
+        {/* SECTION 1 OF 3: PERSONAL DETAILS                                          */}
         {/* ========================================================================= */}
         {section === 1 && (
           <div className="bg-white rounded-3xl border border-slate-200 p-6 sm:p-10 shadow-sm space-y-7 animate-in fade-in">
@@ -372,7 +642,7 @@ export default function QualifierRoundPortal({ initialCandidate, onStartExam, on
                 application form
               </div>
               <h2 className="text-xl sm:text-2xl font-bold font-serif-title text-slate-900 mt-0.5">
-                Section 1 of 2: Personal Details
+                Section 1 of 3: Personal Details
               </h2>
               <p className="text-xs text-slate-500 mt-1">
                 All fields marked with <span className="text-red-600 font-bold">*</span> are mandatory
@@ -500,7 +770,8 @@ export default function QualifierRoundPortal({ initialCandidate, onStartExam, on
                     <option value="PAN Card">PAN Card</option>
                     <option value="Passport">Passport</option>
                     <option value="Voter ID">Voter ID</option>
-                    <option value="Government Photo ID">Government Photo ID</option>
+                    <option value="Driving License">Driving License</option>
+                    <option value="Government Photo ID">Other Government ID with photo</option>
                   </select>
                 </div>
 
@@ -549,7 +820,7 @@ export default function QualifierRoundPortal({ initialCandidate, onStartExam, on
                   Did you qualify to appear for JEE Advanced in last 2 years? <span className="text-red-600">*</span>
                 </label>
                 <p className="text-[11px] text-slate-500">
-                  If selecting "yes", please upload relevant document.
+                  If selecting "yes", please upload relevant document in the document upload section.
                 </p>
                 <div className="flex items-center gap-6 pt-1">
                   {["Yes", "No"].map((choice) => (
@@ -574,7 +845,7 @@ export default function QualifierRoundPortal({ initialCandidate, onStartExam, on
                   Are you a Person with Disabilities (40% or more / "severe" where percentage is not defined)? <span className="text-red-600">*</span>
                 </label>
                 <p className="text-[11px] text-slate-500">
-                  If selecting "yes", please upload relevant document.
+                  If selecting "yes", please upload relevant document in the document upload section.
                 </p>
                 <div className="flex items-center gap-6 pt-1">
                   {["Yes", "No"].map((choice) => (
@@ -599,7 +870,7 @@ export default function QualifierRoundPortal({ initialCandidate, onStartExam, on
                   Are you a defence / paramilitary personnel permanently disabled OR is your parent a defence / paramilitary personnel permanently disabled or killed, during war or peacetime operations? <span className="text-red-600">*</span>
                 </label>
                 <p className="text-[11px] text-slate-500">
-                  If selecting "yes", please upload relevant document.
+                  If selecting "yes", please upload relevant document in the document upload section.
                 </p>
                 <div className="flex items-center gap-6 pt-1">
                   {["Yes", "No"].map((choice) => (
@@ -618,7 +889,32 @@ export default function QualifierRoundPortal({ initialCandidate, onStartExam, on
                 </div>
               </div>
 
-              {/* Field 9: Completion of Class 12 */}
+              {/* Field 9: Working Professional Question */}
+              <div className="p-4 rounded-2xl border border-slate-200 bg-white space-y-2">
+                <label className="block text-slate-800 font-bold">
+                  Are you currently an employed working professional? <span className="text-red-600">*</span>
+                </label>
+                <p className="text-[11px] text-slate-500">
+                  If selecting "yes", employment verification document (Employee ID / Letter / NOC) will be required.
+                </p>
+                <div className="flex items-center gap-6 pt-1">
+                  {["Yes", "No"].map((choice) => (
+                    <label key={choice} className="flex items-center gap-2 cursor-pointer font-semibold text-slate-700">
+                      <input
+                        type="radio"
+                        name="workingPro"
+                        value={choice}
+                        checked={formData.isWorkingProfessional === choice}
+                        onChange={(e) => setFormData({ ...formData, isWorkingProfessional: choice })}
+                        className="text-kgp-crimson focus:ring-kgp-crimson"
+                      />
+                      <span>{choice}</span>
+                    </label>
+                  ))}
+                </div>
+              </div>
+
+              {/* Field 10: Completion of Class 12 */}
               <div className="p-4 rounded-2xl border border-slate-200 bg-white space-y-2">
                 <label className="block text-slate-800 font-bold">
                   Completion of Class 12 or equivalent examination. <span className="text-red-600">*</span>
@@ -640,7 +936,7 @@ export default function QualifierRoundPortal({ initialCandidate, onStartExam, on
                 </div>
               </div>
 
-              {/* Field 10: Year of Passing Class 12 */}
+              {/* Field 11: Year of Passing Class 12 */}
               <div className="space-y-1.5">
                 <label className="block text-slate-800 font-bold">
                   Year of Passing Class 12 or Equivalent Exam <span className="text-red-600">*</span>
@@ -656,7 +952,7 @@ export default function QualifierRoundPortal({ initialCandidate, onStartExam, on
                 </select>
               </div>
 
-              {/* Field 11: Mobile Phone Number */}
+              {/* Field 12: Mobile Phone Number */}
               <div className="space-y-1.5">
                 <label className="block text-slate-800 font-bold">
                   Mobile Phone number <span className="text-red-600">*</span>
@@ -676,7 +972,7 @@ export default function QualifierRoundPortal({ initialCandidate, onStartExam, on
                 </div>
               </div>
 
-              {/* Field 12: Declaration Checkbox */}
+              {/* Field 13: Declaration Checkbox */}
               <div className="p-4.5 rounded-2xl bg-amber-50/80 border-2 border-amber-300 space-y-2">
                 <label className="flex items-start gap-3 cursor-pointer">
                   <input
@@ -708,7 +1004,7 @@ export default function QualifierRoundPortal({ initialCandidate, onStartExam, on
         )}
 
         {/* ========================================================================= */}
-        {/* SECTION 2 OF 2: EXAM CITY OPTIONS                                         */}
+        {/* SECTION 2 OF 3: EXAM CITY OPTIONS                                         */}
         {/* ========================================================================= */}
         {section === 2 && (
           <div className="bg-white rounded-3xl border border-slate-200 p-6 sm:p-10 shadow-sm space-y-7 animate-in fade-in">
@@ -719,14 +1015,14 @@ export default function QualifierRoundPortal({ initialCandidate, onStartExam, on
                 application form
               </div>
               <h2 className="text-xl sm:text-2xl font-bold font-serif-title text-slate-900 mt-0.5">
-                Section 2 of 2: Exam City Options
+                Section 2 of 3: Exam City Options
               </h2>
               <div className="inline-block mt-2 px-3 py-1 bg-amber-100 border border-amber-300 rounded-lg text-amber-950 font-bold text-xs">
                 Qualifier Exam Date: 15 November, 2026
               </div>
             </div>
 
-            {/* Explanatory Policy Notes (Exact to User Specification) */}
+            {/* Explanatory Policy Notes */}
             <div className="bg-slate-50 border border-slate-200 rounded-2xl p-5 space-y-2 text-xs text-slate-700 leading-relaxed">
               <p>
                 <strong>Please be sure to select two different preferences for the Exam City.</strong> If you wish to change your preferences, click <strong>“RESET”</strong> to be able to pick your preferences again.
@@ -739,7 +1035,7 @@ export default function QualifierRoundPortal({ initialCandidate, onStartExam, on
               </p>
             </div>
 
-            <form onSubmit={handleProceedToPayment} className="space-y-7 text-xs">
+            <form onSubmit={handleProceedToSection3} className="space-y-7 text-xs">
               
               {/* Country Selection */}
               <div className="space-y-1.5">
@@ -875,7 +1171,7 @@ export default function QualifierRoundPortal({ initialCandidate, onStartExam, on
                 </button>
               </div>
 
-              {/* Terms & Undertaking Box (Exact User Specification) */}
+              {/* Terms & Undertaking Box */}
               <div className="p-5 rounded-2xl bg-amber-50/70 border-2 border-amber-300 space-y-3">
                 <div className="font-bold text-amber-950 text-xs uppercase tracking-wide">
                   Exam Centre Allocation Terms:
@@ -915,6 +1211,262 @@ export default function QualifierRoundPortal({ initialCandidate, onStartExam, on
                   type="submit"
                   className="px-8 py-3.5 bg-kgp-crimson hover:bg-kgp-darkred text-white font-extrabold text-sm rounded-xl shadow-md transition flex items-center gap-2"
                 >
+                  <span>Save Exam Cities &amp; Proceed to Document Uploads</span>
+                  <ChevronRight className="w-4 h-4" />
+                </button>
+              </div>
+
+            </form>
+          </div>
+        )}
+
+        {/* ========================================================================= */}
+        {/* SECTION 3 OF 3: FILE & DOCUMENT UPLOADS (EXACT USER SPECIFICATION)        */}
+        {/* ========================================================================= */}
+        {section === 3 && (
+          <div className="bg-white rounded-3xl border border-slate-200 p-6 sm:p-10 shadow-sm space-y-7 animate-in fade-in">
+            
+            {/* Form Section Header */}
+            <div className="border-b border-slate-200 pb-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+              <div>
+                <div className="text-xs uppercase font-extrabold tracking-wider text-kgp-crimson">
+                  application form
+                </div>
+                <h2 className="text-xl sm:text-2xl font-bold font-serif-title text-slate-900 mt-0.5">
+                  Section 3 of 3: File &amp; Document Uploads
+                </h2>
+                <p className="text-xs text-slate-500 mt-1">
+                  Upload official scans for admission audit, admit card generation, and reservation verification.
+                </p>
+              </div>
+
+              <button
+                type="button"
+                onClick={handlePreFillDocuments}
+                className="px-3.5 py-2 bg-amber-100 hover:bg-amber-200 text-amber-900 font-bold text-xs rounded-xl border border-amber-300 flex items-center gap-1.5 transition self-start sm:self-auto"
+              >
+                <Sparkles className="w-4 h-4 text-amber-700" />
+                <span>Auto-Attach Sample Docs</span>
+              </button>
+            </div>
+
+            <form onSubmit={handleProceedToReview} className="space-y-6 text-xs">
+              
+              {/* PART A: ESSENTIAL IDENTITY DOCUMENTS */}
+              <div className="space-y-4">
+                <div className="text-xs font-bold uppercase tracking-wider text-slate-600 flex items-center gap-2">
+                  <Camera className="w-4 h-4 text-kgp-crimson" />
+                  <span>A. Candidate Photograph, Signature &amp; Identity</span>
+                </div>
+
+                <div className="grid grid-cols-1 gap-4">
+                  {/* 1. Passport Photograph */}
+                  <DocUploadCard
+                    docKey="photo"
+                    title="Passport size photograph"
+                    specs="JPEG / JPG format – 50KB to 150KB"
+                    requirementType="Mandatory"
+                  />
+
+                  {/* 2. Signature */}
+                  <DocUploadCard
+                    docKey="signature"
+                    title="Candidate Signature"
+                    specs="JPEG / JPG format – 4KB to 150KB"
+                    requirementType="Mandatory"
+                  />
+
+                  {/* 3. Photo ID Card Scan */}
+                  <DocUploadCard
+                    docKey="idProof"
+                    title={`Photo ID Card Scan (${formData.idType})`}
+                    specs="Aadhaar Card / PAN Card / Passport / Voter ID / Driving License / other Government ID with photo (JPEG / JPG / PDF format) – 50KB to 2MB"
+                    requirementType="Mandatory"
+                    conditionalNote={`Matching ID Number: ${formData.idNumber}`}
+                  />
+                </div>
+              </div>
+
+              {/* PART B: RESERVATION & CATEGORY CERTIFICATES */}
+              <div className="space-y-4 pt-4 border-t border-slate-200">
+                <div className="text-xs font-bold uppercase tracking-wider text-slate-600 flex items-center gap-2">
+                  <ShieldCheck className="w-4 h-4 text-amber-600" />
+                  <span>B. Category, Disability &amp; Quota Proofs (Based on Section 1)</span>
+                </div>
+
+                <div className="grid grid-cols-1 gap-4">
+                  {/* 4. Category Certificate */}
+                  <DocUploadCard
+                    docKey="categoryCert"
+                    title={`Category Certificate (${formData.category})`}
+                    specs="Only for applicants who select SC / ST / OBC-NCL / EWS (JPEG / JPG / PDF format) – 50KB to 2MB"
+                    requirementType={['SC', 'ST', 'OBC-NCL', 'EWS'].includes(formData.category) ? 'Mandatory' : 'Optional'}
+                    isConditional={true}
+                    conditionalNote={['SC', 'ST', 'OBC-NCL', 'EWS'].includes(formData.category) ? `Required to validate ${formData.category} quota & fee waiver.` : 'Not required for General category.'}
+                  />
+
+                  {/* 5. PwD Certificate */}
+                  <DocUploadCard
+                    docKey="pwdCert"
+                    title="PwD Certificate"
+                    specs="Only for applicants with 40% or more disability (JPEG / JPG / PDF format) – 50KB to 2MB"
+                    requirementType={formData.isPwd === 'Yes' ? 'Mandatory' : 'Optional'}
+                    isConditional={true}
+                    conditionalNote={formData.isPwd === 'Yes' ? 'Required as Person with Disability was selected in Section 1.' : 'Not required if non-disabled.'}
+                  />
+
+                  {/* 6. Defence Personnel Ward Certificate */}
+                  <DocUploadCard
+                    docKey="defenceCert"
+                    title="Defence Personnel Ward / Disability Certificate"
+                    specs="Proof of applicant having been permanently disabled OR parent having been permanently disabled / killed during war or peacetime operations while serving as a defence / paramilitary personnel (JPEG / JPG / PDF format) – 50KB to 2MB"
+                    requirementType={formData.isDefencePersonnel === 'Yes' ? 'Mandatory' : 'Optional'}
+                    isConditional={true}
+                    conditionalNote={formData.isDefencePersonnel === 'Yes' ? 'Required as Defence Personnel was selected in Section 1.' : 'Not applicable.'}
+                  />
+
+                  {/* 7. JEE-Based Entry Proof */}
+                  <DocUploadCard
+                    docKey="jeeProof"
+                    title="JEE-Based Entry Proof"
+                    specs="Scoresheet / admit card / registration receipt as proof of eligibility to write JEE Advanced (PDF format) – 50KB to 2MB"
+                    requirementType={formData.jeeAdvancedQualified === 'Yes' ? 'Mandatory' : 'Optional'}
+                    isConditional={true}
+                    conditionalNote={formData.jeeAdvancedQualified === 'Yes' ? 'Required to claim direct JEE Advanced pathway admission.' : 'Not applicable.'}
+                  />
+                </div>
+              </div>
+
+              {/* PART C: ACADEMIC QUALIFICATIONS */}
+              <div className="space-y-4 pt-4 border-t border-slate-200">
+                <div className="text-xs font-bold uppercase tracking-wider text-slate-600 flex items-center gap-2">
+                  <Award className="w-4 h-4 text-emerald-700" />
+                  <span>C. Academic Qualification Marksheets &amp; Certificates</span>
+                </div>
+
+                <div className="grid grid-cols-1 gap-4">
+                  {/* 8. Class 10th / Secondary Marksheet */}
+                  <DocUploadCard
+                    docKey="class10"
+                    title="Class 10th / Secondary Marksheet &amp; Certificate"
+                    specs="PDF / JPG format – 50KB to 2MB"
+                    requirementType="Mandatory"
+                    conditionalNote="Mandatory proof of Mathematics and English study."
+                  />
+
+                  {/* 9. Higher Secondary Qualification (Either A or B) */}
+                  <div className="p-4.5 rounded-2xl bg-amber-50/50 border border-amber-300 space-y-3">
+                    <div className="font-bold text-slate-900 text-sm flex items-center justify-between">
+                      <span>Higher Secondary Qualification (Either A or B):</span>
+                      <span className="text-[10px] bg-amber-200 text-amber-900 font-extrabold px-2 py-0.5 rounded">
+                        Mandatory
+                      </span>
+                    </div>
+
+                    {/* Radio Choice between A and B */}
+                    <div className="flex flex-col sm:flex-row gap-4 bg-white p-3 rounded-xl border border-amber-200">
+                      <label className="flex items-center gap-2 cursor-pointer font-bold text-slate-800">
+                        <input
+                          type="radio"
+                          name="higherSecChoice"
+                          value="class12"
+                          checked={formData.higherSecChoice === 'class12'}
+                          onChange={() => setFormData({ ...formData, higherSecChoice: 'class12' })}
+                          className="text-kgp-crimson focus:ring-kgp-crimson"
+                        />
+                        <span>Option A: Class 12th / Senior Secondary</span>
+                      </label>
+
+                      <label className="flex items-center gap-2 cursor-pointer font-bold text-slate-800">
+                        <input
+                          type="radio"
+                          name="higherSecChoice"
+                          value="diploma"
+                          checked={formData.higherSecChoice === 'diploma'}
+                          onChange={() => setFormData({ ...formData, higherSecChoice: 'diploma' })}
+                          className="text-kgp-crimson focus:ring-kgp-crimson"
+                        />
+                        <span>Option B: 3-Year Polytechnic / Diploma</span>
+                      </label>
+                    </div>
+
+                    {formData.higherSecChoice === 'class12' ? (
+                      <DocUploadCard
+                        docKey="class12"
+                        title="A. Class 12th / Senior Secondary Marksheet &amp; Passing Certificate"
+                        specs="PDF / JPG format – 50KB to 2MB"
+                        requirementType="Mandatory"
+                      />
+                    ) : (
+                      <DocUploadCard
+                        docKey="diplomaCert"
+                        title="B. Diploma Completion Certificate &amp; Marksheets"
+                        specs="For candidates who pursued a Polytechnic/Diploma instead of 11th &amp; 12th (PDF format) – 50KB to 2MB"
+                        requirementType="Mandatory"
+                      />
+                    )}
+                  </div>
+                </div>
+              </div>
+
+              {/* PART D: HIGHER DEGREES & EMPLOYMENT VERIFICATION */}
+              <div className="space-y-4 pt-4 border-t border-slate-200">
+                <div className="text-xs font-bold uppercase tracking-wider text-slate-600 flex items-center gap-2">
+                  <GraduationCap className="w-4 h-4 text-blue-700" />
+                  <span>D. Higher Degrees &amp; Employment Proofs (If Applicable)</span>
+                </div>
+
+                <div className="grid grid-cols-1 gap-4">
+                  {/* 10. Undergraduate (UG) */}
+                  <DocUploadCard
+                    docKey="ugDegree"
+                    title="Undergraduate (UG) Degree Certificate &amp; Consolidated Marksheet"
+                    specs="If applicable (PDF format) – 50KB to 2MB"
+                    requirementType="Optional"
+                  />
+
+                  {/* 11. Postgraduate (PG) */}
+                  <DocUploadCard
+                    docKey="pgDegree"
+                    title="Postgraduate (PG) Degree Certificate &amp; Marksheet"
+                    specs="If applicable (PDF format) – 50KB to 2MB"
+                    requirementType="Optional"
+                  />
+
+                  {/* 12. Doctoral (Ph.D.) */}
+                  <DocUploadCard
+                    docKey="phdDegree"
+                    title="Doctoral (Ph.D.) Degree / Provisional Certificate / Coursework Completion Proof"
+                    specs="If applicable (PDF format) – 50KB to 2MB"
+                    requirementType="Optional"
+                  />
+
+                  {/* 13. Employment Verification */}
+                  <DocUploadCard
+                    docKey="employmentProof"
+                    title="Employment Verification (For Working Professionals)"
+                    specs="Current Employee ID Card or Official Employment Letter / NOC from the organization (PDF / JPG format) – 50KB to 2MB"
+                    requirementType={formData.isWorkingProfessional === 'Yes' ? 'Mandatory' : 'Optional'}
+                    conditionalNote={formData.isWorkingProfessional === 'Yes' ? 'Required because you selected Working Professional in Section 1.' : 'Only required if you are an employed professional.'}
+                  />
+                </div>
+              </div>
+
+              {/* Navigation Buttons */}
+              <div className="pt-6 border-t border-slate-200 flex items-center justify-between">
+                <button
+                  type="button"
+                  onClick={() => { setSection(2); window.scrollTo({ top: 0, behavior: 'smooth' }); }}
+                  className="px-6 py-2.5 rounded-xl border border-slate-300 text-slate-700 hover:bg-slate-100 font-bold transition flex items-center gap-2"
+                >
+                  <ChevronLeft className="w-4 h-4" />
+                  <span>Back to Exam Cities</span>
+                </button>
+
+                <button
+                  type="submit"
+                  className="px-8 py-3.5 bg-kgp-crimson hover:bg-kgp-darkred text-white font-extrabold text-sm rounded-xl shadow-md transition flex items-center gap-2"
+                >
                   <span>Review Application &amp; Proceed to Fee Payment</span>
                   <ChevronRight className="w-4 h-4" />
                 </button>
@@ -925,9 +1477,9 @@ export default function QualifierRoundPortal({ initialCandidate, onStartExam, on
         )}
 
         {/* ========================================================================= */}
-        {/* SECTION 3: APPLICATION REVIEW & FEE PAYMENT                                */}
+        {/* SECTION 4: APPLICATION REVIEW & FEE PAYMENT                                */}
         {/* ========================================================================= */}
-        {section === 3 && (
+        {section === 4 && (
           <div className="bg-white rounded-3xl border border-slate-200 p-6 sm:p-10 shadow-sm space-y-7 animate-in fade-in">
             
             <div className="border-b border-slate-200 pb-4">
@@ -938,7 +1490,7 @@ export default function QualifierRoundPortal({ initialCandidate, onStartExam, on
                 Review Application &amp; Complete Qualifier Fee Payment
               </h2>
               <p className="text-xs text-slate-500 mt-1">
-                Please verify your entered details before completing the fee payment.
+                Please verify your entered details and attached documents before completing fee payment.
               </p>
             </div>
 
@@ -978,7 +1530,7 @@ export default function QualifierRoundPortal({ initialCandidate, onStartExam, on
                   <strong className="text-slate-900">{formData.category}</strong>
                 </div>
                 <div>
-                  <span className="text-slate-400 block text-[10px] uppercase">JEE Advanced (Past 2 Yrs):</span>
+                  <span className="text-slate-400 block text-[10px] uppercase">JEE Advanced Qualified:</span>
                   <strong className="text-slate-900">{formData.jeeAdvancedQualified}</strong>
                 </div>
                 <div>
@@ -986,8 +1538,8 @@ export default function QualifierRoundPortal({ initialCandidate, onStartExam, on
                   <strong className="text-slate-900">{formData.isPwd}</strong>
                 </div>
                 <div>
-                  <span className="text-slate-400 block text-[10px] uppercase">Class 12 Status &amp; Year:</span>
-                  <strong className="text-slate-900">{formData.class12Status} ({formData.class12PassingYear})</strong>
+                  <span className="text-slate-400 block text-[10px] uppercase">Working Professional:</span>
+                  <strong className="text-slate-900">{formData.isWorkingProfessional}</strong>
                 </div>
                 <div>
                   <span className="text-slate-400 block text-[10px] uppercase">Mobile Phone:</span>
@@ -1005,6 +1557,21 @@ export default function QualifierRoundPortal({ initialCandidate, onStartExam, on
                   <div className="px-3 py-1.5 rounded-lg bg-white border border-slate-200 font-semibold text-slate-800">
                     <span className="text-slate-500 font-bold">Preference 2:</span> {formData.pref2City}, {formData.pref2State}
                   </div>
+                </div>
+              </div>
+
+              {/* Document Uploads Verified Summary */}
+              <div className="pt-3 border-t border-slate-200">
+                <span className="text-slate-400 block text-[10px] uppercase mb-1.5">Attached Document Scans:</span>
+                <div className="flex flex-wrap gap-2">
+                  {Object.entries(formData.docs)
+                    .filter(([_, d]) => d.uploaded)
+                    .map(([key, d]) => (
+                      <span key={key} className="px-2.5 py-1 bg-white border border-slate-200 rounded-lg text-[11px] font-medium text-slate-700 flex items-center gap-1.5">
+                        <Check className="w-3.5 h-3.5 text-emerald-600" />
+                        <span className="truncate max-w-[200px]">{d.name}</span>
+                      </span>
+                    ))}
                 </div>
               </div>
             </div>
@@ -1077,11 +1644,11 @@ export default function QualifierRoundPortal({ initialCandidate, onStartExam, on
             <div className="pt-4 border-t border-slate-200">
               <button
                 type="button"
-                onClick={() => { setSection(2); window.scrollTo({ top: 0, behavior: 'smooth' }); }}
+                onClick={() => { setSection(3); window.scrollTo({ top: 0, behavior: 'smooth' }); }}
                 className="px-6 py-2.5 rounded-xl border border-slate-300 text-slate-700 hover:bg-slate-100 font-bold transition flex items-center gap-2"
               >
                 <ChevronLeft className="w-4 h-4" />
-                <span>Back to Exam City Options</span>
+                <span>Back to Document Uploads</span>
               </button>
             </div>
 
@@ -1089,9 +1656,9 @@ export default function QualifierRoundPortal({ initialCandidate, onStartExam, on
         )}
 
         {/* ========================================================================= */}
-        {/* SECTION 4: PAYMENT SUCCESS & LAUNCH QUALIFIER CBT EXAM                     */}
+        {/* SECTION 5: PAYMENT SUCCESS & LAUNCH QUALIFIER CBT EXAM                     */}
         {/* ========================================================================= */}
-        {section === 4 && (
+        {section === 5 && (
           <div className="bg-gradient-to-br from-slate-900 via-kgp-navy to-slate-900 text-white rounded-3xl p-8 sm:p-12 shadow-2xl space-y-8 animate-in zoom-in-95 text-center">
             
             <div className="w-20 h-20 rounded-full bg-emerald-500/20 text-emerald-400 border border-emerald-500/40 flex items-center justify-center mx-auto shadow-lg">
@@ -1106,7 +1673,7 @@ export default function QualifierRoundPortal({ initialCandidate, onStartExam, on
                 {formData.fullName}
               </h2>
               <p className="text-slate-300 text-xs sm:text-sm max-w-xl mx-auto">
-                Your application for the <strong>{formData.program}</strong> has been received for the <strong>15 November, 2026 Qualifier Exam</strong>.
+                Your application and uploaded documents for the <strong>{formData.program}</strong> have been accepted for the <strong>15 November, 2026 Qualifier Exam</strong>.
               </p>
             </div>
 
@@ -1123,6 +1690,10 @@ export default function QualifierRoundPortal({ initialCandidate, onStartExam, on
               <div className="flex justify-between pb-2 border-b border-white/10">
                 <span className="text-slate-300">Allocated City Choices:</span>
                 <strong className="text-white">{formData.pref1City}, {formData.pref2City}</strong>
+              </div>
+              <div className="flex justify-between pb-2 border-b border-white/10">
+                <span className="text-slate-300">Attached Documents:</span>
+                <strong className="text-emerald-300">{Object.values(formData.docs).filter(d => d.uploaded).length} Verified Files</strong>
               </div>
               <div className="flex justify-between">
                 <span className="text-slate-300">Amount Paid:</span>
