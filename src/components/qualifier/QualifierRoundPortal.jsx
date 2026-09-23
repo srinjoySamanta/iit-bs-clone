@@ -48,31 +48,8 @@ const DISTRICTS_TRIPURA = [
   "Unakoti (Kailashahar)"
 ];
 
-const OTHER_INDIAN_STATES = [
-  "West Bengal", "Tripura", "Assam", "Bihar", "Jharkhand", "Odisha",
-  "Delhi (NCR)", "Maharashtra", "Karnataka", "Tamil Nadu", "Telangana",
-  "Uttar Pradesh", "Gujarat", "Rajasthan", "Madhya Pradesh", "Kerala",
-  "Punjab", "Haryana", "Chhattisgarh", "Uttarakhand", "Himachal Pradesh"
-];
-
-const OTHER_STATE_CITIES = {
-  "Assam": ["Guwahati", "Silchar", "Dibrugarh", "Jorhat"],
-  "Bihar": ["Patna", "Gaya", "Muzaffarpur", "Bhagalpur"],
-  "Jharkhand": ["Ranchi", "Jamshedpur", "Dhanbad", "Bokaro"],
-  "Odisha": ["Bhubaneswar", "Cuctack", "Rourkela", "Sambalpur"],
-  "Delhi (NCR)": ["Delhi (Central)", "Delhi (North)", "Delhi (South)", "Noida", "Gurugram"],
-  "Maharashtra": ["Mumbai", "Pune", "Nagpur", "Nashik"],
-  "Karnataka": ["Bengaluru", "Mysuru", "Mangaluru", "Hubballi"],
-  "Tamil Nadu": ["Chennai", "Coimbatore", "Madurai", "Tiruchirappalli"],
-  "Telangana": ["Hyderabad", "Warangal", "Nizamabad"],
-  "Uttar Pradesh": ["Lucknow", "Kanpur", "Varanasi", "Prayagraj", "Noida"],
-  "Gujarat": ["Ahmedabad", "Surat", "Vadodara", "Rajkot"],
-  "Rajasthan": ["Jaipur", "Jodhpur", "Kota", "Udaipur"],
-  "Madhya Pradesh": ["Bhopal", "Indore", "Gwalior", "Jabalpur"],
-  "Kerala": ["Thiruvananthapuram", "Kochi", "Kozhikode"],
-  "Punjab": ["Amritsar", "Ludhiana", "Jalandhar"],
-  "Haryana": ["Chandigarh", "Faridabad", "Ambala"]
-};
+// State Options restricted strictly to West Bengal and Tripura
+const EXAM_STATES = ["West Bengal", "Tripura"];
 
 export default function QualifierRoundPortal({ initialCandidate, onStartExam, onBackToHome }) {
   // Wizard steps: 
@@ -176,11 +153,10 @@ export default function QualifierRoundPortal({ initialCandidate, onStartExam, on
     feeWaiverText = "50% Fee Waiver Applied (OBC-NCL/EWS)";
   }
 
-  // Get cities based on selected state
+  // Get cities based on selected state (West Bengal or Tripura)
   const getCitiesForState = (stateName) => {
-    if (stateName === "West Bengal") return DISTRICTS_WEST_BENGAL;
     if (stateName === "Tripura") return DISTRICTS_TRIPURA;
-    return OTHER_STATE_CITIES[stateName] || ["Main Examination Center (Central)"];
+    return DISTRICTS_WEST_BENGAL;
   };
 
   // Helper for simulated file upload on each document slot
@@ -737,18 +713,18 @@ export default function QualifierRoundPortal({ initialCandidate, onStartExam, on
                   </div>
                 </div>
 
-                {/* Country of Citizenship */}
+                {/* Country of Citizenship (Fixed to India) */}
                 <div className="space-y-1.5">
                   <label className="block text-slate-800 font-bold">
                     Country of Citizenship <span className="text-red-600">*</span>
                   </label>
                   <input
                     type="text"
-                    required
-                    value={formData.citizenship}
-                    onChange={(e) => setFormData({ ...formData, citizenship: e.target.value })}
-                    className="w-full px-4 py-2.5 rounded-xl border border-slate-300 bg-white text-sm font-semibold"
+                    readOnly
+                    value="India"
+                    className="w-full px-4 py-2.5 rounded-xl border border-slate-300 bg-slate-100 text-slate-800 text-sm font-bold cursor-not-allowed select-none"
                   />
+                  <p className="text-[10px] text-slate-400">Fixed (India)</p>
                 </div>
               </div>
 
@@ -1037,18 +1013,22 @@ export default function QualifierRoundPortal({ initialCandidate, onStartExam, on
 
             <form onSubmit={handleProceedToSection3} className="space-y-7 text-xs">
               
-              {/* Country Selection */}
+              {/* Country Selection (Fixed to India) */}
               <div className="space-y-1.5">
                 <label className="block text-slate-800 font-bold text-sm">
                   Country <span className="text-red-600">*</span>
                 </label>
-                <input
-                  type="text"
-                  required
-                  value={formData.examCountry}
-                  onChange={(e) => setFormData({ ...formData, examCountry: e.target.value })}
-                  className="w-full sm:w-1/2 px-4 py-2.5 rounded-xl border border-slate-300 bg-white font-semibold text-sm"
-                />
+                <div className="relative sm:w-1/2">
+                  <input
+                    type="text"
+                    readOnly
+                    value="India"
+                    className="w-full px-4 py-2.5 rounded-xl border border-slate-300 bg-slate-100 text-slate-800 font-bold text-sm cursor-not-allowed select-none"
+                  />
+                  <span className="absolute right-3 top-1/2 -translate-y-1/2 text-[10px] bg-emerald-100 text-emerald-800 font-bold px-2 py-0.5 rounded">
+                    Fixed (India)
+                  </span>
+                </div>
               </div>
 
               {/* Preference 1 Card */}
@@ -1074,7 +1054,7 @@ export default function QualifierRoundPortal({ initialCandidate, onStartExam, on
                       }}
                       className="w-full px-4 py-2.5 rounded-xl border border-slate-300 bg-white font-semibold text-sm"
                     >
-                      {OTHER_INDIAN_STATES.map((st) => (
+                      {EXAM_STATES.map((st) => (
                         <option key={st} value={st}>{st}</option>
                       ))}
                     </select>
@@ -1128,7 +1108,7 @@ export default function QualifierRoundPortal({ initialCandidate, onStartExam, on
                       }}
                       className="w-full px-4 py-2.5 rounded-xl border border-slate-300 bg-white font-semibold text-sm"
                     >
-                      {OTHER_INDIAN_STATES.map((st) => (
+                      {EXAM_STATES.map((st) => (
                         <option key={st} value={st}>{st}</option>
                       ))}
                     </select>
