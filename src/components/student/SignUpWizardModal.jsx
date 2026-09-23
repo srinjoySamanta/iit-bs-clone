@@ -182,11 +182,21 @@ export default function SignUpWizardModal({ isOpen, onClose }) {
                   <input
                     type="date"
                     required
+                    max={new Date().toISOString().split('T')[0]}
+                    min="1940-01-01"
                     value={formData.birthday}
-                    onChange={(e) => setFormData({ ...formData, birthday: e.target.value })}
+                    onChange={(e) => {
+                      const val = e.target.value;
+                      const today = new Date().toISOString().split('T')[0];
+                      if (val > today) {
+                        alert("Invalid Date of Birth: Birthday cannot exceed today's date.");
+                        return;
+                      }
+                      setFormData({ ...formData, birthday: val });
+                    }}
                     className="w-full px-3 py-2 rounded-lg border border-slate-300 focus:outline-none focus:border-kgp-crimson"
                   />
-                  <span className="text-[10px] text-slate-500 block mt-0.5">Minimum 15 years as on date</span>
+                  <span className="text-[10px] text-slate-500 block mt-0.5">Must be a valid past date (minimum 15 years as on date)</span>
                 </div>
 
                 <div>

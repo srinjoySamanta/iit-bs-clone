@@ -45,6 +45,7 @@ export default function QualifierRoundPortal({ initialCandidate, onStartExam, on
   const [maxReachedTab, setMaxReachedTab] = useState(1);
   const [formError, setFormError] = useState('');
   const [sameAsPermanent, setSameAsPermanent] = useState(true);
+  const todayDateString = new Date().toISOString().split('T')[0];
 
   // Form State covering all IITM BS Degree application fields
   const [formData, setFormData] = useState({
@@ -195,6 +196,25 @@ export default function QualifierRoundPortal({ initialCandidate, onStartExam, on
       }
       if (!formData.phone.trim()) {
         setFormError('Please enter candidate 10-digit Mobile Number.');
+        return;
+      }
+      if (!formData.dob) {
+        setFormError('Please select candidate Date of Birth.');
+        return;
+      }
+      if (formData.dob > todayDateString) {
+        setFormError("Invalid Date of Birth: Date of birth cannot exceed today's date.");
+        return;
+      }
+      const dobTime = new Date(formData.dob).getTime();
+      const todayStart = new Date().setHours(0, 0, 0, 0);
+      if (dobTime >= todayStart) {
+        setFormError("Invalid Date of Birth: Date of birth cannot be today or in the future.");
+        return;
+      }
+      const ageInYears = (todayStart - dobTime) / (1000 * 60 * 60 * 24 * 365.25);
+      if (ageInYears < 13) {
+        setFormError('Invalid Date of Birth: Candidate must be at least 13 years of age to register.');
         return;
       }
       // Check IIT Madras fee waiver rule
@@ -466,10 +486,21 @@ export default function QualifierRoundPortal({ initialCandidate, onStartExam, on
                   <input
                     type="date"
                     required
+                    max={todayDateString}
+                    min="1940-01-01"
                     value={formData.dob}
-                    onChange={(e) => setFormData({ ...formData, dob: e.target.value })}
+                    onChange={(e) => {
+                      const val = e.target.value;
+                      if (val > todayDateString) {
+                        setFormError("Invalid Date of Birth: Date of birth cannot exceed today's date.");
+                        return;
+                      }
+                      setFormError('');
+                      setFormData({ ...formData, dob: val });
+                    }}
                     className="w-full px-4 py-2.5 rounded-xl border border-slate-300 focus:border-kgp-crimson focus:outline-none text-sm transition"
                   />
+                  <p className="text-[11px] text-slate-400 mt-1">Must be a valid past date (cannot exceed today).</p>
                 </div>
 
                 <div>
