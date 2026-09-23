@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { 
   ArrowRight, ShieldCheck, CheckCircle2, Award, Calendar, 
-  Sparkles, Download, Layers, Users, BookOpen, Clock, ChevronRight 
+  Sparkles, Download, Users, BookOpen, Clock, ChevronRight 
 } from 'lucide-react';
-import { IIT_KGP_INFO, STATS } from '../data/portalData';
+import { IIT_KGP_INFO } from '../data/portalData';
 import iitKgpLogo from '../assets/logo';
 
 export default function Hero({ onOpenSignUp, onOpenDiagram, onOpenCertificate, onOpenQualifier }) {
@@ -54,7 +54,7 @@ export default function Hero({ onOpenSignUp, onOpenDiagram, onOpenCertificate, o
           </div>
           <div className="hidden sm:inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-800 border border-emerald-200 shadow-sm">
             <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" />
-            <span>Direct Entry: WBJEE &amp; JEE Advanced</span>
+            <span>Direct Entry: WBJEE, JEE Advanced &amp; Tripura JEE</span>
           </div>
           <div className="hidden md:inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-blue-50 text-blue-900 border border-blue-200 shadow-sm">
             <Sparkles className="w-3.5 h-3.5 text-blue-600" />
@@ -150,16 +150,6 @@ export default function Hero({ onOpenSignUp, onOpenDiagram, onOpenCertificate, o
             <ChevronRight className="w-4 h-4 text-amber-600" />
           </a>
 
-          {/* Interactive Block Diagram Button */}
-          <button
-            onClick={onOpenDiagram}
-            className="px-4 py-3.5 sm:py-4 bg-white hover:bg-slate-50 text-slate-700 hover:text-slate-900 text-xs sm:text-sm font-medium rounded-2xl border border-stone-300 flex items-center justify-center gap-1.5 transition shadow-sm"
-            title="Open Interactive Portal Block Diagram"
-          >
-            <Layers className="w-4 h-4 text-amber-600" />
-            <span className="hidden sm:inline">Block Diagram</span>
-          </button>
-
         </div>
 
         {/* Live Admission Deadline Countdown Strip (Sober & Prestigious Academic Style) */}
@@ -202,49 +192,6 @@ export default function Hero({ onOpenSignUp, onOpenDiagram, onOpenCertificate, o
             </div>
           </div>
 
-        </div>
-
-        {/* Feature Highlights Grid (Clean, Prestigious White Executive Cards) */}
-        <div className="mt-10 grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4 text-center">
-          <div className="bg-white hover:bg-amber-50/20 border border-stone-200/90 hover:border-amber-400/80 rounded-2xl p-4 sm:p-5 shadow-sm hover:shadow-md transition">
-            <div className="text-2xl sm:text-3xl lg:text-4xl font-extrabold text-kgp-crimson font-serif-title">
-              {STATS[0].value}
-            </div>
-            <div className="text-xs sm:text-sm font-bold text-slate-900 mt-1">
-              {STATS[0].label}
-            </div>
-            <div className="text-[11px] sm:text-xs text-slate-500 mt-0.5">{STATS[0].desc}</div>
-          </div>
-
-          <div className="bg-white hover:bg-amber-50/20 border border-stone-200/90 hover:border-amber-400/80 rounded-2xl p-4 sm:p-5 shadow-sm hover:shadow-md transition">
-            <div className="text-2xl sm:text-3xl lg:text-4xl font-extrabold text-kgp-crimson font-serif-title">
-              {STATS[1].value}
-            </div>
-            <div className="text-xs sm:text-sm font-bold text-slate-900 mt-1">
-              {STATS[1].label}
-            </div>
-            <div className="text-[11px] sm:text-xs text-slate-500 mt-0.5">{STATS[1].desc}</div>
-          </div>
-
-          <div className="bg-white hover:bg-amber-50/20 border border-stone-200/90 hover:border-amber-400/80 rounded-2xl p-4 sm:p-5 shadow-sm hover:shadow-md transition">
-            <div className="text-2xl sm:text-3xl lg:text-4xl font-extrabold text-kgp-crimson font-serif-title">
-              {STATS[2].value}
-            </div>
-            <div className="text-xs sm:text-sm font-bold text-slate-900 mt-1">
-              {STATS[2].label}
-            </div>
-            <div className="text-[11px] sm:text-xs text-slate-500 mt-0.5">{STATS[2].desc}</div>
-          </div>
-
-          <div className="bg-white hover:bg-amber-50/20 border border-stone-200/90 hover:border-amber-400/80 rounded-2xl p-4 sm:p-5 shadow-sm hover:shadow-md transition">
-            <div className="text-2xl sm:text-3xl lg:text-4xl font-extrabold text-kgp-crimson font-serif-title">
-              {STATS[3].value}
-            </div>
-            <div className="text-xs sm:text-sm font-bold text-slate-900 mt-1">
-              {STATS[3].label}
-            </div>
-            <div className="text-[11px] sm:text-xs text-slate-500 mt-0.5">{STATS[3].desc}</div>
-          </div>
         </div>
 
       </div>

@@ -19,7 +19,7 @@ export const IIT_KGP_INFO = {
 
 export const ANNOUNCEMENT_TICKER = [
   "🚨 Qualifier Round Examination 2026 Registration Open! Fill Details, Pay Fee & Take Exam",
-  "⭐ Direct Foundation entry for WBJEE & JEE Advanced Rank Holders",
+  "⭐ Direct Foundation entry for WBJEE, JEE Advanced & Tripura JEE Rank Holders",
   "🤖 Strictly Focused on Data Science & Artificial Intelligence (AI)",
   "🎓 Up to 75% Fee Waiver for eligible students with family income < ₹1 LPA"
 ];
