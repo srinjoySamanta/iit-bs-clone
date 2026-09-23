@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { 
   ArrowLeft, Lock, Mail, User, ShieldCheck, Key, 
   HelpCircle, Eye, EyeOff, CheckCircle2, Award, ExternalLink,
-  Sparkles, Phone, ChevronRight, Check, X, AlertTriangle, RefreshCw, Clock
+  Sparkles, Phone, ChevronRight, Check, X, AlertTriangle, RefreshCw, Clock, Settings
 } from 'lucide-react';
 import { IIT_KGP_INFO } from '../data/portalData';
 import iitKgpLogo from '../assets/logo';
@@ -28,6 +28,18 @@ export default function StudentLoginPage({
   const [timerSeconds, setTimerSeconds] = useState(59);
   const [showSimulatedNotice, setShowSimulatedNotice] = useState(false);
   const [dispatchToast, setDispatchToast] = useState(false);
+
+  // Real Email Delivery (EmailJS API) states
+  const [emailServiceId, setEmailServiceId] = useState(() => localStorage.getItem('iit_kgp_emailjs_service_id') || '');
+  const [emailTemplateId, setEmailTemplateId] = useState(() => localStorage.getItem('iit_kgp_emailjs_template_id') || '');
+  const [emailPublicKey, setEmailPublicKey] = useState(() => localStorage.getItem('iit_kgp_emailjs_public_key') || '');
+  const [showEmailConfig, setShowEmailConfig] = useState(false);
+  const [emailDeliveryStatus, setEmailDeliveryStatus] = useState('idle'); // 'idle' | 'sending' | 'delivered' | 'failed' | 'no_service'
+  const [emailStatusDetail, setEmailStatusDetail] = useState('');
+  const [tempServiceId, setTempServiceId] = useState(() => localStorage.getItem('iit_kgp_emailjs_service_id') || '');
+  const [tempTemplateId, setTempTemplateId] = useState(() => localStorage.getItem('iit_kgp_emailjs_template_id') || '');
+  const [tempPublicKey, setTempPublicKey] = useState(() => localStorage.getItem('iit_kgp_emailjs_public_key') || '');
+  const [configSuccessMsg, setConfigSuccessMsg] = useState('');
 
   // Fallback direct roll login toggle (for enrolled students)
   const [showRollLogin, setShowRollLogin] = useState(false);
@@ -102,6 +114,65 @@ export default function StudentLoginPage({
     return { valid: true, email: trimmed };
   };
 
+  const dispatchRealEmail = async (toEmail, code) => {
+    const sId = emailServiceId.trim() || localStorage.getItem('iit_kgp_emailjs_service_id') || '';
+    const tId = emailTemplateId.trim() || localStorage.getItem('iit_kgp_emailjs_template_id') || '';
+    const pKey = emailPublicKey.trim() || localStorage.getItem('iit_kgp_emailjs_public_key') || '';
+
+    if (!sId || !tId || !pKey) {
+      setEmailDeliveryStatus('no_service');
+      setEmailStatusDetail('No EmailJS credentials configured yet.');
+      return;
+    }
+
+    setEmailDeliveryStatus('sending');
+    setEmailStatusDetail('Connecting to mail server...');
+    try {
+      const response = await fetch('https://api.emailjs.com/api/v1.0/email/send', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          service_id: sId,
+          template_id: tId,
+          user_id: pKey,
+          template_params: {
+            to_email: toEmail,
+            verification_code: code,
+            passcode: code,
+            otp: code,
+            user_email: toEmail,
+            time: new Date().toLocaleTimeString()
+          }
+        })
+      });
+
+      if (response.ok) {
+        setEmailDeliveryStatus('delivered');
+        setEmailStatusDetail(`Real email delivered to ${toEmail}! Check your inbox or spam folder.`);
+      } else {
+        const errText = await response.text();
+        setEmailDeliveryStatus('failed');
+        setEmailStatusDetail(errText || 'Delivery service returned an error. Check EmailJS template configuration.');
+      }
+    } catch (err) {
+      setEmailDeliveryStatus('failed');
+      setEmailStatusDetail(err.message || 'Network error dispatching email.');
+    }
+  };
+
+  const handleSaveEmailConfig = (e) => {
+    e.preventDefault();
+    localStorage.setItem('iit_kgp_emailjs_service_id', tempServiceId.trim());
+    localStorage.setItem('iit_kgp_emailjs_template_id', tempTemplateId.trim());
+    localStorage.setItem('iit_kgp_emailjs_public_key', tempPublicKey.trim());
+    setEmailServiceId(tempServiceId.trim());
+    setEmailTemplateId(tempTemplateId.trim());
+    setEmailPublicKey(tempPublicKey.trim());
+    setConfigSuccessMsg('Credentials saved! Testing real email delivery...');
+    dispatchRealEmail(studentEmail.trim(), generatedCode);
+    setTimeout(() => setConfigSuccessMsg(''), 4000);
+  };
+
   const handleStartGoogleAuth = (e) => {
     e.preventDefault();
     setAuthError('');
@@ -120,6 +191,7 @@ export default function StudentLoginPage({
     setTimerSeconds(59);
     setShowSimulatedNotice(false);
     setGoogleAuthStep(2);
+    dispatchRealEmail(check.email, code);
   };
 
   const handleVerifyCode = (e) => {
@@ -165,6 +237,7 @@ export default function StudentLoginPage({
     setTimerSeconds(59);
     setDispatchToast(true);
     setTimeout(() => setDispatchToast(false), 5000);
+    dispatchRealEmail(studentEmail.trim(), newCode);
   };
 
   const handleResetModal = () => {
@@ -618,21 +691,71 @@ export default function StudentLoginPage({
                   </div>
                 </div>
 
-                {/* Verification Email Dispatch Banner (Code NOT shown here) */}
-                <div className="p-3.5 bg-blue-50 border border-blue-200 rounded-2xl space-y-2 text-left">
-                  <div className="flex items-center gap-2 text-blue-900 font-bold text-xs">
-                    <Mail className="w-4 h-4 text-[#1a73e8]" />
-                    <span>Verification Code Sent via Gmail</span>
-                  </div>
-                  <p className="text-blue-800 text-[11px] leading-relaxed">
-                    A secure 6-digit Google verification code has been dispatched to your Gmail inbox:
-                  </p>
-                  <div className="font-mono text-xs font-bold text-blue-950 bg-white/90 p-2 rounded-lg border border-blue-200 flex items-center justify-between">
-                    <span className="truncate">{studentEmail}</span>
-                    <span className="text-[10px] text-emerald-700 font-semibold bg-emerald-50 px-2 py-0.5 rounded border border-emerald-200 flex-shrink-0">
-                      Dispatched
+                {/* Verification Email Dispatch Banner & Delivery Engine */}
+                <div className="p-3.5 bg-blue-50/90 border border-blue-200 rounded-2xl space-y-2.5 text-left">
+                  <div className="flex items-center justify-between text-blue-900 font-bold text-xs">
+                    <span className="flex items-center gap-1.5">
+                      <Mail className="w-4 h-4 text-[#1a73e8]" />
+                      <span>Google Verification Code</span>
                     </span>
+                    <button
+                      type="button"
+                      onClick={() => setShowEmailConfig(!showEmailConfig)}
+                      className="text-[11px] text-[#1a73e8] hover:text-blue-800 underline font-semibold flex items-center gap-1"
+                    >
+                      <Settings className="w-3 h-3" />
+                      <span>{showEmailConfig ? 'Hide Email Setup' : 'Real Email Setup (EmailJS)'}</span>
+                    </button>
                   </div>
+
+                  {/* Delivery Status Messages */}
+                  {emailDeliveryStatus === 'delivered' && (
+                    <div className="p-2.5 bg-emerald-50 border border-emerald-300 rounded-xl text-xs text-emerald-800 flex items-center gap-2">
+                      <CheckCircle2 className="w-4 h-4 text-emerald-600 flex-shrink-0" />
+                      <span>Real email delivered to <strong>{studentEmail}</strong>! Check your Gmail inbox or Spam folder.</span>
+                    </div>
+                  )}
+
+                  {emailDeliveryStatus === 'sending' && (
+                    <div className="p-2.5 bg-blue-100/80 border border-blue-300 rounded-xl text-xs text-blue-900 flex items-center gap-2">
+                      <RefreshCw className="w-4 h-4 text-[#1a73e8] animate-spin flex-shrink-0" />
+                      <span>Dispatching verification email to <strong>{studentEmail}</strong> via EmailJS...</span>
+                    </div>
+                  )}
+
+                  {emailDeliveryStatus === 'failed' && (
+                    <div className="p-2.5 bg-amber-50 border border-amber-300 rounded-xl text-xs text-amber-900 space-y-1">
+                      <div className="font-bold flex items-center gap-1.5">
+                        <AlertTriangle className="w-3.5 h-3.5 text-amber-600" />
+                        <span>EmailJS Relay Notice</span>
+                      </div>
+                      <p className="text-[11px] text-amber-800">{emailStatusDetail}</p>
+                    </div>
+                  )}
+
+                  {/* Prominent Verification Code Card with 1-Click Auto-Fill */}
+                  <div className="p-3 bg-white rounded-xl border-2 border-blue-300 shadow-sm flex items-center justify-between gap-3">
+                    <div>
+                      <div className="text-[10px] text-slate-500 font-bold uppercase tracking-wider">
+                        Generated Security Code
+                      </div>
+                      <div className="text-xl font-mono font-extrabold text-[#1a73e8] tracking-wider">
+                        G-{generatedCode}
+                      </div>
+                    </div>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setEnteredCode(generatedCode);
+                        setAuthError('');
+                      }}
+                      className="px-3.5 py-2 bg-gradient-to-r from-blue-600 to-[#1a73e8] hover:from-blue-700 hover:to-blue-800 text-white font-bold text-xs rounded-xl shadow-sm transition flex items-center gap-1.5 flex-shrink-0"
+                    >
+                      <Check className="w-3.5 h-3.5" />
+                      <span>Auto-fill Code</span>
+                    </button>
+                  </div>
+
                   <div className="pt-1 flex items-center justify-between text-[11px]">
                     <a
                       href="https://mail.google.com/mail/u/0/#inbox"
@@ -641,29 +764,66 @@ export default function StudentLoginPage({
                       className="text-[#1a73e8] font-bold hover:underline flex items-center gap-1"
                     >
                       <ExternalLink className="w-3 h-3" />
-                      <span>Open Gmail Inbox</span>
+                      <span>Open Gmail Inbox ({studentEmail})</span>
                     </a>
-                    <button
-                      type="button"
-                      onClick={() => setShowSimulatedNotice(!showSimulatedNotice)}
-                      className="text-slate-400 hover:text-slate-600 text-[10px] underline"
-                      title="Testing helper for review without external mail server"
-                    >
-                      {showSimulatedNotice ? 'Hide Preview' : 'Show Test Inbox Preview'}
-                    </button>
+                    <span className="text-[10px] text-slate-400">
+                      Code valid for 10 minutes
+                    </span>
                   </div>
 
-                  {/* Optional testing inspection preview */}
-                  {showSimulatedNotice && (
-                    <div className="mt-2 p-2.5 bg-white rounded-xl border border-blue-300 text-[11px] text-slate-700 space-y-1 animate-in fade-in">
-                      <div className="font-bold text-slate-900 flex items-center justify-between">
-                        <span>📩 Gmail Message Preview:</span>
-                        <span className="text-[10px] text-slate-400">Just now</span>
+                  {/* EmailJS Configuration Panel (Collapsible) */}
+                  {showEmailConfig && (
+                    <div className="mt-2 p-3 bg-white rounded-xl border border-slate-300 text-slate-800 space-y-2 animate-in fade-in">
+                      <div className="font-bold text-xs text-slate-900 flex items-center gap-1.5">
+                        <Settings className="w-3.5 h-3.5 text-[#1a73e8]" />
+                        <span>Connect Free EmailJS (Sends to Real Inboxes)</span>
                       </div>
-                      <div className="text-slate-600"><strong>From:</strong> Google Security &lt;no-reply@accounts.google.com&gt;</div>
-                      <div className="text-slate-600"><strong>To:</strong> {studentEmail}</div>
-                      <div className="text-blue-900 font-bold pt-1">
-                        Your verification code is: <span className="font-mono text-base text-[#1a73e8] bg-blue-50 px-2 py-0.5 rounded border border-blue-200">G-{generatedCode}</span>
+                      <p className="text-[11px] text-slate-600 leading-relaxed">
+                        GitHub Pages is a static frontend. To dispatch real emails to your Gmail inbox from this website, connect your free 
+                        <a href="https://www.emailjs.com/" target="_blank" rel="noreferrer" className="text-[#1a73e8] font-bold underline mx-1">EmailJS</a> 
+                        account (200 free emails/month):
+                      </p>
+                      <div className="space-y-2 pt-1 text-xs">
+                        <div>
+                          <label className="block text-[10px] font-bold text-slate-600 uppercase mb-0.5">EmailJS Service ID</label>
+                          <input
+                            type="text"
+                            placeholder="e.g. service_xxxxxxx"
+                            value={tempServiceId}
+                            onChange={(e) => setTempServiceId(e.target.value)}
+                            className="w-full px-2.5 py-1.5 rounded-lg border border-slate-300 font-mono text-xs focus:outline-none focus:border-[#1a73e8]"
+                          />
+                        </div>
+                        <div>
+                          <label className="block text-[10px] font-bold text-slate-600 uppercase mb-0.5">EmailJS Template ID</label>
+                          <input
+                            type="text"
+                            placeholder="e.g. template_xxxxxxx"
+                            value={tempTemplateId}
+                            onChange={(e) => setTempTemplateId(e.target.value)}
+                            className="w-full px-2.5 py-1.5 rounded-lg border border-slate-300 font-mono text-xs focus:outline-none focus:border-[#1a73e8]"
+                          />
+                        </div>
+                        <div>
+                          <label className="block text-[10px] font-bold text-slate-600 uppercase mb-0.5">EmailJS Public Key</label>
+                          <input
+                            type="text"
+                            placeholder="e.g. public_xxxxxxx"
+                            value={tempPublicKey}
+                            onChange={(e) => setTempPublicKey(e.target.value)}
+                            className="w-full px-2.5 py-1.5 rounded-lg border border-slate-300 font-mono text-xs focus:outline-none focus:border-[#1a73e8]"
+                          />
+                        </div>
+                        {configSuccessMsg && (
+                          <div className="text-[11px] text-emerald-700 font-semibold">{configSuccessMsg}</div>
+                        )}
+                        <button
+                          type="button"
+                          onClick={handleSaveEmailConfig}
+                          className="w-full py-2 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-lg transition text-xs shadow-sm"
+                        >
+                          Save Credentials &amp; Send Real Email to {studentEmail}
+                        </button>
                       </div>
                     </div>
                   )}
