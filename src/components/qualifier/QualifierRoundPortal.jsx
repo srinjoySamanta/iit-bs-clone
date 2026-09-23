@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { 
   CheckCircle2, CreditCard, ArrowRight, ArrowLeft, UserCheck, ShieldCheck, 
-  Award, QrCode, FileText, Sparkles, Users, Lock, ChevronRight, ChevronLeft,
+  Award, QrCode, FileText, Sparkles, Lock, ChevronRight, ChevronLeft,
   Upload, Check, AlertCircle, Building, BookOpen, MapPin, Calendar, 
   Camera, Download, Printer, Info, AlertTriangle, Eye, RefreshCw
 } from 'lucide-react';
-import { IIT_KGP_INFO, SAMPLE_QUALIFIER_CANDIDATES } from '../../data/portalData';
+import { IIT_KGP_INFO } from '../../data/portalData';
 import iitKgpLogo from '../../assets/logo';
 
 const INDIAN_STATES = [
@@ -43,7 +43,6 @@ export default function QualifierRoundPortal({ initialCandidate, onStartExam, on
   // Navigation tabs matching IIT Madras BS portal (/application_form/...)
   const [activeTab, setActiveTab] = useState('personal'); // 'personal' | 'address' | 'academic' | 'exam_city' | 'documents' | 'payment' | 'completed'
   const [maxReachedTab, setMaxReachedTab] = useState(1);
-  const [candidates, setCandidates] = useState(SAMPLE_QUALIFIER_CANDIDATES);
   const [formError, setFormError] = useState('');
   const [sameAsPermanent, setSameAsPermanent] = useState(true);
 
@@ -248,20 +247,6 @@ export default function QualifierRoundPortal({ initialCandidate, onStartExam, on
   const handleCompletePayment = () => {
     // Generate official roll number
     const finalRoll = "KGP-QUAL-2026-" + Math.floor(1000 + Math.random() * 9000);
-    
-    // Add to candidate host list
-    const newEntry = {
-      roll: finalRoll,
-      name: formData.fullName,
-      email: formData.email,
-      phone: formData.phone || '+91 98301 22419',
-      feeStatus: `Paid (₹${payableAmount})`,
-      examStatus: "Ready for Test",
-      score: "-",
-      result: "Registered"
-    };
-
-    setCandidates([newEntry, ...candidates]);
     setFormData(prev => ({ ...prev, finalRollNo: finalRoll }));
     setActiveTab('completed');
   };
@@ -1656,61 +1641,6 @@ export default function QualifierRoundPortal({ initialCandidate, onStartExam, on
 
           </div>
         )}
-
-        {/* ========================================================================= */}
-        {/* HOST OF STUDENTS LIVE ROSTER (SUPERVISOR / APPLICANT REGISTRY)            */}
-        {/* ========================================================================= */}
-        <div className="mt-12 bg-white rounded-3xl border border-slate-200 p-6 sm:p-8 shadow-xs space-y-4">
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-4 border-b border-slate-200">
-            <div>
-              <h3 className="text-base font-bold font-serif-title text-slate-900 flex items-center gap-2">
-                <Users className="w-5 h-5 text-kgp-crimson" />
-                <span>Host of Students — Qualifier Round Registrations</span>
-              </h3>
-              <p className="text-xs text-slate-500 mt-0.5">
-                Official applicant roster, fee reconciliation status, and test engine readiness.
-              </p>
-            </div>
-            <span className="text-xs bg-emerald-100 text-emerald-800 font-bold px-3 py-1 rounded-full w-fit">
-              {candidates.length} Registered Candidates
-            </span>
-          </div>
-
-          <div className="overflow-x-auto">
-            <table className="w-full text-left text-xs">
-              <thead className="bg-slate-100 text-slate-700 uppercase font-bold">
-                <tr>
-                  <th className="px-3.5 py-3">Roll No</th>
-                  <th className="px-3.5 py-3">Candidate Name</th>
-                  <th className="px-3.5 py-3">Email</th>
-                  <th className="px-3.5 py-3">Fee Status</th>
-                  <th className="px-3.5 py-3">Exam Status</th>
-                  <th className="px-3.5 py-3 text-right">Result</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-slate-100">
-                {candidates.map((c, i) => (
-                  <tr key={i} className="hover:bg-slate-50 transition">
-                    <td className="px-3.5 py-3 font-mono font-bold text-kgp-crimson">{c.roll}</td>
-                    <td className="px-3.5 py-3 font-bold text-slate-900">{c.name}</td>
-                    <td className="px-3.5 py-3 text-slate-500 font-mono">{c.email}</td>
-                    <td className="px-3.5 py-3 font-semibold text-slate-700">{c.feeStatus}</td>
-                    <td className="px-3.5 py-3">
-                      <span className={`px-2.5 py-1 rounded-md font-bold text-[10px] ${
-                        c.examStatus === 'Completed' 
-                          ? 'bg-emerald-100 text-emerald-800' 
-                          : 'bg-blue-100 text-blue-800'
-                      }`}>
-                        {c.examStatus}
-                      </span>
-                    </td>
-                    <td className="px-3.5 py-3 text-right font-bold text-emerald-700">{c.result}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        </div>
 
       </main>
 
