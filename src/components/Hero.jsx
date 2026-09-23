@@ -152,44 +152,60 @@ export default function Hero({ onOpenSignUp, onOpenDiagram, onOpenCertificate, o
 
         </div>
 
-        {/* Live Admission Deadline Countdown Strip (Sober & Prestigious Academic Style) */}
-        <div className="mt-7 max-w-xl mx-auto bg-white border-2 border-amber-300/80 rounded-2xl p-3 sm:p-3.5 shadow-md flex flex-col sm:flex-row items-center justify-between gap-3 text-slate-900">
+        {/* Live Admission Deadline Countdown Strip & Next Batch Notice */}
+        <div className="mt-7 max-w-xl mx-auto bg-white border-2 border-amber-300/80 rounded-2xl p-3 sm:p-3.5 shadow-md text-slate-900 space-y-3">
           
-          <div className="flex items-center space-x-2.5 text-center sm:text-left">
-            <div className="w-8 h-8 rounded-lg bg-red-50 text-kgp-crimson border border-red-200 flex items-center justify-center flex-shrink-0 shadow-sm">
-              <Clock className="w-4 h-4 animate-spin" style={{ animationDuration: '10s' }} />
-            </div>
-            <div>
-              <div className="text-[10px] sm:text-[11px] font-bold text-amber-800 uppercase tracking-wider leading-none">
-                Qualifier Term 2026 Batch
+          <div className="flex flex-col sm:flex-row items-center justify-between gap-3">
+            <div className="flex items-center space-x-2.5 text-center sm:text-left">
+              <div className="w-8 h-8 rounded-lg bg-red-50 text-kgp-crimson border border-red-200 flex items-center justify-center flex-shrink-0 shadow-sm">
+                <Clock className="w-4 h-4 animate-spin" style={{ animationDuration: '10s' }} />
               </div>
-              <div className="text-xs sm:text-sm font-extrabold text-slate-900 leading-tight">
-                Applications Closing Soon
+              <div>
+                <div className="text-[10px] sm:text-[11px] font-bold text-amber-800 uppercase tracking-wider leading-none">
+                  Qualifier Term 2026 Batch
+                </div>
+                <div className="text-xs sm:text-sm font-extrabold text-slate-900 leading-tight">
+                  Applications Closing Soon
+                </div>
+              </div>
+            </div>
+
+            {/* Countdown Blocks */}
+            <div className="flex items-center space-x-1.5 text-center">
+              <div className="bg-stone-50 border border-stone-200 px-2.5 py-1 rounded-lg">
+                <span className="text-base font-extrabold text-slate-900 tabular-nums">{timeLeft.days}</span>
+                <span className="block text-[9px] text-slate-500 uppercase font-semibold">Days</span>
+              </div>
+              <span className="text-amber-600 font-bold">:</span>
+              <div className="bg-stone-50 border border-stone-200 px-2.5 py-1 rounded-lg">
+                <span className="text-base font-extrabold text-slate-900 tabular-nums">{String(timeLeft.hours).padStart(2, '0')}</span>
+                <span className="block text-[9px] text-slate-500 uppercase font-semibold">Hours</span>
+              </div>
+              <span className="text-amber-600 font-bold">:</span>
+              <div className="bg-stone-50 border border-stone-200 px-2.5 py-1 rounded-lg">
+                <span className="text-base font-extrabold text-slate-900 tabular-nums">{String(timeLeft.minutes).padStart(2, '0')}</span>
+                <span className="block text-[9px] text-slate-500 uppercase font-semibold">Mins</span>
+              </div>
+              <span className="text-amber-600 font-bold">:</span>
+              <div className="bg-stone-50 border border-stone-200 px-2.5 py-1 rounded-lg">
+                <span className="text-base font-extrabold text-kgp-crimson tabular-nums">{String(timeLeft.seconds).padStart(2, '0')}</span>
+                <span className="block text-[9px] text-slate-500 uppercase font-semibold">Secs</span>
               </div>
             </div>
           </div>
 
-          {/* Countdown Blocks */}
-          <div className="flex items-center space-x-1.5 text-center">
-            <div className="bg-stone-50 border border-stone-200 px-2.5 py-1 rounded-lg">
-              <span className="text-base font-extrabold text-slate-900 tabular-nums">{timeLeft.days}</span>
-              <span className="block text-[9px] text-slate-500 uppercase font-semibold">Days</span>
+          {/* Next Batch Notification: Qualifier Term Batch 2027 */}
+          <div className="pt-2.5 border-t border-slate-100 flex flex-col sm:flex-row items-center justify-between gap-1.5 text-[11px] text-slate-700 bg-slate-50/70 -mx-1 px-3 py-1.5 rounded-xl border border-slate-200/60">
+            <div className="flex items-center gap-2 font-semibold">
+              <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+              <span className="text-slate-900 font-bold">
+                Qualifier Term Batch 2027 Application Starting Soon
+              </span>
             </div>
-            <span className="text-amber-600 font-bold">:</span>
-            <div className="bg-stone-50 border border-stone-200 px-2.5 py-1 rounded-lg">
-              <span className="text-base font-extrabold text-slate-900 tabular-nums">{String(timeLeft.hours).padStart(2, '0')}</span>
-              <span className="block text-[9px] text-slate-500 uppercase font-semibold">Hours</span>
-            </div>
-            <span className="text-amber-600 font-bold">:</span>
-            <div className="bg-stone-50 border border-stone-200 px-2.5 py-1 rounded-lg">
-              <span className="text-base font-extrabold text-slate-900 tabular-nums">{String(timeLeft.minutes).padStart(2, '0')}</span>
-              <span className="block text-[9px] text-slate-500 uppercase font-semibold">Mins</span>
-            </div>
-            <span className="text-amber-600 font-bold">:</span>
-            <div className="bg-stone-50 border border-stone-200 px-2.5 py-1 rounded-lg">
-              <span className="text-base font-extrabold text-kgp-crimson tabular-nums">{String(timeLeft.seconds).padStart(2, '0')}</span>
-              <span className="block text-[9px] text-slate-500 uppercase font-semibold">Secs</span>
-            </div>
+            <span className="inline-flex items-center gap-1 text-[10px] font-extrabold text-emerald-800 bg-emerald-100/80 px-2 py-0.5 rounded-md border border-emerald-300">
+              <Sparkles className="w-3 h-3 text-emerald-600" />
+              <span>Admissions 2027</span>
+            </span>
           </div>
 
         </div>
