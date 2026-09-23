@@ -5,7 +5,7 @@ import {
   Check, AlertCircle, Building, BookOpen, MapPin, Calendar, 
   Printer, Info, AlertTriangle, RotateCcw, Upload, FileUp, 
   Camera, Briefcase, GraduationCap, Eye, Trash2, Sparkles, 
-  X, ExternalLink, ShieldAlert, FileCheck
+  X, ExternalLink, ShieldAlert, FileCheck, User
 } from 'lucide-react';
 import { IIT_KGP_INFO } from '../../data/portalData';
 import iitKgpLogo from '../../assets/logo';
@@ -181,6 +181,19 @@ export default function QualifierRoundPortal({ initialCandidate, onStartExam, on
     payableAmount = 750; // 50% fee waiver
     feeWaiverText = "50% Fee Waiver Applied (OBC-NCL/EWS)";
   }
+
+  // Calculate overall application progress percentage
+  const calculateProgress = () => {
+    if (section === 5) return 100;
+    if (section === 4) return 85;
+    if (section === 3) return 65;
+    if (section === 2) return 40;
+    return 20;
+  };
+
+  // Mandatory verification documents registry
+  const mandatoryDocsKeys = ['photo', 'signature', 'idProof', 'class10', formData.higherSecChoice === 'diploma' ? 'diplomaCert' : 'class12'];
+  const mandatoryUploadedCount = mandatoryDocsKeys.filter(k => formData.docs[k]?.uploaded).length;
 
   // Get cities based on selected state (West Bengal or Tripura)
   const getCitiesForState = (stateName) => {
@@ -555,9 +568,9 @@ export default function QualifierRoundPortal({ initialCandidate, onStartExam, on
   return (
     <div className="min-h-screen bg-[#f3f4f6] text-slate-800 font-sans selection:bg-amber-500 selection:text-white pb-20">
       
-      {/* 1. TOP NAVBAR */}
+      {/* 1. TOP NAVBAR (FULL WIDESCREEN) */}
       <header className="bg-white border-b border-slate-200 sticky top-0 z-30 shadow-xs">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 py-3 flex items-center justify-between">
+        <div className="max-w-[1720px] mx-auto px-4 sm:px-6 lg:px-8 py-3 flex items-center justify-between gap-4">
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 rounded-full bg-white border border-slate-200 p-1 flex items-center justify-center shadow-xs flex-shrink-0">
               <img src={iitKgpLogo} alt="IIT KGP" className="w-8 h-8 object-contain" />
@@ -567,143 +580,339 @@ export default function QualifierRoundPortal({ initialCandidate, onStartExam, on
                 {IIT_KGP_INFO.hindiName}
               </div>
               <div className="text-sm sm:text-base font-extrabold text-slate-900 tracking-tight flex items-center gap-2">
-                <span>IIT Kharagpur BS Admissions Portal</span>
+                <span>IIT Kharagpur Admissions Directorate</span>
+                <span className="hidden sm:inline-block px-2 py-0.5 bg-amber-100 text-amber-900 text-[10px] font-bold rounded-full border border-amber-300">
+                  Qualifier Round 2026
+                </span>
               </div>
             </div>
           </div>
 
-          <button
-            onClick={onBackToHome}
-            className="px-3.5 py-1.5 rounded-xl border border-slate-300 text-slate-700 hover:bg-slate-100 text-xs font-semibold transition"
-          >
-            Exit to Home
-          </button>
+          <div className="flex items-center gap-2 sm:gap-3">
+            <button
+              type="button"
+              onClick={handlePreFillDocuments}
+              className="hidden sm:flex px-3.5 py-1.5 bg-amber-50 hover:bg-amber-100 text-amber-900 font-bold text-xs rounded-xl border border-amber-300 items-center gap-1.5 transition shadow-2xs"
+              title="Automatically populate verified sample test documents"
+            >
+              <Sparkles className="w-3.5 h-3.5 text-amber-600" />
+              <span>Auto-Attach Sample Docs</span>
+            </button>
+
+            <button
+              onClick={onBackToHome}
+              className="px-3.5 py-1.5 rounded-xl border border-slate-300 text-slate-700 hover:bg-slate-100 text-xs font-semibold transition"
+            >
+              Exit to Home
+            </button>
+          </div>
         </div>
       </header>
 
-      {/* 2. PROGRAM SUB-BANNER */}
-      <div className="bg-[#800000] text-white py-3.5 px-4 sm:px-6 border-b-2 border-amber-400 shadow-sm">
-        <div className="max-w-4xl mx-auto flex flex-col sm:flex-row sm:items-center justify-between gap-2 text-xs">
-          <div className="flex items-center gap-2 font-bold text-sm">
+      {/* 2. PROGRAM SUB-BANNER (FULL WIDESCREEN) */}
+      <div className="bg-[#800000] text-white py-2.5 px-4 sm:px-6 lg:px-8 border-b-2 border-amber-400 shadow-sm">
+        <div className="max-w-[1720px] mx-auto flex flex-col sm:flex-row sm:items-center justify-between gap-2 text-xs">
+          <div className="flex items-center gap-2 font-bold">
             <BookOpen className="w-4 h-4 text-amber-300" />
-            <span>Online Application Form — Qualifier Round 2026</span>
+            <span>Online Application Form — {formData.program}</span>
           </div>
-          <div className="text-amber-200 text-[11px] font-mono">
-            IIT Kharagpur Admissions Desk
+          <div className="flex items-center gap-4 text-amber-200 text-[11px] font-mono">
+            <span>Qualifier CBT Exam: 15 Nov, 2026</span>
+            <span className="hidden md:inline text-white/40">•</span>
+            <span className="hidden md:inline">256-Bit SSL Encrypted Scrutiny System</span>
           </div>
         </div>
       </div>
 
-      {/* 3. STEPPER PROGRESS TABS (4 Clean Steps) */}
-      <div className="max-w-4xl mx-auto px-4 sm:px-6 pt-6">
-        <div className="bg-white rounded-2xl border border-slate-200 shadow-xs p-2 flex items-center justify-between text-xs font-bold gap-1.5 overflow-x-auto">
+      {/* 3. WIDESCREEN WORKSPACE (SIDEBAR + MAIN FORM + RIGHT DOSSIER) */}
+      <div className="max-w-[1720px] mx-auto px-4 sm:px-6 lg:px-8 py-6">
+        <div className="flex flex-col lg:flex-row gap-6 lg:gap-8 items-start">
           
-          {/* Step 1 */}
-          <button
-            onClick={() => { if (section >= 1) setSection(1); }}
-            className={`flex-1 py-2 px-2.5 rounded-xl flex items-center justify-center gap-1.5 transition ${
-              section === 1 
-                ? 'bg-kgp-crimson text-white shadow-xs' 
-                : section > 1 
-                  ? 'bg-emerald-50 text-emerald-800 border border-emerald-200' 
-                  : 'text-slate-400'
-            }`}
-          >
-            <span className={`w-5 h-5 rounded-full flex items-center justify-center text-[10px] ${
-              section === 1 ? 'bg-amber-400 text-slate-950 font-black' : section > 1 ? 'bg-emerald-600 text-white' : 'bg-slate-200 text-slate-600'
-            }`}>
-              {section > 1 ? <Check className="w-3.5 h-3.5 stroke-[3]" /> : '1'}
-            </span>
-            <span className="truncate">1. Personal</span>
-          </button>
-
-          <ChevronRight className="w-3.5 h-3.5 text-slate-300 flex-shrink-0" />
-
-          {/* Step 2 */}
-          <button
-            onClick={() => { if (section >= 2) setSection(2); }}
-            className={`flex-1 py-2 px-2.5 rounded-xl flex items-center justify-center gap-1.5 transition ${
-              section === 2 
-                ? 'bg-kgp-crimson text-white shadow-xs' 
-                : section > 2 
-                  ? 'bg-emerald-50 text-emerald-800 border border-emerald-200' 
-                  : 'text-slate-400'
-            }`}
-          >
-            <span className={`w-5 h-5 rounded-full flex items-center justify-center text-[10px] ${
-              section === 2 ? 'bg-amber-400 text-slate-950 font-black' : section > 2 ? 'bg-emerald-600 text-white' : 'bg-slate-200 text-slate-600'
-            }`}>
-              {section > 2 ? <Check className="w-3.5 h-3.5 stroke-[3]" /> : '2'}
-            </span>
-            <span className="truncate">2. Exam Cities</span>
-          </button>
-
-          <ChevronRight className="w-3.5 h-3.5 text-slate-300 flex-shrink-0" />
-
-          {/* Step 3 (File & Document Uploads) */}
-          <button
-            onClick={() => { if (section >= 3) setSection(3); }}
-            className={`flex-1 py-2 px-2.5 rounded-xl flex items-center justify-center gap-1.5 transition ${
-              section === 3 
-                ? 'bg-kgp-crimson text-white shadow-xs' 
-                : section > 3 
-                  ? 'bg-emerald-50 text-emerald-800 border border-emerald-200' 
-                  : 'text-slate-400'
-            }`}
-          >
-            <span className={`w-5 h-5 rounded-full flex items-center justify-center text-[10px] ${
-              section === 3 ? 'bg-amber-400 text-slate-950 font-black' : section > 3 ? 'bg-emerald-600 text-white' : 'bg-slate-200 text-slate-600'
-            }`}>
-              {section > 3 ? <Check className="w-3.5 h-3.5 stroke-[3]" /> : '3'}
-            </span>
-            <span className="truncate">3. Document Uploads</span>
-          </button>
-
-          <ChevronRight className="w-3.5 h-3.5 text-slate-300 flex-shrink-0" />
-
-          {/* Step 4 */}
-          <button
-            onClick={() => { if (section >= 4) setSection(4); }}
-            className={`flex-1 py-2 px-2.5 rounded-xl flex items-center justify-center gap-1.5 transition ${
-              section >= 4 ? 'bg-kgp-crimson text-white shadow-xs' : 'text-slate-400'
-            }`}
-          >
-            <span className={`w-5 h-5 rounded-full flex items-center justify-center text-[10px] ${
-              section >= 4 ? 'bg-amber-400 text-slate-950 font-black' : 'bg-slate-200 text-slate-600'
-            }`}>
-              4
-            </span>
-            <span className="truncate">Review &amp; Pay</span>
-          </button>
-
-        </div>
-      </div>
-
-      {/* 4. MAIN FORM WRAPPER */}
-      <main className="max-w-4xl mx-auto px-4 sm:px-6 py-6">
-        
-        {/* Error Alert */}
-        {formError && (
-          <div className="mb-6 p-4 bg-red-50 border-2 border-red-300 rounded-2xl text-xs text-red-800 flex items-start gap-3 shadow-xs animate-in fade-in">
-            <AlertTriangle className="w-5 h-5 text-red-600 flex-shrink-0 mt-0.5" />
-            <div className="space-y-1">
-              <div className="font-bold text-red-900">Please review the following before continuing:</div>
-              <p className="leading-relaxed">{formError}</p>
-            </div>
-          </div>
-        )}
-
-        {/* ========================================================================= */}
-        {/* SECTION 1 OF 3: PERSONAL DETAILS                                          */}
-        {/* ========================================================================= */}
-        {section === 1 && (
-          <div className="bg-white rounded-3xl border border-slate-200 p-6 sm:p-10 shadow-sm space-y-7 animate-in fade-in">
+          {/* ========================================================================= */}
+          {/* LEFT SIDEBAR: THE 4 APPLICATION STEPS & APPLICANT DOSSIER                 */}
+          {/* ========================================================================= */}
+          <aside className="w-full lg:w-72 xl:w-80 flex-shrink-0 space-y-5 lg:sticky lg:top-20">
             
-            {/* Form Section Header */}
-            <div className="border-b border-slate-200 pb-4">
-              <div className="text-xs uppercase font-extrabold tracking-wider text-kgp-crimson">
-                application form
+            {/* Applicant Profile Card */}
+            <div className="bg-white rounded-3xl border border-slate-200 p-5 shadow-xs space-y-4">
+              <div className="flex items-center gap-3 pb-3 border-b border-slate-100">
+                <div className="w-12 h-12 rounded-2xl bg-slate-100 border border-slate-200 overflow-hidden flex items-center justify-center flex-shrink-0 shadow-inner">
+                  {formData.docs.photo.uploaded && formData.docs.photo.previewUrl ? (
+                    <img 
+                      src={formData.docs.photo.previewUrl} 
+                      alt="Candidate" 
+                      className="w-full h-full object-cover"
+                    />
+                  ) : (
+                    <span className="font-extrabold text-kgp-crimson text-sm font-mono">
+                      {formData.fullName ? formData.fullName.split(' ').map(n => n[0]).join('').slice(0, 2) : 'SS'}
+                    </span>
+                  )}
+                </div>
+                <div className="min-w-0 flex-1">
+                  <div className="text-[10px] uppercase font-bold text-slate-400">Applicant</div>
+                  <div className="font-extrabold text-slate-900 text-sm truncate uppercase">
+                    {formData.fullName || "SRINJOY SAMANTA"}
+                  </div>
+                  <div className="text-[10px] text-emerald-700 font-mono flex items-center gap-1 font-semibold">
+                    <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
+                    <span>{formData.applicationNo || "KGP-2026-BS-7821"}</span>
+                  </div>
+                </div>
               </div>
+
+              {/* Progress bar */}
+              <div className="space-y-1.5">
+                <div className="flex justify-between text-[11px] font-bold">
+                  <span className="text-slate-600">Application Progress</span>
+                  <span className="text-kgp-crimson font-mono">{calculateProgress()}%</span>
+                </div>
+                <div className="w-full h-2 rounded-full bg-slate-100 overflow-hidden">
+                  <div 
+                    className="h-full bg-gradient-to-r from-amber-400 to-kgp-crimson transition-all duration-300 rounded-full"
+                    style={{ width: `${calculateProgress()}%` }}
+                  ></div>
+                </div>
+              </div>
+
+              {/* Target Program Badge */}
+              <div className="text-[11px] p-2.5 rounded-xl bg-slate-50 border border-slate-200 text-slate-700 font-semibold leading-snug">
+                <span className="text-[9px] uppercase font-extrabold text-slate-400 block mb-0.5">Degree Track:</span>
+                {formData.program}
+              </div>
+            </div>
+
+            {/* THE 4 STEPS ON THE LEFT SIDE */}
+            <div className="bg-white rounded-3xl border border-slate-200 p-3 shadow-xs space-y-2">
+              <div className="px-3 pt-2 pb-1 text-[10px] font-extrabold uppercase tracking-wider text-slate-400">
+                Application Steps
+              </div>
+
+              {/* 1. Personal */}
+              <button
+                type="button"
+                onClick={() => { if (section >= 1) { setSection(1); window.scrollTo({ top: 0, behavior: 'smooth' }); } }}
+                className={`w-full p-3.5 rounded-2xl flex items-center gap-3 transition text-left ${
+                  section === 1 
+                    ? 'bg-[#800000] text-white shadow-md' 
+                    : section > 1
+                      ? 'hover:bg-slate-50 text-slate-800'
+                      : 'text-slate-400 hover:bg-slate-50'
+                }`}
+              >
+                <div className={`w-9 h-9 rounded-xl flex items-center justify-center font-bold text-xs flex-shrink-0 transition ${
+                  section === 1 
+                    ? 'bg-amber-400 text-slate-950 font-black shadow-xs' 
+                    : section > 1 
+                      ? 'bg-emerald-100 text-emerald-800 border border-emerald-300' 
+                      : 'bg-slate-100 text-slate-400'
+                }`}>
+                  {section > 1 ? <Check className="w-4 h-4 stroke-[3]" /> : '1'}
+                </div>
+                <div className="min-w-0 flex-1">
+                  <div className="font-extrabold text-xs flex items-center justify-between">
+                    <span>1. Personal</span>
+                    {section > 1 && (
+                      <span className="text-[9px] px-1.5 py-0.5 rounded font-bold bg-emerald-50 text-emerald-700 border border-emerald-200">
+                        Completed
+                      </span>
+                    )}
+                    {section === 1 && (
+                      <span className="text-[9px] px-1.5 py-0.5 rounded font-black bg-amber-400 text-slate-950">
+                        Current
+                      </span>
+                    )}
+                  </div>
+                  <div className={`text-[11px] truncate ${section === 1 ? 'text-amber-200' : 'text-slate-500'}`}>
+                    Personal details &amp; category
+                  </div>
+                </div>
+              </button>
+
+              {/* 2. Exam Cities */}
+              <button
+                type="button"
+                onClick={() => { if (section >= 2) { setSection(2); window.scrollTo({ top: 0, behavior: 'smooth' }); } }}
+                className={`w-full p-3.5 rounded-2xl flex items-center gap-3 transition text-left ${
+                  section === 2 
+                    ? 'bg-[#800000] text-white shadow-md' 
+                    : section > 2
+                      ? 'hover:bg-slate-50 text-slate-800'
+                      : 'text-slate-400'
+                }`}
+              >
+                <div className={`w-9 h-9 rounded-xl flex items-center justify-center font-bold text-xs flex-shrink-0 transition ${
+                  section === 2 
+                    ? 'bg-amber-400 text-slate-950 font-black shadow-xs' 
+                    : section > 2 
+                      ? 'bg-emerald-100 text-emerald-800 border border-emerald-300' 
+                      : 'bg-slate-100 text-slate-400'
+                }`}>
+                  {section > 2 ? <Check className="w-4 h-4 stroke-[3]" /> : '2'}
+                </div>
+                <div className="min-w-0 flex-1">
+                  <div className="font-extrabold text-xs flex items-center justify-between">
+                    <span>2. Exam Cities</span>
+                    {section > 2 && (
+                      <span className="text-[9px] px-1.5 py-0.5 rounded font-bold bg-emerald-50 text-emerald-700 border border-emerald-200">
+                        Completed
+                      </span>
+                    )}
+                    {section === 2 && (
+                      <span className="text-[9px] px-1.5 py-0.5 rounded font-black bg-amber-400 text-slate-950">
+                        Current
+                      </span>
+                    )}
+                  </div>
+                  <div className={`text-[11px] truncate ${section === 2 ? 'text-amber-200' : 'text-slate-500'}`}>
+                    WB &amp; Tripura preferences
+                  </div>
+                </div>
+              </button>
+
+              {/* 3. Document Uploads */}
+              <button
+                type="button"
+                onClick={() => { if (section >= 3) { setSection(3); window.scrollTo({ top: 0, behavior: 'smooth' }); } }}
+                className={`w-full p-3.5 rounded-2xl flex items-center gap-3 transition text-left ${
+                  section === 3 
+                    ? 'bg-[#800000] text-white shadow-md' 
+                    : section > 3
+                      ? 'hover:bg-slate-50 text-slate-800'
+                      : 'text-slate-400'
+                }`}
+              >
+                <div className={`w-9 h-9 rounded-xl flex items-center justify-center font-bold text-xs flex-shrink-0 transition ${
+                  section === 3 
+                    ? 'bg-amber-400 text-slate-950 font-black shadow-xs' 
+                    : section > 3 
+                      ? 'bg-emerald-100 text-emerald-800 border border-emerald-300' 
+                      : 'bg-slate-100 text-slate-400'
+                }`}>
+                  {section > 3 ? <Check className="w-4 h-4 stroke-[3]" /> : '3'}
+                </div>
+                <div className="min-w-0 flex-1">
+                  <div className="font-extrabold text-xs flex items-center justify-between">
+                    <span>3. Document Uploads</span>
+                    {section > 3 && (
+                      <span className="text-[9px] px-1.5 py-0.5 rounded font-bold bg-emerald-50 text-emerald-700 border border-emerald-200">
+                        Completed
+                      </span>
+                    )}
+                    {section === 3 && (
+                      <span className="text-[9px] px-1.5 py-0.5 rounded font-black bg-amber-400 text-slate-950">
+                        Current
+                      </span>
+                    )}
+                  </div>
+                  <div className={`text-[11px] truncate ${section === 3 ? 'text-amber-200' : 'text-slate-500'}`}>
+                    Biometrics &amp; certificates
+                  </div>
+                </div>
+              </button>
+
+              {/* 4. Review & Pay */}
+              <button
+                type="button"
+                onClick={() => { if (section >= 4) { setSection(4); window.scrollTo({ top: 0, behavior: 'smooth' }); } }}
+                className={`w-full p-3.5 rounded-2xl flex items-center gap-3 transition text-left ${
+                  section === 4 
+                    ? 'bg-[#800000] text-white shadow-md' 
+                    : section > 4
+                      ? 'hover:bg-slate-50 text-slate-800'
+                      : 'text-slate-400'
+                }`}
+              >
+                <div className={`w-9 h-9 rounded-xl flex items-center justify-center font-bold text-xs flex-shrink-0 transition ${
+                  section === 4 
+                    ? 'bg-amber-400 text-slate-950 font-black shadow-xs' 
+                    : section > 4 
+                      ? 'bg-emerald-100 text-emerald-800 border border-emerald-300' 
+                      : 'bg-slate-100 text-slate-400'
+                }`}>
+                  {section > 4 ? <Check className="w-4 h-4 stroke-[3]" /> : '4'}
+                </div>
+                <div className="min-w-0 flex-1">
+                  <div className="font-extrabold text-xs flex items-center justify-between">
+                    <span>4. Review &amp; Pay</span>
+                    {section === 5 && (
+                      <span className="text-[9px] px-1.5 py-0.5 rounded font-bold bg-emerald-50 text-emerald-700 border border-emerald-200">
+                        Paid
+                      </span>
+                    )}
+                    {section === 4 && (
+                      <span className="text-[9px] px-1.5 py-0.5 rounded font-black bg-amber-400 text-slate-950">
+                        Current
+                      </span>
+                    )}
+                  </div>
+                  <div className={`text-[11px] truncate ${section === 4 ? 'text-amber-200' : 'text-slate-500'}`}>
+                    Summary &amp; fee payment
+                  </div>
+                </div>
+              </button>
+            </div>
+
+            {/* Quick Support / Admissions Helpdesk Card */}
+            <div className="bg-white rounded-3xl border border-slate-200 p-5 shadow-xs space-y-3 text-xs">
+              <div className="font-bold text-slate-900 flex items-center gap-2">
+                <Building className="w-4 h-4 text-kgp-crimson" />
+                <span>Admissions Helpdesk</span>
+              </div>
+              <p className="text-[11px] text-slate-500 leading-relaxed">
+                IIT Kharagpur Admissions Office, Main Academic Complex, Kharagpur – 721302.
+              </p>
+              <div className="pt-2 border-t border-slate-100 space-y-1.5 text-[11px] font-mono text-slate-600">
+                <div>📧 admissions@iitkgp.ac.in</div>
+                <div>📞 +91 3222 282022</div>
+                <div className="text-[10px] text-slate-400 font-sans">Mon–Fri: 9:30 AM – 5:30 PM IST</div>
+              </div>
+            </div>
+
+            {/* Institutional Security Badge */}
+            <div className="p-4 rounded-2xl bg-white border border-slate-200 flex items-center gap-3 text-slate-600 text-[11px] shadow-xs">
+              <Lock className="w-5 h-5 text-emerald-600 flex-shrink-0" />
+              <div>
+                <strong className="text-slate-900 block font-bold">256-Bit SSL Secured</strong>
+                <span>Govt of India MoE &amp; DigiLocker Standards</span>
+              </div>
+            </div>
+
+          </aside>
+
+          {/* ========================================================================= */}
+          {/* RIGHT AREA: FULL-FLEDGE WORKSPACE (FORM + LIVE SCRUTINY DOSSIER)          */}
+          {/* ========================================================================= */}
+          <main className="flex-1 min-w-0 w-full space-y-6">
+            
+            {/* Error Alert */}
+            {formError && (
+              <div className="p-4 bg-red-50 border-2 border-red-300 rounded-2xl text-xs text-red-800 flex items-start gap-3 shadow-xs animate-in fade-in">
+                <AlertTriangle className="w-5 h-5 text-red-600 flex-shrink-0 mt-0.5" />
+                <div className="space-y-1">
+                  <div className="font-bold text-red-900">Please review the following before continuing:</div>
+                  <p className="leading-relaxed">{formError}</p>
+                </div>
+              </div>
+            )}
+
+            {/* Grid for Active Form + Live Scrutiny Dossier */}
+            <div className="grid grid-cols-1 xl:grid-cols-12 gap-6 lg:gap-8 items-start">
+              
+              {/* Form Column (Takes 8 cols on widescreen, full 12 cols on step 5) */}
+              <div className={section === 5 ? "xl:col-span-12" : "xl:col-span-8 min-w-0"}>
+                
+                {/* ========================================================================= */}
+                {/* SECTION 1 OF 3: PERSONAL DETAILS                                          */}
+                {/* ========================================================================= */}
+                {section === 1 && (
+                  <div className="bg-white rounded-3xl border border-slate-200 p-6 sm:p-10 shadow-sm space-y-7 animate-in fade-in">
+                    
+                    {/* Form Section Header */}
+                    <div className="border-b border-slate-200 pb-4">
+                      <div className="text-xs uppercase font-extrabold tracking-wider text-kgp-crimson">
+                        application form
+                      </div>
               <h2 className="text-xl sm:text-2xl font-bold font-serif-title text-slate-900 mt-0.5">
                 Section 1 of 3: Personal Details
               </h2>
@@ -1969,11 +2178,216 @@ export default function QualifierRoundPortal({ initialCandidate, onStartExam, on
                 <span>Print Application Summary</span>
               </button>
             </div>
-
           </div>
         )}
+      </div>
 
-      </main>
+            {/* Secondary Column: Live Admissions Dossier & Scrutiny Intelligence Panel */}
+            {section !== 5 && (
+              <div className="xl:col-span-4 space-y-6 lg:sticky lg:top-20">
+                
+                {/* Fee Reconciliation Card */}
+                <div className="bg-gradient-to-br from-slate-900 via-kgp-navy to-slate-900 text-white rounded-3xl p-5 sm:p-6 shadow-md space-y-3.5 border border-slate-800">
+                  <div className="flex items-center justify-between">
+                    <span className="text-[10px] uppercase font-bold tracking-wider text-amber-400">
+                      Qualifier Fee Reconciliation
+                    </span>
+                    <span className="text-[10px] bg-white/10 px-2 py-0.5 rounded font-mono text-slate-300">
+                      {formData.category} Quota
+                    </span>
+                  </div>
+
+                  <div className="flex items-baseline justify-between">
+                    <div>
+                      <div className="text-3xl font-black text-amber-400 font-mono">
+                        ₹{payableAmount}
+                      </div>
+                      <div className="text-[11px] text-amber-200 mt-0.5">
+                        {feeWaiverText}
+                      </div>
+                    </div>
+                    <div className="text-right text-[10px] text-slate-400 leading-tight">
+                      Standard: <span className="line-through">₹1,500</span><br />
+                      CBT Test: Included (₹0)
+                    </div>
+                  </div>
+
+                  <div className="pt-2.5 border-t border-white/10 text-[11px] text-slate-300 flex items-center justify-between">
+                    <span>Gateway Status:</span>
+                    <span className="font-bold text-amber-300">Due at Step 4</span>
+                  </div>
+                </div>
+
+                {/* Live Document Scrutiny Checklist */}
+                <div className="bg-white rounded-3xl border border-slate-200 p-5 sm:p-6 shadow-xs space-y-4">
+                  <div className="flex items-center justify-between border-b border-slate-200 pb-3">
+                    <div className="flex items-center gap-2">
+                      <FileCheck className="w-4 h-4 text-emerald-600" />
+                      <span className="font-bold text-slate-900 text-sm">Live Scrutiny Checklist</span>
+                    </div>
+                    <span className="text-[10px] font-mono font-bold bg-emerald-50 text-emerald-800 px-2 py-0.5 rounded border border-emerald-200">
+                      {mandatoryUploadedCount} / {mandatoryDocsKeys.length} Ready
+                    </span>
+                  </div>
+
+                  <div className="space-y-2.5 text-xs">
+                    {/* Photo */}
+                    <div className="flex items-center justify-between p-2.5 rounded-xl bg-slate-50 border border-slate-100">
+                      <div className="flex items-center gap-2">
+                        <Camera className="w-3.5 h-3.5 text-slate-500" />
+                        <span className="font-semibold text-slate-800">Passport Photo (3.5×4.5cm)</span>
+                      </div>
+                      {formData.docs.photo.uploaded ? (
+                        <span className="text-[10px] font-bold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded flex items-center gap-1">
+                          <Check className="w-3 h-3 stroke-[3]" /> Attached
+                        </span>
+                      ) : (
+                        <span className="text-[10px] font-bold text-amber-700 bg-amber-50 px-2 py-0.5 rounded">
+                          Pending
+                        </span>
+                      )}
+                    </div>
+
+                    {/* Signature */}
+                    <div className="flex items-center justify-between p-2.5 rounded-xl bg-slate-50 border border-slate-100">
+                      <div className="flex items-center gap-2">
+                        <Award className="w-3.5 h-3.5 text-slate-500" />
+                        <span className="font-semibold text-slate-800">Digital Signature</span>
+                      </div>
+                      {formData.docs.signature.uploaded ? (
+                        <span className="text-[10px] font-bold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded flex items-center gap-1">
+                          <Check className="w-3 h-3 stroke-[3]" /> Attached
+                        </span>
+                      ) : (
+                        <span className="text-[10px] font-bold text-amber-700 bg-amber-50 px-2 py-0.5 rounded">
+                          Pending
+                        </span>
+                      )}
+                    </div>
+
+                    {/* ID Proof */}
+                    <div className="flex items-center justify-between p-2.5 rounded-xl bg-slate-50 border border-slate-100">
+                      <div className="flex items-center gap-2">
+                        <ShieldCheck className="w-3.5 h-3.5 text-slate-500" />
+                        <span className="font-semibold text-slate-800">Photo ID ({formData.idType})</span>
+                      </div>
+                      {formData.docs.idProof.uploaded ? (
+                        <span className="text-[10px] font-bold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded flex items-center gap-1">
+                          <Check className="w-3 h-3 stroke-[3]" /> Attached
+                        </span>
+                      ) : (
+                        <span className="text-[10px] font-bold text-amber-700 bg-amber-50 px-2 py-0.5 rounded">
+                          Pending
+                        </span>
+                      )}
+                    </div>
+
+                    {/* Class 10 */}
+                    <div className="flex items-center justify-between p-2.5 rounded-xl bg-slate-50 border border-slate-100">
+                      <div className="flex items-center gap-2">
+                        <FileText className="w-3.5 h-3.5 text-slate-500" />
+                        <span className="font-semibold text-slate-800">Class 10 Marksheet</span>
+                      </div>
+                      {formData.docs.class10.uploaded ? (
+                        <span className="text-[10px] font-bold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded flex items-center gap-1">
+                          <Check className="w-3 h-3 stroke-[3]" /> Attached
+                        </span>
+                      ) : (
+                        <span className="text-[10px] font-bold text-amber-700 bg-amber-50 px-2 py-0.5 rounded">
+                          Pending
+                        </span>
+                      )}
+                    </div>
+
+                    {/* Class 12 / Diploma */}
+                    <div className="flex items-center justify-between p-2.5 rounded-xl bg-slate-50 border border-slate-100">
+                      <div className="flex items-center gap-2">
+                        <GraduationCap className="w-3.5 h-3.5 text-slate-500" />
+                        <span className="font-semibold text-slate-800">
+                          {formData.higherSecChoice === 'diploma' ? 'Diploma Certificate' : 'Class 12 Marksheet'}
+                        </span>
+                      </div>
+                      {(formData.higherSecChoice === 'diploma' ? formData.docs.diplomaCert.uploaded : formData.docs.class12.uploaded) ? (
+                        <span className="text-[10px] font-bold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded flex items-center gap-1">
+                          <Check className="w-3 h-3 stroke-[3]" /> Attached
+                        </span>
+                      ) : (
+                        <span className="text-[10px] font-bold text-amber-700 bg-amber-50 px-2 py-0.5 rounded">
+                          Pending
+                        </span>
+                      )}
+                    </div>
+
+                    {/* Category Cert (if applicable) */}
+                    {['SC', 'ST', 'OBC-NCL', 'EWS'].includes(formData.category) && (
+                      <div className="flex items-center justify-between p-2.5 rounded-xl bg-amber-50/60 border border-amber-200">
+                        <div className="flex items-center gap-2">
+                          <Building className="w-3.5 h-3.5 text-amber-700" />
+                          <span className="font-semibold text-amber-900">{formData.category} Quota Proof</span>
+                        </div>
+                        {formData.docs.categoryCert.uploaded ? (
+                          <span className="text-[10px] font-bold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded flex items-center gap-1">
+                            <Check className="w-3 h-3 stroke-[3]" /> Attached
+                          </span>
+                        ) : (
+                          <span className="text-[10px] font-bold text-red-700 bg-red-50 px-2 py-0.5 rounded">
+                            Required
+                          </span>
+                        )}
+                      </div>
+                    )}
+                  </div>
+                </div>
+
+                {/* Important Dates */}
+                <div className="bg-white rounded-3xl border border-slate-200 p-5 sm:p-6 shadow-xs space-y-3">
+                  <div className="flex items-center gap-2 font-bold text-slate-900 text-sm border-b border-slate-200 pb-3">
+                    <Calendar className="w-4 h-4 text-kgp-crimson" />
+                    <span>Admissions &amp; CBT Schedule</span>
+                  </div>
+                  <div className="space-y-2.5 text-xs">
+                    <div className="flex items-center justify-between">
+                      <span className="text-slate-500">Registrations:</span>
+                      <strong className="text-emerald-700 font-bold">Open</strong>
+                    </div>
+                    <div className="flex items-center justify-between">
+                      <span className="text-slate-500">Last Date to Submit:</span>
+                      <strong className="text-slate-800">15 May, 2026</strong>
+                    </div>
+                    <div className="flex items-center justify-between">
+                      <span className="text-slate-500">Hall Ticket Release:</span>
+                      <strong className="text-slate-800">28 May, 2026</strong>
+                    </div>
+                    <div className="flex items-center justify-between">
+                      <span className="text-slate-500">Qualifier Exam (CBT):</span>
+                      <strong className="text-kgp-crimson font-bold">15 Nov, 2026</strong>
+                    </div>
+                    <div className="flex items-center justify-between">
+                      <span className="text-slate-500">Results &amp; Merit List:</span>
+                      <strong className="text-emerald-700 font-bold">25 Nov, 2026</strong>
+                    </div>
+                  </div>
+                </div>
+
+                {/* State Center Preference Policy Badge */}
+                <div className="bg-amber-50/80 border border-amber-200 rounded-3xl p-5 space-y-2 text-xs">
+                  <div className="font-bold text-amber-950 flex items-center gap-1.5">
+                    <MapPin className="w-4 h-4 text-amber-700" />
+                    <span>West Bengal &amp; Tripura Centers</span>
+                  </div>
+                  <p className="text-slate-600 text-[11px] leading-relaxed">
+                    Applicants choose 2 preferences strictly from 23 districts in West Bengal or 8 districts in Tripura. Admit cards will specify assigned test labs 2 weeks prior to exam date.
+                  </p>
+                </div>
+
+              </div>
+            )}
+
+            </div>
+          </main>
+
+        </div>
+      </div>
 
       {/* ========================================================================= */}
       {/* UNIVERSITY DOCUMENT SCRUTINY PREVIEW MODAL                                */}
