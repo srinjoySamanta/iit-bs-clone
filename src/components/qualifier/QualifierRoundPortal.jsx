@@ -139,7 +139,7 @@ export default function QualifierRoundPortal({ initialCandidate, onStartExam, on
                   <div>
                     <div className="text-xs font-bold text-emerald-900 flex items-center gap-1.5">
                       <span>Authenticated Google Account</span>
-                      <span className="bg-emerald-200/80 text-emerald-800 text-[10px] px-1.5 py-0.2 rounded font-semibold">2-Step Verified</span>
+                      <span className="bg-emerald-200/80 text-emerald-800 text-[10px] px-1.5 py-0.2 rounded font-semibold">Google Verified</span>
                     </div>
                     <div className="text-[11px] text-emerald-700 font-mono">{formData.email}</div>
                   </div>

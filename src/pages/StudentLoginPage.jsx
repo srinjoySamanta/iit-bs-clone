@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { 
   ArrowLeft, Lock, Mail, User, ShieldCheck, Key, 
   HelpCircle, Eye, EyeOff, CheckCircle2, Award, ExternalLink,
-  Sparkles, Phone, ChevronRight, Check, X, AlertTriangle, RefreshCw, Clock, Settings
+  Sparkles, Phone, ChevronRight, Check, X, AlertTriangle
 } from 'lucide-react';
 import { IIT_KGP_INFO } from '../data/portalData';
 import iitKgpLogo from '../assets/logo';
@@ -18,6 +18,18 @@ export default function StudentLoginPage({
   const [showGoogleModal, setShowGoogleModal] = useState(false);
   const [studentEmail, setStudentEmail] = useState('');
   const [authError, setAuthError] = useState('');
+
+  // Purge any leftover legacy verification code keys from browser cache
+  useEffect(() => {
+    try {
+      localStorage.removeItem('iit_kgp_emailjs_service_id');
+      localStorage.removeItem('iit_kgp_emailjs_template_id');
+      localStorage.removeItem('iit_kgp_emailjs_public_key');
+      localStorage.removeItem('iit_kgp_verification_code');
+    } catch {
+      // ignore
+    }
+  }, []);
 
   // Fallback direct roll login toggle (for enrolled students)
   const [showRollLogin, setShowRollLogin] = useState(false);
