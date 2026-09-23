@@ -1,27 +1,12 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import { 
   ArrowRight, ShieldCheck, CheckCircle2, Award, Calendar, 
-  Sparkles, Download, Users, BookOpen, Clock, ChevronRight 
+  Sparkles, Download, Users, BookOpen, ChevronRight 
 } from 'lucide-react';
 import { IIT_KGP_INFO } from '../data/portalData';
 import iitKgpLogo from '../assets/logo';
 
 export default function Hero({ onOpenSignUp, onOpenDiagram, onOpenCertificate, onOpenQualifier }) {
-  // Countdown to application deadline
-  const [timeLeft, setTimeLeft] = useState({ days: 38, hours: 14, minutes: 22, seconds: 45 });
-
-  useEffect(() => {
-    const timer = setInterval(() => {
-      setTimeLeft(prev => {
-        if (prev.seconds > 0) return { ...prev, seconds: prev.seconds - 1 };
-        if (prev.minutes > 0) return { ...prev, minutes: 59, seconds: 59 };
-        if (prev.hours > 0) return { ...prev, hours: prev.hours - 1, minutes: 59, seconds: 59 };
-        if (prev.days > 0) return { ...prev, days: prev.days - 1, hours: 23, minutes: 59, seconds: 59 };
-        return prev;
-      });
-    }, 1000);
-    return () => clearInterval(timer);
-  }, []);
 
   return (
     <section className="relative overflow-hidden bg-gradient-to-b from-[#faf9f6] via-white to-[#f4f1ea] text-slate-900 pt-8 pb-16 lg:pt-10 lg:pb-20 border-b border-stone-200">
@@ -152,62 +137,28 @@ export default function Hero({ onOpenSignUp, onOpenDiagram, onOpenCertificate, o
 
         </div>
 
-        {/* Live Admission Deadline Countdown Strip & Next Batch Notice */}
-        <div className="mt-7 max-w-xl mx-auto bg-white border-2 border-amber-300/80 rounded-2xl p-3 sm:p-3.5 shadow-md text-slate-900 space-y-3">
-          
-          <div className="flex flex-col sm:flex-row items-center justify-between gap-3">
-            <div className="flex items-center space-x-2.5 text-center sm:text-left">
-              <div className="w-8 h-8 rounded-lg bg-red-50 text-kgp-crimson border border-red-200 flex items-center justify-center flex-shrink-0 shadow-sm">
-                <Clock className="w-4 h-4 animate-spin" style={{ animationDuration: '10s' }} />
-              </div>
-              <div>
-                <div className="text-[10px] sm:text-[11px] font-bold text-amber-800 uppercase tracking-wider leading-none">
-                  Qualifier Term 2026 Batch
-                </div>
-                <div className="text-xs sm:text-sm font-extrabold text-slate-900 leading-tight">
-                  Applications Closing Soon
-                </div>
-              </div>
+        {/* Academic Admission Alert: Qualifier Term Batch 2027 */}
+        <div className="mt-7 max-w-xl mx-auto bg-white border-2 border-amber-300/80 rounded-2xl p-4 sm:p-5 shadow-md text-slate-900 flex flex-col sm:flex-row items-center justify-between gap-3 text-center sm:text-left transition hover:border-amber-400">
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-amber-500/10 to-red-500/10 border border-amber-300/80 flex items-center justify-center flex-shrink-0 shadow-xs">
+              <Sparkles className="w-5 h-5 text-amber-600 animate-pulse" />
             </div>
-
-            {/* Countdown Blocks */}
-            <div className="flex items-center space-x-1.5 text-center">
-              <div className="bg-stone-50 border border-stone-200 px-2.5 py-1 rounded-lg">
-                <span className="text-base font-extrabold text-slate-900 tabular-nums">{timeLeft.days}</span>
-                <span className="block text-[9px] text-slate-500 uppercase font-semibold">Days</span>
+            <div>
+              <div className="text-[10px] sm:text-[11px] font-bold text-amber-800 uppercase tracking-wider leading-none mb-1">
+                Upcoming Academic Cycle
               </div>
-              <span className="text-amber-600 font-bold">:</span>
-              <div className="bg-stone-50 border border-stone-200 px-2.5 py-1 rounded-lg">
-                <span className="text-base font-extrabold text-slate-900 tabular-nums">{String(timeLeft.hours).padStart(2, '0')}</span>
-                <span className="block text-[9px] text-slate-500 uppercase font-semibold">Hours</span>
-              </div>
-              <span className="text-amber-600 font-bold">:</span>
-              <div className="bg-stone-50 border border-stone-200 px-2.5 py-1 rounded-lg">
-                <span className="text-base font-extrabold text-slate-900 tabular-nums">{String(timeLeft.minutes).padStart(2, '0')}</span>
-                <span className="block text-[9px] text-slate-500 uppercase font-semibold">Mins</span>
-              </div>
-              <span className="text-amber-600 font-bold">:</span>
-              <div className="bg-stone-50 border border-stone-200 px-2.5 py-1 rounded-lg">
-                <span className="text-base font-extrabold text-kgp-crimson tabular-nums">{String(timeLeft.seconds).padStart(2, '0')}</span>
-                <span className="block text-[9px] text-slate-500 uppercase font-semibold">Secs</span>
+              <div className="text-sm sm:text-base font-extrabold text-slate-950 leading-tight">
+                Qualifier Term Batch 2027 Application Starting Soon
               </div>
             </div>
           </div>
 
-          {/* Next Batch Notification: Qualifier Term Batch 2027 */}
-          <div className="pt-2.5 border-t border-slate-100 flex flex-col sm:flex-row items-center justify-between gap-1.5 text-[11px] text-slate-700 bg-slate-50/70 -mx-1 px-3 py-1.5 rounded-xl border border-slate-200/60">
-            <div className="flex items-center gap-2 font-semibold">
+          <div className="flex items-center gap-2 flex-shrink-0">
+            <span className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-emerald-50 text-emerald-800 font-extrabold text-xs border border-emerald-300 shadow-xs">
               <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
-              <span className="text-slate-900 font-bold">
-                Qualifier Term Batch 2027 Application Starting Soon
-              </span>
-            </div>
-            <span className="inline-flex items-center gap-1 text-[10px] font-extrabold text-emerald-800 bg-emerald-100/80 px-2 py-0.5 rounded-md border border-emerald-300">
-              <Sparkles className="w-3 h-3 text-emerald-600" />
               <span>Admissions 2027</span>
             </span>
           </div>
-
         </div>
 
       </div>
