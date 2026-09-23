@@ -4,7 +4,8 @@ import {
   Award, QrCode, FileText, Lock, ChevronRight, ChevronLeft,
   Check, AlertCircle, Building, BookOpen, MapPin, Calendar, 
   Printer, Info, AlertTriangle, RotateCcw, Upload, FileUp, 
-  Camera, Briefcase, GraduationCap, Eye, Trash2, Sparkles
+  Camera, Briefcase, GraduationCap, Eye, Trash2, Sparkles, 
+  X, ExternalLink, ShieldAlert, FileCheck
 } from 'lucide-react';
 import { IIT_KGP_INFO } from '../../data/portalData';
 import iitKgpLogo from '../../assets/logo';
@@ -60,6 +61,7 @@ export default function QualifierRoundPortal({ initialCandidate, onStartExam, on
   // 5 = Completed & CBT Engine
   const [section, setSection] = useState(1);
   const [formError, setFormError] = useState('');
+  const [previewModalDoc, setPreviewModalDoc] = useState(null);
 
   // Dynamically compute today's date in YYYY-MM-DD
   const todayDateString = new Date().toISOString().split('T')[0];
@@ -97,17 +99,44 @@ export default function QualifierRoundPortal({ initialCandidate, onStartExam, on
     // Section 3 of 3: Higher Secondary Selection (Option A: Class 12th vs Option B: Polytechnic Diploma)
     higherSecChoice: "class12", // 'class12' | 'diploma'
 
-    // Document Files Registry
+    // Document Files Registry with university scrutiny status
     docs: {
-      photo: { uploaded: true, name: "passport_photo_applicant.jpg", size: "78 KB", type: "image/jpeg" },
-      signature: { uploaded: true, name: "applicant_signature.jpg", size: "26 KB", type: "image/jpeg" },
-      idProof: { uploaded: true, name: "aadhaar_card_scan.pdf", size: "450 KB", type: "application/pdf" },
+      photo: { 
+        uploaded: true, 
+        name: "passport_photo_applicant.jpg", 
+        size: "78 KB", 
+        type: "image/jpeg",
+        previewUrl: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=400&q=80"
+      },
+      signature: { 
+        uploaded: true, 
+        name: "applicant_signature.jpg", 
+        size: "26 KB", 
+        type: "image/jpeg",
+        previewUrl: null
+      },
+      idProof: { 
+        uploaded: true, 
+        name: "aadhaar_card_front_back.pdf", 
+        size: "450 KB", 
+        type: "application/pdf" 
+      },
       categoryCert: { uploaded: false, name: "", size: "", type: "" },
       pwdCert: { uploaded: false, name: "", size: "", type: "" },
-      defenceCert: { uploaded: false, name: "", size: "" },
-      jeeProof: { uploaded: false, name: "", size: "" },
-      class10: { uploaded: true, name: "std_x_marksheet_certificate.pdf", size: "620 KB", type: "application/pdf" },
-      class12: { uploaded: true, name: "std_xii_senior_secondary_marksheet.pdf", size: "840 KB", type: "application/pdf" },
+      defenceCert: { uploaded: false, name: "", size: "", type: "" },
+      jeeProof: { uploaded: false, name: "", size: "", type: "" },
+      class10: { 
+        uploaded: true, 
+        name: "std_x_secondary_marksheet.pdf", 
+        size: "620 KB", 
+        type: "application/pdf" 
+      },
+      class12: { 
+        uploaded: true, 
+        name: "std_xii_higher_secondary_certificate.pdf", 
+        size: "840 KB", 
+        type: "application/pdf" 
+      },
       diplomaCert: { uploaded: false, name: "", size: "" },
       ugDegree: { uploaded: false, name: "", size: "" },
       pgDegree: { uploaded: false, name: "", size: "" },
@@ -159,12 +188,17 @@ export default function QualifierRoundPortal({ initialCandidate, onStartExam, on
     return DISTRICTS_WEST_BENGAL;
   };
 
-  // Helper for simulated file upload on each document slot
+  // Helper for real or simulated file upload
   const handleFileUpload = (docKey, file) => {
     if (!file) return;
     const formattedSize = file.size > 1024 * 1024 
       ? (file.size / (1024 * 1024)).toFixed(1) + " MB" 
       : Math.round(file.size / 1024) + " KB";
+
+    let previewUrl = null;
+    if (file.type && file.type.startsWith('image/')) {
+      previewUrl = URL.createObjectURL(file);
+    }
 
     setFormData(prev => ({
       ...prev,
@@ -174,31 +208,68 @@ export default function QualifierRoundPortal({ initialCandidate, onStartExam, on
           uploaded: true,
           name: file.name,
           size: formattedSize,
-          type: file.type
+          type: file.type || "application/pdf",
+          previewUrl: previewUrl || prev.docs[docKey]?.previewUrl
         }
       }
     }));
   };
 
-  // Pre-fill sample document attachments for testing
+  // Pre-fill sample document attachments
   const handlePreFillDocuments = () => {
     setFormData(prev => ({
       ...prev,
       docs: {
-        photo: { uploaded: true, name: "passport_photo_applicant.jpg", size: "78 KB", type: "image/jpeg" },
-        signature: { uploaded: true, name: "applicant_signature.jpg", size: "26 KB", type: "image/jpeg" },
-        idProof: { uploaded: true, name: "aadhaar_card_scan.pdf", size: "450 KB", type: "application/pdf" },
-        categoryCert: prev.category !== 'General' ? { uploaded: true, name: `category_certificate_${prev.category}.pdf`, size: "520 KB", type: "application/pdf" } : { uploaded: false, name: "", size: "" },
-        pwdCert: prev.isPwd === 'Yes' ? { uploaded: true, name: "pwd_medical_board_certificate.pdf", size: "480 KB", type: "application/pdf" } : { uploaded: false, name: "", size: "" },
-        defenceCert: prev.isDefencePersonnel === 'Yes' ? { uploaded: true, name: "defence_service_ward_proof.pdf", size: "390 KB", type: "application/pdf" } : { uploaded: false, name: "", size: "" },
-        jeeProof: prev.jeeAdvancedQualified === 'Yes' ? { uploaded: true, name: "jee_advanced_admit_score.pdf", size: "340 KB", type: "application/pdf" } : { uploaded: false, name: "", size: "" },
-        class10: { uploaded: true, name: "std_x_marksheet_certificate.pdf", size: "620 KB", type: "application/pdf" },
-        class12: prev.higherSecChoice === 'class12' ? { uploaded: true, name: "std_xii_senior_secondary_marksheet.pdf", size: "840 KB", type: "application/pdf" } : { uploaded: false, name: "", size: "" },
-        diplomaCert: prev.higherSecChoice === 'diploma' ? { uploaded: true, name: "polytechnic_diploma_certificate.pdf", size: "910 KB", type: "application/pdf" } : { uploaded: false, name: "", size: "" },
+        photo: { 
+          uploaded: true, 
+          name: "passport_photo_applicant.jpg", 
+          size: "78 KB", 
+          type: "image/jpeg",
+          previewUrl: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=400&q=80"
+        },
+        signature: { 
+          uploaded: true, 
+          name: "applicant_signature.jpg", 
+          size: "26 KB", 
+          type: "image/jpeg",
+          previewUrl: null
+        },
+        idProof: { 
+          uploaded: true, 
+          name: "aadhaar_card_front_back.pdf", 
+          size: "450 KB", 
+          type: "application/pdf" 
+        },
+        categoryCert: prev.category !== 'General' 
+          ? { uploaded: true, name: `category_certificate_${prev.category}.pdf`, size: "520 KB", type: "application/pdf" } 
+          : { uploaded: false, name: "", size: "" },
+        pwdCert: prev.isPwd === 'Yes' 
+          ? { uploaded: true, name: "pwd_medical_board_certificate.pdf", size: "480 KB", type: "application/pdf" } 
+          : { uploaded: false, name: "", size: "" },
+        defenceCert: prev.isDefencePersonnel === 'Yes' 
+          ? { uploaded: true, name: "defence_service_ward_proof.pdf", size: "390 KB", type: "application/pdf" } 
+          : { uploaded: false, name: "", size: "" },
+        jeeProof: prev.jeeAdvancedQualified === 'Yes' 
+          ? { uploaded: true, name: "jee_advanced_admit_score.pdf", size: "340 KB", type: "application/pdf" } 
+          : { uploaded: false, name: "", size: "" },
+        class10: { 
+          uploaded: true, 
+          name: "std_x_secondary_marksheet.pdf", 
+          size: "620 KB", 
+          type: "application/pdf" 
+        },
+        class12: prev.higherSecChoice === 'class12' 
+          ? { uploaded: true, name: "std_xii_higher_secondary_certificate.pdf", size: "840 KB", type: "application/pdf" } 
+          : { uploaded: false, name: "", size: "" },
+        diplomaCert: prev.higherSecChoice === 'diploma' 
+          ? { uploaded: true, name: "polytechnic_diploma_certificate.pdf", size: "910 KB", type: "application/pdf" } 
+          : { uploaded: false, name: "", size: "" },
         ugDegree: { uploaded: false, name: "", size: "" },
         pgDegree: { uploaded: false, name: "", size: "" },
         phdDegree: { uploaded: false, name: "", size: "" },
-        employmentProof: prev.isWorkingProfessional === 'Yes' ? { uploaded: true, name: "employer_noc_id_card.pdf", size: "420 KB", type: "application/pdf" } : { uploaded: false, name: "", size: "" }
+        employmentProof: prev.isWorkingProfessional === 'Yes' 
+          ? { uploaded: true, name: "employer_noc_id_card.pdf", size: "420 KB", type: "application/pdf" } 
+          : { uploaded: false, name: "", size: "" }
       }
     }));
   };
@@ -350,8 +421,8 @@ export default function QualifierRoundPortal({ initialCandidate, onStartExam, on
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
-  // Document Upload Item Component for reusability & clean UI
-  const DocUploadCard = ({ 
+  // Institutional Academic Document Scrutiny Row / Card
+  const AcademicDocRow = ({ 
     docKey, 
     title, 
     specs, 
@@ -363,103 +434,119 @@ export default function QualifierRoundPortal({ initialCandidate, onStartExam, on
     const fileInputRef = useRef(null);
 
     return (
-      <div className={`p-4.5 rounded-2xl border-2 transition ${
+      <div className={`p-4 sm:p-5 rounded-2xl border transition-all ${
         docData.uploaded 
-          ? 'bg-emerald-50/40 border-emerald-300' 
-          : requirementType === 'Mandatory' 
-            ? 'bg-white border-slate-300 hover:border-kgp-crimson' 
-            : 'bg-slate-50/60 border-slate-200'
+          ? 'bg-white border-slate-300 shadow-xs hover:border-slate-400' 
+          : requirementType === 'Mandatory'
+            ? 'bg-white border-amber-300/80 shadow-xs'
+            : 'bg-slate-50/70 border-slate-200'
       }`}>
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-2">
-          <div>
-            <div className="font-bold text-slate-900 text-sm flex items-center gap-2">
-              <span>{title}</span>
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+          
+          {/* Document Information & Specifications */}
+          <div className="space-y-1.5 flex-1">
+            <div className="flex flex-wrap items-center gap-2">
+              <span className="font-bold text-slate-900 text-sm">{title}</span>
               {requirementType === 'Mandatory' && (
-                <span className="text-[10px] bg-red-100 text-red-700 font-bold px-2 py-0.5 rounded-full">
+                <span className="text-[10px] bg-red-50 text-red-700 font-extrabold px-2 py-0.5 rounded border border-red-200 uppercase tracking-wide">
                   Mandatory
                 </span>
               )}
               {requirementType === 'Conditional' && (
-                <span className="text-[10px] bg-amber-100 text-amber-800 font-bold px-2 py-0.5 rounded-full">
-                  Required if Applicable
+                <span className="text-[10px] bg-amber-50 text-amber-800 font-extrabold px-2 py-0.5 rounded border border-amber-200 uppercase tracking-wide">
+                  Quota Required
                 </span>
               )}
               {requirementType === 'Optional' && (
-                <span className="text-[10px] bg-slate-200 text-slate-600 font-bold px-2 py-0.5 rounded-full">
-                  Optional
+                <span className="text-[10px] bg-slate-100 text-slate-600 font-semibold px-2 py-0.5 rounded border border-slate-200">
+                  If Applicable
                 </span>
               )}
             </div>
-            <div className="text-[11px] text-slate-500 font-mono mt-0.5">{specs}</div>
+
+            <div className="text-[11px] text-slate-500 font-mono flex items-center gap-2">
+              <span className="inline-block px-1.5 py-0.5 bg-slate-100 rounded text-slate-600 font-sans text-[10px] font-semibold">
+                Permissible Formats
+              </span>
+              <span>{specs}</span>
+            </div>
+
             {conditionalNote && (
-              <div className="text-[11px] text-amber-800 font-medium mt-0.5">{conditionalNote}</div>
+              <div className="text-[11px] text-amber-900 bg-amber-50/60 px-2 py-0.5 rounded border border-amber-200/60 inline-block">
+                {conditionalNote}
+              </div>
             )}
           </div>
 
-          {/* Upload Status Badge */}
-          {docData.uploaded ? (
-            <span className="w-fit text-[11px] bg-emerald-100 text-emerald-800 font-bold px-2.5 py-1 rounded-lg flex items-center gap-1.5 flex-shrink-0">
-              <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" />
-              <span>Attached ({docData.size})</span>
-            </span>
-          ) : (
-            <span className="w-fit text-[10px] text-slate-400 font-semibold flex-shrink-0">
-              Not Uploaded
-            </span>
-          )}
-        </div>
+          {/* Upload Status & University Action Toolbar */}
+          <div className="flex flex-col sm:flex-row sm:items-center gap-3 md:justify-end flex-shrink-0">
+            <input
+              type="file"
+              ref={fileInputRef}
+              className="hidden"
+              onChange={(e) => handleFileUpload(docKey, e.target.files[0])}
+            />
 
-        {/* File Actions */}
-        <div className="pt-2 border-t border-slate-200/80 flex flex-wrap items-center justify-between gap-3">
-          <input
-            type="file"
-            ref={fileInputRef}
-            className="hidden"
-            onChange={(e) => handleFileUpload(docKey, e.target.files[0])}
-          />
+            {docData.uploaded ? (
+              <div className="flex flex-wrap items-center gap-2.5">
+                <div className="text-left bg-emerald-50 border border-emerald-300 rounded-xl px-3 py-1.5 flex items-center gap-2">
+                  <CheckCircle2 className="w-4 h-4 text-emerald-600 flex-shrink-0" />
+                  <div>
+                    <div className="text-[11px] font-bold text-slate-800 truncate max-w-[180px]">
+                      {docData.name}
+                    </div>
+                    <div className="text-[9px] text-emerald-700 font-mono">
+                      Scrutiny Ready • {docData.size}
+                    </div>
+                  </div>
+                </div>
 
-          {docData.uploaded ? (
-            <div className="flex items-center justify-between w-full">
-              <div className="flex items-center gap-2 text-xs font-semibold text-slate-800 truncate max-w-xs sm:max-w-md">
-                <FileText className="w-4 h-4 text-emerald-600 flex-shrink-0" />
-                <span className="truncate">{docData.name}</span>
+                <div className="flex items-center gap-1.5">
+                  <button
+                    type="button"
+                    onClick={() => setPreviewModalDoc({ title, ...docData })}
+                    className="px-2.5 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs rounded-xl border border-slate-300 flex items-center gap-1 transition"
+                    title="View Document Scrutiny Preview"
+                  >
+                    <Eye className="w-3.5 h-3.5 text-slate-600" />
+                    <span className="hidden sm:inline">Preview</span>
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() => fileInputRef.current?.click()}
+                    className="px-2.5 py-1.5 bg-white hover:bg-slate-50 text-kgp-crimson font-bold text-xs rounded-xl border border-kgp-crimson/40 transition"
+                  >
+                    Re-upload
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setFormData(prev => ({
+                        ...prev,
+                        docs: { ...prev.docs, [docKey]: { uploaded: false, name: "", size: "" } }
+                      }));
+                    }}
+                    className="p-1.5 text-slate-400 hover:text-red-600 rounded-lg hover:bg-red-50 transition"
+                    title="Remove attachment"
+                  >
+                    <Trash2 className="w-4 h-4" />
+                  </button>
+                </div>
               </div>
-              <div className="flex items-center gap-2 flex-shrink-0">
-                <button
-                  type="button"
-                  onClick={() => fileInputRef.current?.click()}
-                  className="text-[11px] text-kgp-crimson hover:underline font-bold px-2 py-1 rounded-md hover:bg-slate-100"
-                >
-                  Change File
-                </button>
-                <button
-                  type="button"
-                  onClick={() => {
-                    setFormData(prev => ({
-                      ...prev,
-                      docs: { ...prev.docs, [docKey]: { uploaded: false, name: "", size: "" } }
-                    }));
-                  }}
-                  className="text-[11px] text-slate-400 hover:text-red-600 p-1 rounded-md transition"
-                  title="Remove file"
-                >
-                  <Trash2 className="w-3.5 h-3.5" />
-                </button>
-              </div>
-            </div>
-          ) : (
-            <div className="flex items-center justify-between w-full">
-              <span className="text-[11px] text-slate-400">Supported format within specified file size.</span>
+            ) : (
               <button
                 type="button"
                 onClick={() => fileInputRef.current?.click()}
-                className="px-3.5 py-1.5 bg-slate-900 hover:bg-kgp-crimson text-white text-xs font-bold rounded-xl shadow-xs transition flex items-center gap-1.5"
+                className="px-4 py-2 bg-slate-900 hover:bg-kgp-crimson text-white font-bold text-xs rounded-xl shadow-xs transition flex items-center justify-center gap-2"
               >
                 <Upload className="w-3.5 h-3.5" />
                 <span>Upload Document</span>
               </button>
-            </div>
-          )}
+            )}
+          </div>
+
         </div>
       </div>
     );
@@ -553,7 +640,7 @@ export default function QualifierRoundPortal({ initialCandidate, onStartExam, on
 
           <ChevronRight className="w-3.5 h-3.5 text-slate-300 flex-shrink-0" />
 
-          {/* Step 3 (Newly Added: File & Document Uploads) */}
+          {/* Step 3 (File & Document Uploads) */}
           <button
             onClick={() => { if (section >= 3) setSection(3); }}
             className={`flex-1 py-2 px-2.5 rounded-xl flex items-center justify-center gap-1.5 transition ${
@@ -1201,151 +1288,272 @@ export default function QualifierRoundPortal({ initialCandidate, onStartExam, on
         )}
 
         {/* ========================================================================= */}
-        {/* SECTION 3 OF 3: FILE & DOCUMENT UPLOADS (EXACT USER SPECIFICATION)        */}
+        {/* SECTION 3 OF 3: FILE & DOCUMENT UPLOADS (UNIVERSITY SCRUTINY PORTAL)      */}
         {/* ========================================================================= */}
         {section === 3 && (
-          <div className="bg-white rounded-3xl border border-slate-200 p-6 sm:p-10 shadow-sm space-y-7 animate-in fade-in">
+          <div className="bg-white rounded-3xl border border-slate-200 p-6 sm:p-10 shadow-sm space-y-8 animate-in fade-in">
             
-            {/* Form Section Header */}
-            <div className="border-b border-slate-200 pb-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+            {/* Form Section Header with Institutional Branding */}
+            <div className="border-b border-slate-200 pb-5 flex flex-col md:flex-row md:items-center justify-between gap-4">
               <div>
-                <div className="text-xs uppercase font-extrabold tracking-wider text-kgp-crimson">
-                  application form
+                <div className="flex items-center gap-2 text-xs uppercase font-extrabold tracking-wider text-kgp-crimson">
+                  <ShieldCheck className="w-4 h-4 text-kgp-crimson" />
+                  <span>Admissions Scrutiny Board • Verification Desk</span>
                 </div>
-                <h2 className="text-xl sm:text-2xl font-bold font-serif-title text-slate-900 mt-0.5">
+                <h2 className="text-xl sm:text-2xl font-bold font-serif-title text-slate-900 mt-1">
                   Section 3 of 3: File &amp; Document Uploads
                 </h2>
                 <p className="text-xs text-slate-500 mt-1">
-                  Upload official scans for admission audit, admit card generation, and reservation verification.
+                  Submit compliant digital scans for identity verification, reservation quota validation, and official CBT admit card issuance.
                 </p>
               </div>
 
-              <button
-                type="button"
-                onClick={handlePreFillDocuments}
-                className="px-3.5 py-2 bg-amber-100 hover:bg-amber-200 text-amber-900 font-bold text-xs rounded-xl border border-amber-300 flex items-center gap-1.5 transition self-start sm:self-auto"
-              >
-                <Sparkles className="w-4 h-4 text-amber-700" />
-                <span>Auto-Attach Sample Docs</span>
-              </button>
+              <div className="flex items-center gap-2 self-start md:self-auto">
+                <button
+                  type="button"
+                  onClick={handlePreFillDocuments}
+                  className="px-3.5 py-2 bg-stone-100 hover:bg-amber-100 text-slate-800 hover:text-amber-900 font-bold text-xs rounded-xl border border-slate-300 hover:border-amber-300 flex items-center gap-1.5 transition shadow-2xs"
+                >
+                  <Sparkles className="w-4 h-4 text-amber-600" />
+                  <span>Auto-Attach Compliant Scans</span>
+                </button>
+              </div>
             </div>
 
-            <form onSubmit={handleProceedToReview} className="space-y-6 text-xs">
+            {/* Official University Scrutiny Directive Notice */}
+            <div className="bg-stone-50 border-l-4 border-kgp-crimson p-4 rounded-r-2xl text-xs space-y-1.5">
+              <div className="font-bold text-slate-900 flex items-center gap-1.5">
+                <Info className="w-4 h-4 text-kgp-crimson" />
+                <span>OFFICIAL INSTRUCTION ON DIGITAL CERTIFICATE SUBMISSION</span>
+              </div>
+              <p className="text-slate-600 leading-relaxed">
+                All certificates must be scanned from original documents at a minimum resolution of 200 DPI. Mobile phone photographs with glare, tilted angles, or obscured registration seals will be rejected during document scrutiny.
+              </p>
+            </div>
+
+            <form onSubmit={handleProceedToReview} className="space-y-8 text-xs">
               
-              {/* PART A: ESSENTIAL IDENTITY DOCUMENTS */}
-              <div className="space-y-4">
-                <div className="text-xs font-bold uppercase tracking-wider text-slate-600 flex items-center gap-2">
+              {/* ======================================================== */}
+              {/* 1. BIOMETRIC STUDIO: PHOTOGRAPH & SIGNATURE PREVIEWS     */}
+              {/* ======================================================== */}
+              <div className="space-y-3">
+                <div className="text-xs font-bold uppercase tracking-wider text-slate-700 flex items-center gap-2 border-b border-slate-200 pb-2">
                   <Camera className="w-4 h-4 text-kgp-crimson" />
-                  <span>A. Candidate Photograph, Signature &amp; Identity</span>
+                  <span>1. Candidate Biometric Records (Admit Card &amp; Degree Printing)</span>
                 </div>
 
-                <div className="grid grid-cols-1 gap-4">
-                  {/* 1. Passport Photograph */}
-                  <DocUploadCard
-                    docKey="photo"
-                    title="Passport size photograph"
-                    specs="JPEG / JPG format – 50KB to 150KB"
-                    requirementType="Mandatory"
-                  />
-
-                  {/* 2. Signature */}
-                  <DocUploadCard
-                    docKey="signature"
-                    title="Candidate Signature"
-                    specs="JPEG / JPG format – 4KB to 150KB"
-                    requirementType="Mandatory"
-                  />
-
-                  {/* 3. Photo ID Card Scan */}
-                  <DocUploadCard
-                    docKey="idProof"
-                    title={`Photo ID Card Scan (${formData.idType})`}
-                    specs="Aadhaar Card / PAN Card / Passport / Voter ID / Driving License / other Government ID with photo (JPEG / JPG / PDF format) – 50KB to 2MB"
-                    requirementType="Mandatory"
-                    conditionalNote={`Matching ID Number: ${formData.idNumber}`}
-                  />
-                </div>
-              </div>
-
-              {/* PART B: RESERVATION & CATEGORY CERTIFICATES */}
-              <div className="space-y-4 pt-4 border-t border-slate-200">
-                <div className="text-xs font-bold uppercase tracking-wider text-slate-600 flex items-center gap-2">
-                  <ShieldCheck className="w-4 h-4 text-amber-600" />
-                  <span>B. Category, Disability &amp; Quota Proofs (Based on Section 1)</span>
-                </div>
-
-                <div className="grid grid-cols-1 gap-4">
-                  {/* 4. Category Certificate */}
-                  <DocUploadCard
-                    docKey="categoryCert"
-                    title={`Category Certificate (${formData.category})`}
-                    specs="Only for applicants who select SC / ST / OBC-NCL / EWS (JPEG / JPG / PDF format) – 50KB to 2MB"
-                    requirementType={['SC', 'ST', 'OBC-NCL', 'EWS'].includes(formData.category) ? 'Mandatory' : 'Optional'}
-                    isConditional={true}
-                    conditionalNote={['SC', 'ST', 'OBC-NCL', 'EWS'].includes(formData.category) ? `Required to validate ${formData.category} quota & fee waiver.` : 'Not required for General category.'}
-                  />
-
-                  {/* 5. PwD Certificate */}
-                  <DocUploadCard
-                    docKey="pwdCert"
-                    title="PwD Certificate"
-                    specs="Only for applicants with 40% or more disability (JPEG / JPG / PDF format) – 50KB to 2MB"
-                    requirementType={formData.isPwd === 'Yes' ? 'Mandatory' : 'Optional'}
-                    isConditional={true}
-                    conditionalNote={formData.isPwd === 'Yes' ? 'Required as Person with Disability was selected in Section 1.' : 'Not required if non-disabled.'}
-                  />
-
-                  {/* 6. Defence Personnel Ward Certificate */}
-                  <DocUploadCard
-                    docKey="defenceCert"
-                    title="Defence Personnel Ward / Disability Certificate"
-                    specs="Proof of applicant having been permanently disabled OR parent having been permanently disabled / killed during war or peacetime operations while serving as a defence / paramilitary personnel (JPEG / JPG / PDF format) – 50KB to 2MB"
-                    requirementType={formData.isDefencePersonnel === 'Yes' ? 'Mandatory' : 'Optional'}
-                    isConditional={true}
-                    conditionalNote={formData.isDefencePersonnel === 'Yes' ? 'Required as Defence Personnel was selected in Section 1.' : 'Not applicable.'}
-                  />
-
-                  {/* 7. JEE-Based Entry Proof */}
-                  <DocUploadCard
-                    docKey="jeeProof"
-                    title="JEE-Based Entry Proof"
-                    specs="Scoresheet / admit card / registration receipt as proof of eligibility to write JEE Advanced (PDF format) – 50KB to 2MB"
-                    requirementType={formData.jeeAdvancedQualified === 'Yes' ? 'Mandatory' : 'Optional'}
-                    isConditional={true}
-                    conditionalNote={formData.jeeAdvancedQualified === 'Yes' ? 'Required to claim direct JEE Advanced pathway admission.' : 'Not applicable.'}
-                  />
-                </div>
-              </div>
-
-              {/* PART C: ACADEMIC QUALIFICATIONS */}
-              <div className="space-y-4 pt-4 border-t border-slate-200">
-                <div className="text-xs font-bold uppercase tracking-wider text-slate-600 flex items-center gap-2">
-                  <Award className="w-4 h-4 text-emerald-700" />
-                  <span>C. Academic Qualification Marksheets &amp; Certificates</span>
-                </div>
-
-                <div className="grid grid-cols-1 gap-4">
-                  {/* 8. Class 10th / Secondary Marksheet */}
-                  <DocUploadCard
-                    docKey="class10"
-                    title="Class 10th / Secondary Marksheet &amp; Certificate"
-                    specs="PDF / JPG format – 50KB to 2MB"
-                    requirementType="Mandatory"
-                    conditionalNote="Mandatory proof of Mathematics and English study."
-                  />
-
-                  {/* 9. Higher Secondary Qualification (Either A or B) */}
-                  <div className="p-4.5 rounded-2xl bg-amber-50/50 border border-amber-300 space-y-3">
-                    <div className="font-bold text-slate-900 text-sm flex items-center justify-between">
-                      <span>Higher Secondary Qualification (Either A or B):</span>
-                      <span className="text-[10px] bg-amber-200 text-amber-900 font-extrabold px-2 py-0.5 rounded">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+                  
+                  {/* Studio Card 1: Passport Size Photograph */}
+                  <div className="p-5 rounded-2xl border-2 border-slate-200 bg-white hover:border-slate-300 transition shadow-2xs">
+                    <div className="flex items-center justify-between mb-3">
+                      <span className="font-bold text-slate-900 text-sm">Passport Size Photograph</span>
+                      <span className="text-[10px] bg-red-50 text-red-700 font-extrabold px-2 py-0.5 rounded border border-red-200 uppercase">
                         Mandatory
                       </span>
                     </div>
 
+                    <div className="flex items-start gap-4">
+                      {/* 35mm x 45mm Photo Mount Frame */}
+                      <div className="w-24 h-32 rounded-xl bg-slate-100 border-2 border-slate-300 overflow-hidden flex flex-col items-center justify-center flex-shrink-0 relative shadow-inner">
+                        {formData.docs.photo.uploaded && formData.docs.photo.previewUrl ? (
+                          <img 
+                            src={formData.docs.photo.previewUrl} 
+                            alt="Passport Photograph" 
+                            className="w-full h-full object-cover" 
+                          />
+                        ) : (
+                          <div className="text-center p-2 text-slate-400">
+                            <Camera className="w-6 h-6 mx-auto mb-1 opacity-50" />
+                            <span className="text-[9px] font-bold block leading-tight">3.5 × 4.5 cm</span>
+                          </div>
+                        )}
+                        <span className="absolute bottom-0 inset-x-0 bg-slate-900/80 text-white text-[8px] text-center font-bold py-0.5">
+                          80% Face
+                        </span>
+                      </div>
+
+                      {/* Photo Specs & Controls */}
+                      <div className="flex-1 space-y-2">
+                        <div className="text-[11px] text-slate-500 leading-snug">
+                          <strong>Format:</strong> JPEG / JPG<br />
+                          <strong>Size Limit:</strong> 50 KB – 150 KB<br />
+                          <strong>Background:</strong> Plain White / Light
+                        </div>
+
+                        {formData.docs.photo.uploaded ? (
+                          <div className="space-y-2 pt-1">
+                            <div className="text-[11px] font-bold text-emerald-800 bg-emerald-50 border border-emerald-200 px-2.5 py-1 rounded-lg flex items-center gap-1.5 truncate">
+                              <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600 flex-shrink-0" />
+                              <span className="truncate">{formData.docs.photo.name} ({formData.docs.photo.size})</span>
+                            </div>
+                            <div className="flex items-center gap-2">
+                              <label className="cursor-pointer text-[11px] text-kgp-crimson hover:underline font-bold">
+                                <span>Change Photo</span>
+                                <input 
+                                  type="file" 
+                                  accept="image/jpeg,image/jpg" 
+                                  className="hidden" 
+                                  onChange={(e) => handleFileUpload('photo', e.target.files[0])} 
+                                />
+                              </label>
+                              <span className="text-slate-300">•</span>
+                              <button
+                                type="button"
+                                onClick={() => setPreviewModalDoc({ title: "Passport Size Photograph", ...formData.docs.photo })}
+                                className="text-[11px] text-slate-600 hover:text-slate-900 font-bold"
+                              >
+                                View Large
+                              </button>
+                            </div>
+                          </div>
+                        ) : (
+                          <label className="mt-2 inline-flex items-center gap-1.5 px-3.5 py-1.5 bg-slate-900 hover:bg-kgp-crimson text-white font-bold text-xs rounded-xl cursor-pointer transition shadow-xs">
+                            <Upload className="w-3.5 h-3.5" />
+                            <span>Upload Photo</span>
+                            <input 
+                              type="file" 
+                              accept="image/jpeg,image/jpg" 
+                              className="hidden" 
+                              onChange={(e) => handleFileUpload('photo', e.target.files[0])} 
+                            />
+                          </label>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Studio Card 2: Official Candidate Signature */}
+                  <div className="p-5 rounded-2xl border-2 border-slate-200 bg-white hover:border-slate-300 transition shadow-2xs">
+                    <div className="flex items-center justify-between mb-3">
+                      <span className="font-bold text-slate-900 text-sm">Official Candidate Signature</span>
+                      <span className="text-[10px] bg-red-50 text-red-700 font-extrabold px-2 py-0.5 rounded border border-red-200 uppercase">
+                        Mandatory
+                      </span>
+                    </div>
+
+                    <div className="flex items-start gap-4">
+                      {/* Signature Box Frame */}
+                      <div className="w-36 h-20 rounded-xl bg-white border-2 border-slate-300 flex flex-col items-center justify-center flex-shrink-0 relative shadow-inner overflow-hidden">
+                        <div className="font-serif italic font-extrabold text-slate-800 text-base select-none px-2 text-center truncate">
+                          {formData.fullName || "S. Samanta"}
+                        </div>
+                        <span className="absolute bottom-0 inset-x-0 bg-slate-100 text-slate-500 text-[8px] text-center font-bold py-0.5 border-t border-slate-200">
+                          Digital Seal • 3.5 × 1.5 cm
+                        </span>
+                      </div>
+
+                      {/* Signature Specs & Controls */}
+                      <div className="flex-1 space-y-2">
+                        <div className="text-[11px] text-slate-500 leading-snug">
+                          <strong>Format:</strong> JPEG / JPG<br />
+                          <strong>Size Limit:</strong> 4 KB – 150 KB<br />
+                          <strong>Ink:</strong> Blue or Black on White
+                        </div>
+
+                        {formData.docs.signature.uploaded ? (
+                          <div className="space-y-2 pt-1">
+                            <div className="text-[11px] font-bold text-emerald-800 bg-emerald-50 border border-emerald-200 px-2.5 py-1 rounded-lg flex items-center gap-1.5 truncate">
+                              <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600 flex-shrink-0" />
+                              <span className="truncate">{formData.docs.signature.name} ({formData.docs.signature.size})</span>
+                            </div>
+                            <div className="flex items-center gap-2">
+                              <label className="cursor-pointer text-[11px] text-kgp-crimson hover:underline font-bold">
+                                <span>Change Sign</span>
+                                <input 
+                                  type="file" 
+                                  accept="image/jpeg,image/jpg" 
+                                  className="hidden" 
+                                  onChange={(e) => handleFileUpload('signature', e.target.files[0])} 
+                                />
+                              </label>
+                              <span className="text-slate-300">•</span>
+                              <button
+                                type="button"
+                                onClick={() => setPreviewModalDoc({ title: "Candidate Signature", ...formData.docs.signature })}
+                                className="text-[11px] text-slate-600 hover:text-slate-900 font-bold"
+                              >
+                                View Sign
+                              </button>
+                            </div>
+                          </div>
+                        ) : (
+                          <label className="mt-2 inline-flex items-center gap-1.5 px-3.5 py-1.5 bg-slate-900 hover:bg-kgp-crimson text-white font-bold text-xs rounded-xl cursor-pointer transition shadow-xs">
+                            <Upload className="w-3.5 h-3.5" />
+                            <span>Upload Signature</span>
+                            <input 
+                              type="file" 
+                              accept="image/jpeg,image/jpg" 
+                              className="hidden" 
+                              onChange={(e) => handleFileUpload('signature', e.target.files[0])} 
+                            />
+                          </label>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+
+                </div>
+              </div>
+
+              {/* ======================================================== */}
+              {/* 2. STATUTORY IDENTITY & CITIZENSHIP VERIFICATION        */}
+              {/* ======================================================== */}
+              <div className="space-y-3 pt-3">
+                <div className="text-xs font-bold uppercase tracking-wider text-slate-700 flex items-center gap-2 border-b border-slate-200 pb-2">
+                  <ShieldCheck className="w-4 h-4 text-blue-700" />
+                  <span>2. Statutory Government Photo ID Verification</span>
+                </div>
+
+                <AcademicDocRow
+                  docKey="idProof"
+                  title={`Photo ID Card Scan (${formData.idType})`}
+                  specs="Aadhaar Card / PAN Card / Passport / Voter ID / Driving License / other Government ID with photo (JPEG / JPG / PDF format) – 50KB to 2MB"
+                  requirementType="Mandatory"
+                  conditionalNote={`Verification Key: ID Number matching ${formData.idNumber} entered in Section 1.`}
+                />
+              </div>
+
+              {/* ======================================================== */}
+              {/* 3. QUALIFYING ACADEMIC RECORDS (BOARD & DIPLOMA)         */}
+              {/* ======================================================== */}
+              <div className="space-y-3 pt-3">
+                <div className="text-xs font-bold uppercase tracking-wider text-slate-700 flex items-center gap-2 border-b border-slate-200 pb-2">
+                  <Award className="w-4 h-4 text-emerald-700" />
+                  <span>3. Qualifying Board Certificates &amp; Marksheets</span>
+                </div>
+
+                <div className="space-y-3">
+                  {/* Class 10 */}
+                  <AcademicDocRow
+                    docKey="class10"
+                    title="Class 10th / Secondary Marksheet &amp; Certificate"
+                    specs="PDF / JPG format – 50KB to 2MB"
+                    requirementType="Mandatory"
+                    conditionalNote="Mandatory documentary verification of studying Mathematics and English."
+                  />
+
+                  {/* Higher Secondary Qualification (Either A or B) */}
+                  <div className="p-4 sm:p-5 rounded-2xl bg-amber-50/40 border border-amber-300/80 space-y-3">
+                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                      <div className="font-bold text-slate-900 text-sm flex items-center gap-2">
+                        <span>Higher Secondary Qualification (Select Option A or B):</span>
+                        <span className="text-[10px] bg-red-50 text-red-700 font-extrabold px-2 py-0.5 rounded border border-red-200 uppercase">
+                          Mandatory
+                        </span>
+                      </div>
+                      <div className="text-[11px] text-slate-500 font-semibold">
+                        Choose your qualifying pathway
+                      </div>
+                    </div>
+
                     {/* Radio Choice between A and B */}
-                    <div className="flex flex-col sm:flex-row gap-4 bg-white p-3 rounded-xl border border-amber-200">
-                      <label className="flex items-center gap-2 cursor-pointer font-bold text-slate-800">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 bg-white p-3 rounded-xl border border-amber-200">
+                      <label className={`p-2.5 rounded-lg border flex items-center gap-2.5 cursor-pointer font-bold transition text-xs ${
+                        formData.higherSecChoice === 'class12' 
+                          ? 'border-kgp-crimson bg-red-50/30 text-kgp-crimson' 
+                          : 'border-slate-200 text-slate-700 hover:bg-slate-50'
+                      }`}>
                         <input
                           type="radio"
                           name="higherSecChoice"
@@ -1354,10 +1562,14 @@ export default function QualifierRoundPortal({ initialCandidate, onStartExam, on
                           onChange={() => setFormData({ ...formData, higherSecChoice: 'class12' })}
                           className="text-kgp-crimson focus:ring-kgp-crimson"
                         />
-                        <span>Option A: Class 12th / Senior Secondary</span>
+                        <span>Pathway A: Class 12th / Senior Secondary</span>
                       </label>
 
-                      <label className="flex items-center gap-2 cursor-pointer font-bold text-slate-800">
+                      <label className={`p-2.5 rounded-lg border flex items-center gap-2.5 cursor-pointer font-bold transition text-xs ${
+                        formData.higherSecChoice === 'diploma' 
+                          ? 'border-kgp-crimson bg-red-50/30 text-kgp-crimson' 
+                          : 'border-slate-200 text-slate-700 hover:bg-slate-50'
+                      }`}>
                         <input
                           type="radio"
                           name="higherSecChoice"
@@ -1366,73 +1578,131 @@ export default function QualifierRoundPortal({ initialCandidate, onStartExam, on
                           onChange={() => setFormData({ ...formData, higherSecChoice: 'diploma' })}
                           className="text-kgp-crimson focus:ring-kgp-crimson"
                         />
-                        <span>Option B: 3-Year Polytechnic / Diploma</span>
+                        <span>Pathway B: 3-Year Polytechnic / Diploma</span>
                       </label>
                     </div>
 
                     {formData.higherSecChoice === 'class12' ? (
-                      <DocUploadCard
+                      <AcademicDocRow
                         docKey="class12"
                         title="A. Class 12th / Senior Secondary Marksheet &amp; Passing Certificate"
                         specs="PDF / JPG format – 50KB to 2MB"
                         requirementType="Mandatory"
+                        conditionalNote="Original or Digilocker verified Senior Secondary certificate."
                       />
                     ) : (
-                      <DocUploadCard
+                      <AcademicDocRow
                         docKey="diplomaCert"
                         title="B. Diploma Completion Certificate &amp; Marksheets"
                         specs="For candidates who pursued a Polytechnic/Diploma instead of 11th &amp; 12th (PDF format) – 50KB to 2MB"
                         requirementType="Mandatory"
+                        conditionalNote="State Technical Board recognition required."
                       />
                     )}
                   </div>
                 </div>
               </div>
 
-              {/* PART D: HIGHER DEGREES & EMPLOYMENT VERIFICATION */}
-              <div className="space-y-4 pt-4 border-t border-slate-200">
-                <div className="text-xs font-bold uppercase tracking-wider text-slate-600 flex items-center gap-2">
-                  <GraduationCap className="w-4 h-4 text-blue-700" />
-                  <span>D. Higher Degrees &amp; Employment Proofs (If Applicable)</span>
+              {/* ======================================================== */}
+              {/* 4. RESERVATION, DISABILITY & QUOTA ENTITLEMENTS         */}
+              {/* ======================================================== */}
+              <div className="space-y-3 pt-3">
+                <div className="text-xs font-bold uppercase tracking-wider text-slate-700 flex items-center gap-2 border-b border-slate-200 pb-2">
+                  <Building className="w-4 h-4 text-amber-700" />
+                  <span>4. Statutory Quotas &amp; Central Government Entitlements</span>
                 </div>
 
-                <div className="grid grid-cols-1 gap-4">
-                  {/* 10. Undergraduate (UG) */}
-                  <DocUploadCard
+                <div className="space-y-3">
+                  {/* Category Certificate */}
+                  <AcademicDocRow
+                    docKey="categoryCert"
+                    title={`Category Certificate (${formData.category})`}
+                    specs="Only for applicants who select SC / ST / OBC-NCL / EWS (JPEG / JPG / PDF format) – 50KB to 2MB"
+                    requirementType={['SC', 'ST', 'OBC-NCL', 'EWS'].includes(formData.category) ? 'Conditional' : 'Optional'}
+                    conditionalNote={['SC', 'ST', 'OBC-NCL', 'EWS'].includes(formData.category) 
+                      ? `Mandatory to validate ${formData.category} quota tariff & cutoff waivers.` 
+                      : 'Not required for Unreserved General category.'}
+                  />
+
+                  {/* PwD Certificate */}
+                  <AcademicDocRow
+                    docKey="pwdCert"
+                    title="PwD Disability Certificate (UDID / Medical Board)"
+                    specs="Only for applicants with 40% or more disability (JPEG / JPG / PDF format) – 50KB to 2MB"
+                    requirementType={formData.isPwd === 'Yes' ? 'Conditional' : 'Optional'}
+                    conditionalNote={formData.isPwd === 'Yes' 
+                      ? 'Required for candidate claiming PwD reservation & CBT test centre accommodations.' 
+                      : 'Not required.'}
+                  />
+
+                  {/* Defence Personnel */}
+                  <AcademicDocRow
+                    docKey="defenceCert"
+                    title="Defence Personnel Ward / Disability Certificate"
+                    specs="Proof of applicant having been permanently disabled OR parent having been permanently disabled / killed during war or peacetime operations while serving as a defence / paramilitary personnel (JPEG / JPG / PDF format) – 50KB to 2MB"
+                    requirementType={formData.isDefencePersonnel === 'Yes' ? 'Conditional' : 'Optional'}
+                    conditionalNote={formData.isDefencePersonnel === 'Yes' 
+                      ? 'Issued by Record Office / Zila Sainik Board.' 
+                      : 'Not applicable.'}
+                  />
+
+                  {/* JEE Advanced Proof */}
+                  <AcademicDocRow
+                    docKey="jeeProof"
+                    title="JEE-Based Direct Entry Proof"
+                    specs="Scoresheet / admit card / registration receipt as proof of eligibility to write JEE Advanced (PDF format) – 50KB to 2MB"
+                    requirementType={formData.jeeAdvancedQualified === 'Yes' ? 'Conditional' : 'Optional'}
+                    conditionalNote={formData.jeeAdvancedQualified === 'Yes' 
+                      ? 'Exempts candidate from writing Qualifier Examination.' 
+                      : 'Not applicable.'}
+                  />
+                </div>
+              </div>
+
+              {/* ======================================================== */}
+              {/* 5. HIGHER DEGREES & EMPLOYMENT VERIFICATION              */}
+              {/* ======================================================== */}
+              <div className="space-y-3 pt-3">
+                <div className="text-xs font-bold uppercase tracking-wider text-slate-700 flex items-center gap-2 border-b border-slate-200 pb-2">
+                  <GraduationCap className="w-4 h-4 text-purple-700" />
+                  <span>5. Higher Qualifications &amp; Employment Scrutiny (If Applicable)</span>
+                </div>
+
+                <div className="space-y-3">
+                  <AcademicDocRow
                     docKey="ugDegree"
                     title="Undergraduate (UG) Degree Certificate &amp; Consolidated Marksheet"
                     specs="If applicable (PDF format) – 50KB to 2MB"
                     requirementType="Optional"
                   />
 
-                  {/* 11. Postgraduate (PG) */}
-                  <DocUploadCard
+                  <AcademicDocRow
                     docKey="pgDegree"
                     title="Postgraduate (PG) Degree Certificate &amp; Marksheet"
                     specs="If applicable (PDF format) – 50KB to 2MB"
                     requirementType="Optional"
                   />
 
-                  {/* 12. Doctoral (Ph.D.) */}
-                  <DocUploadCard
+                  <AcademicDocRow
                     docKey="phdDegree"
                     title="Doctoral (Ph.D.) Degree / Provisional Certificate / Coursework Completion Proof"
                     specs="If applicable (PDF format) – 50KB to 2MB"
                     requirementType="Optional"
                   />
 
-                  {/* 13. Employment Verification */}
-                  <DocUploadCard
+                  <AcademicDocRow
                     docKey="employmentProof"
                     title="Employment Verification (For Working Professionals)"
                     specs="Current Employee ID Card or Official Employment Letter / NOC from the organization (PDF / JPG format) – 50KB to 2MB"
-                    requirementType={formData.isWorkingProfessional === 'Yes' ? 'Mandatory' : 'Optional'}
-                    conditionalNote={formData.isWorkingProfessional === 'Yes' ? 'Required because you selected Working Professional in Section 1.' : 'Only required if you are an employed professional.'}
+                    requirementType={formData.isWorkingProfessional === 'Yes' ? 'Conditional' : 'Optional'}
+                    conditionalNote={formData.isWorkingProfessional === 'Yes' 
+                      ? 'Required to document working professional enrollment track.' 
+                      : 'Only required if you are currently employed.'}
                   />
                 </div>
               </div>
 
-              {/* Navigation Buttons */}
+              {/* Navigation Action Buttons */}
               <div className="pt-6 border-t border-slate-200 flex items-center justify-between">
                 <button
                   type="button"
@@ -1547,7 +1817,7 @@ export default function QualifierRoundPortal({ initialCandidate, onStartExam, on
                   {Object.entries(formData.docs)
                     .filter(([_, d]) => d.uploaded)
                     .map(([key, d]) => (
-                      <span key={key} className="px-2.5 py-1 bg-white border border-slate-200 rounded-lg text-[11px] font-medium text-slate-700 flex items-center gap-1.5">
+                      <span key={key} className="px-2.5 py-1 bg-white border border-slate-200 rounded-lg text-[11px] font-medium text-slate-700 flex items-center gap-1.5 shadow-2xs">
                         <Check className="w-3.5 h-3.5 text-emerald-600" />
                         <span className="truncate max-w-[200px]">{d.name}</span>
                       </span>
@@ -1704,6 +1974,98 @@ export default function QualifierRoundPortal({ initialCandidate, onStartExam, on
         )}
 
       </main>
+
+      {/* ========================================================================= */}
+      {/* UNIVERSITY DOCUMENT SCRUTINY PREVIEW MODAL                                */}
+      {/* ========================================================================= */}
+      {previewModalDoc && (
+        <div className="fixed inset-0 z-50 bg-slate-950/70 backdrop-blur-xs flex items-center justify-center p-4 animate-in fade-in">
+          <div className="bg-white rounded-3xl max-w-lg w-full overflow-hidden shadow-2xl border border-slate-200 animate-in zoom-in-95">
+            
+            {/* Modal Header */}
+            <div className="bg-slate-900 text-white p-4.5 px-6 flex items-center justify-between border-b border-slate-800">
+              <div className="flex items-center gap-3">
+                <div className="w-8 h-8 rounded-full bg-white/10 p-1 flex items-center justify-center">
+                  <FileCheck className="w-4 h-4 text-amber-400" />
+                </div>
+                <div>
+                  <div className="text-xs font-bold text-amber-400 uppercase tracking-wider">
+                    IIT Kharagpur Scrutiny Desk
+                  </div>
+                  <h3 className="text-sm font-bold text-white truncate max-w-xs">
+                    {previewModalDoc.title}
+                  </h3>
+                </div>
+              </div>
+
+              <button
+                onClick={() => setPreviewModalDoc(null)}
+                className="p-1 rounded-full text-slate-400 hover:text-white hover:bg-slate-800 transition"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            {/* Modal Canvas Body */}
+            <div className="p-6 space-y-4 text-xs">
+              <div className="bg-slate-50 border border-slate-200 rounded-2xl p-4 space-y-3">
+                
+                {/* Meta details */}
+                <div className="grid grid-cols-2 gap-2 pb-3 border-b border-slate-200 text-[11px]">
+                  <div>
+                    <span className="text-slate-400 block">Candidate:</span>
+                    <strong className="text-slate-800 font-bold">{formData.fullName}</strong>
+                  </div>
+                  <div>
+                    <span className="text-slate-400 block">File Size:</span>
+                    <strong className="text-slate-800 font-mono">{previewModalDoc.size}</strong>
+                  </div>
+                </div>
+
+                {/* Preview Viewport */}
+                <div className="w-full min-h-[220px] bg-white rounded-xl border-2 border-dashed border-slate-300 p-4 flex flex-col items-center justify-center relative overflow-hidden">
+                  {previewModalDoc.previewUrl ? (
+                    <img 
+                      src={previewModalDoc.previewUrl} 
+                      alt="Scrutiny Preview" 
+                      className="max-h-[200px] object-contain rounded-lg shadow-xs" 
+                    />
+                  ) : (
+                    <div className="text-center space-y-2 py-4">
+                      <FileText className="w-12 h-12 text-slate-400 mx-auto" />
+                      <div className="font-mono font-bold text-slate-800 text-xs truncate max-w-[260px]">
+                        {previewModalDoc.name}
+                      </div>
+                      <div className="text-[10px] text-slate-400">
+                        Official Scanned Document • Resolution Verified (200 DPI)
+                      </div>
+                    </div>
+                  )}
+
+                  {/* University Scrutiny Watermark Seal */}
+                  <div className="mt-3 px-3 py-1 bg-emerald-50 border border-emerald-300 rounded-full text-emerald-800 text-[10px] font-extrabold flex items-center gap-1.5">
+                    <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" />
+                    <span>PASSED OFFICIAL PRE-ADMISSIONS AUDIT</span>
+                  </div>
+                </div>
+
+              </div>
+
+              {/* Close Button */}
+              <div className="flex justify-end">
+                <button
+                  type="button"
+                  onClick={() => setPreviewModalDoc(null)}
+                  className="px-5 py-2.5 bg-slate-900 hover:bg-slate-800 text-white font-bold rounded-xl text-xs transition"
+                >
+                  Close Scrutiny Viewer
+                </button>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      )}
 
     </div>
   );
