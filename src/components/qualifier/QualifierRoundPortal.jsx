@@ -860,18 +860,68 @@ export default function QualifierRoundPortal({ initialCandidate, onStartExam, on
   return (
     <div className="min-h-screen bg-[#f3f4f6] text-slate-800 font-sans selection:bg-amber-500 selection:text-white pb-20">
       
-      {/* 0. INSTITUTIONAL TOP GOVERNMENT BAR & SITE TRANSLATOR */}
-      <div className="bg-slate-900 text-slate-300 text-[11px] py-1.5 px-4 sm:px-6 lg:px-8 border-b border-slate-800">
-        <div className="max-w-[1720px] mx-auto flex flex-wrap items-center justify-between gap-2">
-          <div className="flex items-center gap-3">
-            <span className="font-extrabold tracking-wider text-amber-400 uppercase text-xs flex items-center gap-1.5">
-              <span className="w-1.5 h-1.5 rounded-full bg-amber-400 animate-pulse"></span>
-              <span>{t.govHeader}</span>
-            </span>
-            <span className="hidden sm:inline text-slate-600">|</span>
-            <span className="hidden sm:inline text-emerald-400 font-mono text-[10px] font-semibold">
-              🔒 {t.sslSecured}
-            </span>
+      {/* 0. INSTITUTIONAL TOP BAR & FLASH NOTIFICATION (IIT KGP MOTTO: योगः कर्मसु कौशलम्) */}
+      <div className="bg-slate-950 text-slate-300 text-[11px] py-1.5 px-4 sm:px-6 lg:px-8 border-b border-slate-800 shadow-inner">
+        <div className="max-w-[1720px] mx-auto flex items-center justify-between gap-3 sm:gap-6">
+          
+          {/* Left: IIT KGP & Flash Notification Ticker */}
+          <div className="flex items-center gap-3 min-w-0 flex-1 overflow-hidden">
+            {/* IIT KGP Brand Badge */}
+            <div className="flex items-center gap-1.5 flex-shrink-0">
+              <span className="w-2 h-2 rounded-full bg-amber-400 animate-ping"></span>
+              <span className="font-black tracking-wider text-amber-400 uppercase text-xs">
+                {t.govHeader || "IIT KGP"}
+              </span>
+            </div>
+
+            <span className="text-slate-700 flex-shrink-0 hidden sm:inline">|</span>
+
+            {/* Flash Notification / Motto Ticker */}
+            <div className="flex items-center gap-2 min-w-0 flex-1 overflow-hidden">
+              <span className="flex-shrink-0 px-2 py-0.5 rounded-md bg-gradient-to-r from-red-600 to-amber-600 text-white font-black text-[9px] uppercase tracking-wider shadow-xs animate-pulse flex items-center gap-1">
+                <Sparkles className="w-2.5 h-2.5" />
+                <span>FLASH</span>
+              </span>
+
+              {/* Animated Scroller with Motto & Pause on Hover */}
+              <div className="overflow-hidden whitespace-nowrap text-[11px] flex-1">
+                <div className="flash-marquee flex items-center gap-5 cursor-default select-none" title="IIT Kharagpur Official Motto • Hover to Pause">
+                  {/* Track 1 */}
+                  <span className="inline-flex items-center gap-1.5 font-bold text-amber-300 tracking-wide font-serif text-xs">
+                    “योगः कर्मसु कौशलम्”
+                  </span>
+                  <span className="text-slate-400 text-[10px] hidden md:inline">
+                    (Excellence in Action is Yoga)
+                  </span>
+                  <span className="text-amber-500/70 font-black">•</span>
+                  <span className="text-slate-200 font-semibold">
+                    Admissions 2026 Live Now
+                  </span>
+                  <span className="text-amber-500/70 font-black">•</span>
+                  <span className="text-emerald-400 font-semibold">
+                    BS &amp; Diploma in Data Science &amp; Artificial Intelligence
+                  </span>
+                  <span className="text-amber-500/70 font-black">•</span>
+
+                  {/* Duplicate Track for Seamless Infinite Marquee */}
+                  <span className="inline-flex items-center gap-1.5 font-bold text-amber-300 tracking-wide font-serif text-xs">
+                    “योगः कर्मसु कौशलम्”
+                  </span>
+                  <span className="text-slate-400 text-[10px] hidden md:inline">
+                    (Excellence in Action is Yoga)
+                  </span>
+                  <span className="text-amber-500/70 font-black">•</span>
+                  <span className="text-slate-200 font-semibold">
+                    Admissions 2026 Live Now
+                  </span>
+                  <span className="text-amber-500/70 font-black">•</span>
+                  <span className="text-emerald-400 font-semibold">
+                    BS &amp; Diploma in Data Science &amp; Artificial Intelligence
+                  </span>
+                  <span className="text-amber-500/70 font-black">•</span>
+                </div>
+              </div>
+            </div>
           </div>
 
           {/* Trilingual Language Selector (English, Bengali, Hindi) */}

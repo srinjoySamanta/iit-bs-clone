@@ -35,3 +35,19 @@
 .pulse-glow {
   animation: pulseGlow 3s infinite ease-in-out;
 }
+
+@keyframes flashMarquee {
+  0% { transform: translateX(0%); }
+  100% { transform: translateX(-50%); }
+}
+
+.flash-marquee {
+  display: inline-flex;
+  white-space: nowrap;
+  animation: flashMarquee 24s linear infinite;
+  will-change: transform;
+}
+
+.flash-marquee:hover {
+  animation-play-state: paused;
+}
