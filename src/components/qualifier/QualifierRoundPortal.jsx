@@ -396,6 +396,7 @@ export default function QualifierRoundPortal({ initialCandidate, onStartExam, on
                 >
                   <option value="BS in Data Science and Applications">BS in Data Science and Applications</option>
                   <option value="BS in Data Science and Artificial Intelligence (AI)">BS in Data Science and Artificial Intelligence (AI)</option>
+                  <option value="Diploma in Data Science and AI">Diploma in Data Science and AI</option>
                 </select>
               </div>
 
