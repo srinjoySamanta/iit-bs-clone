@@ -44,6 +44,116 @@ export default function Navbar({
   return (
     <header className="sticky top-0 z-50 bg-white/95 backdrop-blur-md shadow-md border-b border-slate-200 transition-all">
 
+      {/* 0. INSTITUTIONAL TOP BAR & FLASH NOTIFICATION (IIT KGP MOTTO: योगः कर्मसु कौशलम्) */}
+      <div className="bg-slate-950 text-slate-300 text-[11px] py-1.5 px-4 sm:px-6 lg:px-8 border-b border-slate-800 shadow-inner">
+        <div className="max-w-7xl mx-auto flex items-center justify-between gap-3 sm:gap-6">
+          
+          {/* Left: IIT KGP & Flash Notification Ticker */}
+          <div className="flex items-center gap-3 min-w-0 flex-1 overflow-hidden">
+            {/* IIT KGP Brand Badge */}
+            <div className="flex items-center gap-1.5 flex-shrink-0">
+              <span className="w-2 h-2 rounded-full bg-amber-400 animate-ping"></span>
+              <span className="font-black tracking-wider text-amber-400 uppercase text-xs">
+                IIT KGP
+              </span>
+            </div>
+
+            <span className="text-slate-700 flex-shrink-0 hidden sm:inline">|</span>
+
+            {/* Flash Notification / Motto Ticker */}
+            <div className="flex items-center gap-2 min-w-0 flex-1 overflow-hidden">
+              <span className="flex-shrink-0 px-2 py-0.5 rounded-md bg-gradient-to-r from-red-600 to-amber-600 text-white font-black text-[9px] uppercase tracking-wider shadow-xs animate-pulse flex items-center gap-1">
+                <Sparkles className="w-2.5 h-2.5" />
+                <span>FLASH</span>
+              </span>
+
+              {/* Animated Scroller with Motto & Pause on Hover */}
+              <div className="overflow-hidden whitespace-nowrap text-[11px] flex-1">
+                <div className="flash-marquee flex items-center gap-5 cursor-default select-none" title="IIT Kharagpur Official Motto • Hover to Pause">
+                  {/* Track 1 */}
+                  <span className="inline-flex items-center gap-1.5 font-bold text-amber-300 tracking-wide font-serif text-xs">
+                    “योगः कर्मसु कौशलम्”
+                  </span>
+                  <span className="text-slate-400 text-[10px] hidden md:inline">
+                    (Excellence in Action is Yoga)
+                  </span>
+                  <span className="text-amber-500/70 font-black">•</span>
+                  <span className="text-slate-200 font-semibold">
+                    Admissions 2026 Live Now
+                  </span>
+                  <span className="text-amber-500/70 font-black">•</span>
+                  <span className="text-emerald-400 font-semibold">
+                    BS &amp; Diploma in Data Science &amp; Artificial Intelligence
+                  </span>
+                  <span className="text-amber-500/70 font-black">•</span>
+
+                  {/* Duplicate Track for Seamless Infinite Marquee */}
+                  <span className="inline-flex items-center gap-1.5 font-bold text-amber-300 tracking-wide font-serif text-xs">
+                    “योगः कर्मसु कौशलम्”
+                  </span>
+                  <span className="text-slate-400 text-[10px] hidden md:inline">
+                    (Excellence in Action is Yoga)
+                  </span>
+                  <span className="text-amber-500/70 font-black">•</span>
+                  <span className="text-slate-200 font-semibold">
+                    Admissions 2026 Live Now
+                  </span>
+                  <span className="text-amber-500/70 font-black">•</span>
+                  <span className="text-emerald-400 font-semibold">
+                    BS &amp; Diploma in Data Science &amp; Artificial Intelligence
+                  </span>
+                  <span className="text-amber-500/70 font-black">•</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Right: Trilingual Language Selector (English, Bengali, Hindi) */}
+          <div className="flex items-center gap-2 flex-shrink-0">
+            <div className="flex items-center gap-1 text-amber-300 font-bold text-[11px] mr-0.5">
+              <Globe className="w-3.5 h-3.5" />
+              <span className="hidden lg:inline">Translate:</span>
+            </div>
+            <div className="inline-flex rounded-lg p-0.5 bg-slate-900 border border-slate-700">
+              <button
+                type="button"
+                onClick={() => changeLanguage('en')}
+                className={`px-2.5 py-0.5 rounded-md text-[11px] font-bold transition ${
+                  lang === 'en'
+                    ? 'bg-amber-500 text-slate-950 shadow-xs'
+                    : 'text-slate-300 hover:text-white hover:bg-slate-800'
+                }`}
+              >
+                English
+              </button>
+              <button
+                type="button"
+                onClick={() => changeLanguage('bn')}
+                className={`px-2.5 py-0.5 rounded-md text-[11px] font-bold transition ${
+                  lang === 'bn'
+                    ? 'bg-amber-500 text-slate-950 shadow-xs'
+                    : 'text-slate-300 hover:text-white hover:bg-slate-800'
+                }`}
+              >
+                বাংলা
+              </button>
+              <button
+                type="button"
+                onClick={() => changeLanguage('hi')}
+                className={`px-2.5 py-0.5 rounded-md text-[11px] font-bold transition ${
+                  lang === 'hi'
+                    ? 'bg-amber-500 text-slate-950 shadow-xs'
+                    : 'text-slate-300 hover:text-white hover:bg-slate-800'
+                }`}
+              >
+                हिन्दी
+              </button>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
       {/* Main Brand & Navigation Header */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between min-h-[72px] py-2 gap-4">
