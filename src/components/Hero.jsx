@@ -24,14 +24,14 @@ export default function Hero({ onOpenSignUp, onOpenDiagram, onOpenCertificate, o
   }, []);
 
   return (
-    <section className="relative overflow-hidden bg-gradient-to-b from-[#081528] via-[#0d223f] to-[#081528] text-white pt-8 pb-16 lg:pt-10 lg:pb-20">
+    <section className="relative overflow-hidden bg-gradient-to-b from-[#faf9f6] via-white to-[#f4f1ea] text-slate-900 pt-8 pb-16 lg:pt-10 lg:pb-20 border-b border-stone-200">
       
       {/* Background Subtle Heritage Grid & Atmospheric Glow */}
-      <div className="absolute inset-0 opacity-15 pointer-events-none">
+      <div className="absolute inset-0 opacity-20 pointer-events-none">
         <svg className="w-full h-full" xmlns="http://www.w3.org/2000/svg">
           <defs>
             <pattern id="kgp-grid" width="48" height="48" patternUnits="userSpaceOnUse">
-              <path d="M 48 0 L 0 0 0 48" fill="none" stroke="#d4af37" strokeWidth="0.6" strokeOpacity="0.4" />
+              <path d="M 48 0 L 0 0 0 48" fill="none" stroke="#b45309" strokeWidth="0.5" strokeOpacity="0.15" />
             </pattern>
           </defs>
           <rect width="100%" height="100%" fill="url(#kgp-grid)" />
@@ -39,25 +39,25 @@ export default function Hero({ onOpenSignUp, onOpenDiagram, onOpenCertificate, o
       </div>
 
       {/* Atmospheric Ambient Glows */}
-      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[350px] bg-red-800/15 blur-[140px] rounded-full pointer-events-none" />
-      <div className="absolute top-1/3 left-1/4 w-[450px] h-[250px] bg-amber-500/10 blur-[100px] rounded-full pointer-events-none" />
+      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[350px] bg-red-700/5 blur-[140px] rounded-full pointer-events-none" />
+      <div className="absolute top-1/3 left-1/4 w-[450px] h-[250px] bg-amber-500/5 blur-[100px] rounded-full pointer-events-none" />
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         
         {/* Top Heritage Pill Badge */}
         <div className="flex flex-wrap items-center justify-center gap-2 mb-4">
-          <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full text-xs font-semibold bg-amber-500/15 text-amber-300 border border-amber-500/30 backdrop-blur shadow-sm">
-            <span className="w-2 h-2 rounded-full bg-amber-400 animate-ping" />
+          <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full text-xs font-semibold bg-red-50 text-kgp-crimson border border-red-200 shadow-sm">
+            <span className="w-2 h-2 rounded-full bg-kgp-crimson animate-ping" />
             <span className="font-bold tracking-wider uppercase text-[11px]">
               First IIT of India • Estd. 1951
             </span>
           </div>
-          <div className="hidden sm:inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-emerald-500/15 text-emerald-300 border border-emerald-500/30 backdrop-blur">
-            <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400" />
-            <span>Direct Entry: WBJEE & JEE Advanced</span>
+          <div className="hidden sm:inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-800 border border-emerald-200 shadow-sm">
+            <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" />
+            <span>Direct Entry: WBJEE &amp; JEE Advanced</span>
           </div>
-          <div className="hidden md:inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-blue-500/15 text-blue-300 border border-blue-500/30 backdrop-blur">
-            <Sparkles className="w-3.5 h-3.5 text-blue-400" />
+          <div className="hidden md:inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-blue-50 text-blue-900 border border-blue-200 shadow-sm">
+            <Sparkles className="w-3.5 h-3.5 text-blue-600" />
             <span>Universal Qualifier (No Age Limit)</span>
           </div>
         </div>
@@ -67,7 +67,7 @@ export default function Hero({ onOpenSignUp, onOpenDiagram, onOpenCertificate, o
           
           {/* Official IIT Kharagpur Crest Display */}
           <div className="flex items-center justify-center gap-3.5 mb-1">
-            <div className="w-13 h-13 sm:w-15 sm:h-15 rounded-2xl bg-white p-1.5 shadow-2xl border-2 border-amber-400 flex items-center justify-center">
+            <div className="w-13 h-13 sm:w-15 sm:h-15 rounded-2xl bg-white p-1.5 shadow-md border-2 border-amber-500/60 flex items-center justify-center">
               <img 
                 src={iitKgpLogo} 
                 alt="Indian Institute of Technology Kharagpur" 
@@ -75,45 +75,45 @@ export default function Hero({ onOpenSignUp, onOpenDiagram, onOpenCertificate, o
               />
             </div>
             <div className="text-left">
-              <div className="text-sm sm:text-base font-bold font-serif-title text-white leading-tight">
+              <div className="text-sm sm:text-base font-bold font-serif-title text-slate-900 leading-tight">
                 Indian Institute of Technology Kharagpur
               </div>
-              <div className="text-xs text-amber-300 font-semibold leading-tight mt-0.5">
+              <div className="text-xs text-amber-800 font-semibold leading-tight mt-0.5">
                 भारतीय प्रौद्योगिकी संस्थान खड़गपुर
               </div>
             </div>
           </div>
 
-          <div className="text-xs sm:text-sm uppercase tracking-widest text-amber-400 font-bold font-sans">
+          <div className="text-xs sm:text-sm uppercase tracking-widest text-amber-800 font-bold font-sans">
             Official 4-Year Undergraduate Degree Programme
           </div>
 
-          <h1 className="text-3xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight font-serif-title leading-tight sm:leading-none text-white drop-shadow-md">
-            Bachelor of Science <span className="text-transparent bg-clip-text bg-gradient-to-r from-amber-300 via-yellow-200 to-amber-400">(BS)</span> in <br />
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-white via-amber-100 to-white underline decoration-amber-500/80 decoration-2 sm:decoration-4 underline-offset-8">
-              Data Science & Artificial Intelligence
+          <h1 className="text-3xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight font-serif-title leading-tight text-slate-950">
+            Bachelor of Science <span className="text-kgp-crimson">(BS)</span> in <br />
+            <span className="text-kgp-crimson underline decoration-amber-500/60 decoration-2 sm:decoration-4 underline-offset-8">
+              Data Science &amp; Artificial Intelligence
             </span>
           </h1>
 
-          <p className="text-sm sm:text-base md:text-lg text-slate-200 font-light max-w-3xl mx-auto leading-relaxed pt-2">
-            Earn an authentic undergraduate degree from the <strong className="text-amber-300 font-semibold">Indian Institute of Technology Kharagpur</strong>. 
-            Enjoy flexible online learning with in-person proctored exams, modular exit awards (<span className="text-white font-medium">Certificate, Diploma, BSc, BS</span>), and lifelong <strong className="text-white font-medium">IIT KGP Alumni Status</strong>.
+          <p className="text-sm sm:text-base md:text-lg text-slate-700 font-normal max-w-3xl mx-auto leading-relaxed pt-2">
+            Earn an authentic undergraduate degree from the <strong className="text-kgp-crimson font-bold">Indian Institute of Technology Kharagpur</strong>. 
+            Enjoy flexible online learning with in-person proctored exams, modular exit awards (<span className="text-slate-900 font-semibold">Certificate, Diploma, BSc, BS</span>), and lifelong <strong className="text-slate-900 font-semibold">IIT KGP Alumni Status</strong>.
           </p>
         </div>
 
-        {/* Primary Call to Action Buttons (Clearly visible on any laptop screen) */}
-        <div className="mt-6 flex flex-wrap items-center justify-center gap-3 sm:gap-4">
+        {/* Primary Call to Action Buttons */}
+        <div className="mt-7 flex flex-wrap items-center justify-center gap-3 sm:gap-4">
           
           {/* Main Qualifier Exam Button */}
           <button
             onClick={onOpenQualifier}
-            className="group px-6 sm:px-8 py-3.5 sm:py-4 bg-gradient-to-r from-emerald-600 via-teal-600 to-emerald-700 hover:from-emerald-500 hover:to-teal-600 text-white font-extrabold text-sm sm:text-base rounded-2xl shadow-xl hover:shadow-2xl flex items-center justify-center gap-2.5 transition transform hover:-translate-y-0.5 ring-2 ring-amber-400 border border-emerald-400/50"
+            className="group px-6 sm:px-8 py-3.5 sm:py-4 bg-gradient-to-r from-emerald-700 via-teal-700 to-emerald-800 hover:from-emerald-800 hover:to-teal-800 text-white font-extrabold text-sm sm:text-base rounded-2xl shadow-md hover:shadow-lg flex items-center justify-center gap-2.5 transition transform hover:-translate-y-0.5 border border-emerald-600/40 ring-2 ring-emerald-500/20"
           >
             <div className="w-7 h-7 rounded-xl bg-white/20 flex items-center justify-center">
               <Sparkles className="w-4 h-4 text-amber-300 animate-pulse" />
             </div>
             <div className="text-left">
-              <div className="text-xs text-amber-200 font-semibold uppercase tracking-wider leading-none">
+              <div className="text-xs text-emerald-100 font-semibold uppercase tracking-wider leading-none">
                 Admission Pathway 1
               </div>
               <div className="font-bold leading-tight">
@@ -126,13 +126,13 @@ export default function Hero({ onOpenSignUp, onOpenDiagram, onOpenCertificate, o
           {/* Direct Admission Button */}
           <button
             onClick={onOpenSignUp}
-            className="group px-6 sm:px-7 py-3.5 sm:py-4 bg-gradient-to-r from-kgp-crimson to-red-800 hover:from-kgp-darkred hover:to-kgp-crimson text-white font-bold text-sm sm:text-base rounded-2xl shadow-lg hover:shadow-xl flex items-center justify-center gap-2.5 transition transform hover:-translate-y-0.5 border border-red-400/30"
+            className="group px-6 sm:px-7 py-3.5 sm:py-4 bg-gradient-to-r from-kgp-crimson to-red-800 hover:from-kgp-darkred hover:to-kgp-crimson text-white font-bold text-sm sm:text-base rounded-2xl shadow-md hover:shadow-lg flex items-center justify-center gap-2.5 transition transform hover:-translate-y-0.5 border border-red-700/30"
           >
             <div className="w-7 h-7 rounded-xl bg-white/20 flex items-center justify-center">
               <Award className="w-4 h-4 text-amber-300" />
             </div>
             <div className="text-left">
-              <div className="text-xs text-red-200 font-semibold uppercase tracking-wider leading-none">
+              <div className="text-xs text-red-100 font-semibold uppercase tracking-wider leading-none">
                 Admission Pathway 2
               </div>
               <div className="font-bold leading-tight">
@@ -144,36 +144,36 @@ export default function Hero({ onOpenSignUp, onOpenDiagram, onOpenCertificate, o
           {/* Fees & Waiver Calculator Shortcut */}
           <a
             href="#fees"
-            className="px-5 py-3.5 sm:py-4 bg-slate-800/80 hover:bg-slate-700/80 text-amber-300 hover:text-amber-200 font-semibold text-xs sm:text-sm rounded-2xl border border-amber-500/30 flex items-center justify-center gap-2 transition backdrop-blur shadow-md"
+            className="px-5 py-3.5 sm:py-4 bg-white hover:bg-slate-50 text-slate-800 hover:text-kgp-crimson font-semibold text-xs sm:text-sm rounded-2xl border border-stone-300 flex items-center justify-center gap-2 transition shadow-sm"
           >
-            <span>Fees & Waivers (Up to 75% Off)</span>
-            <ChevronRight className="w-4 h-4 text-amber-400" />
+            <span>Fees &amp; Waivers (Up to 75% Off)</span>
+            <ChevronRight className="w-4 h-4 text-amber-600" />
           </a>
 
           {/* Interactive Block Diagram Button */}
           <button
             onClick={onOpenDiagram}
-            className="px-4 py-3.5 sm:py-4 bg-slate-900/60 hover:bg-slate-800 text-slate-300 hover:text-white text-xs sm:text-sm font-medium rounded-2xl border border-slate-700 flex items-center justify-center gap-1.5 transition"
+            className="px-4 py-3.5 sm:py-4 bg-white hover:bg-slate-50 text-slate-700 hover:text-slate-900 text-xs sm:text-sm font-medium rounded-2xl border border-stone-300 flex items-center justify-center gap-1.5 transition shadow-sm"
             title="Open Interactive Portal Block Diagram"
           >
-            <Layers className="w-4 h-4 text-amber-400" />
+            <Layers className="w-4 h-4 text-amber-600" />
             <span className="hidden sm:inline">Block Diagram</span>
           </button>
 
         </div>
 
-        {/* Live Admission Deadline Countdown Strip (Compact & Elegant) */}
-        <div className="mt-6 max-w-xl mx-auto bg-slate-900/90 backdrop-blur-md border border-amber-500/30 rounded-2xl p-3 sm:p-3.5 shadow-2xl flex flex-col sm:flex-row items-center justify-between gap-3">
+        {/* Live Admission Deadline Countdown Strip (Sober & Prestigious Academic Style) */}
+        <div className="mt-7 max-w-xl mx-auto bg-white border-2 border-amber-300/80 rounded-2xl p-3 sm:p-3.5 shadow-md flex flex-col sm:flex-row items-center justify-between gap-3 text-slate-900">
           
           <div className="flex items-center space-x-2.5 text-center sm:text-left">
-            <div className="w-8 h-8 rounded-lg bg-kgp-crimson flex items-center justify-center text-amber-300 flex-shrink-0 shadow">
+            <div className="w-8 h-8 rounded-lg bg-red-50 text-kgp-crimson border border-red-200 flex items-center justify-center flex-shrink-0 shadow-sm">
               <Clock className="w-4 h-4 animate-spin" style={{ animationDuration: '10s' }} />
             </div>
             <div>
-              <div className="text-[10px] sm:text-[11px] font-bold text-amber-400 uppercase tracking-wider leading-none">
+              <div className="text-[10px] sm:text-[11px] font-bold text-amber-800 uppercase tracking-wider leading-none">
                 Qualifier Term 2026 Batch
               </div>
-              <div className="text-xs sm:text-sm font-extrabold text-white leading-tight">
+              <div className="text-xs sm:text-sm font-extrabold text-slate-900 leading-tight">
                 Applications Closing Soon
               </div>
             </div>
@@ -181,69 +181,69 @@ export default function Hero({ onOpenSignUp, onOpenDiagram, onOpenCertificate, o
 
           {/* Countdown Blocks */}
           <div className="flex items-center space-x-1.5 text-center">
-            <div className="bg-slate-950 border border-slate-800 px-2.5 py-1 rounded-lg">
-              <span className="text-base font-extrabold text-white tabular-nums">{timeLeft.days}</span>
-              <span className="block text-[9px] text-slate-400 uppercase font-semibold">Days</span>
+            <div className="bg-stone-50 border border-stone-200 px-2.5 py-1 rounded-lg">
+              <span className="text-base font-extrabold text-slate-900 tabular-nums">{timeLeft.days}</span>
+              <span className="block text-[9px] text-slate-500 uppercase font-semibold">Days</span>
             </div>
-            <span className="text-amber-500 font-bold">:</span>
-            <div className="bg-slate-950 border border-slate-800 px-2.5 py-1 rounded-lg">
-              <span className="text-base font-extrabold text-white tabular-nums">{String(timeLeft.hours).padStart(2, '0')}</span>
-              <span className="block text-[9px] text-slate-400 uppercase font-semibold">Hours</span>
+            <span className="text-amber-600 font-bold">:</span>
+            <div className="bg-stone-50 border border-stone-200 px-2.5 py-1 rounded-lg">
+              <span className="text-base font-extrabold text-slate-900 tabular-nums">{String(timeLeft.hours).padStart(2, '0')}</span>
+              <span className="block text-[9px] text-slate-500 uppercase font-semibold">Hours</span>
             </div>
-            <span className="text-amber-500 font-bold">:</span>
-            <div className="bg-slate-950 border border-slate-800 px-2.5 py-1 rounded-lg">
-              <span className="text-base font-extrabold text-white tabular-nums">{String(timeLeft.minutes).padStart(2, '0')}</span>
-              <span className="block text-[9px] text-slate-400 uppercase font-semibold">Mins</span>
+            <span className="text-amber-600 font-bold">:</span>
+            <div className="bg-stone-50 border border-stone-200 px-2.5 py-1 rounded-lg">
+              <span className="text-base font-extrabold text-slate-900 tabular-nums">{String(timeLeft.minutes).padStart(2, '0')}</span>
+              <span className="block text-[9px] text-slate-500 uppercase font-semibold">Mins</span>
             </div>
-            <span className="text-amber-500 font-bold">:</span>
-            <div className="bg-slate-950 border border-slate-800 px-2.5 py-1 rounded-lg">
-              <span className="text-base font-extrabold text-amber-400 tabular-nums">{String(timeLeft.seconds).padStart(2, '0')}</span>
-              <span className="block text-[9px] text-slate-400 uppercase font-semibold">Secs</span>
+            <span className="text-amber-600 font-bold">:</span>
+            <div className="bg-stone-50 border border-stone-200 px-2.5 py-1 rounded-lg">
+              <span className="text-base font-extrabold text-kgp-crimson tabular-nums">{String(timeLeft.seconds).padStart(2, '0')}</span>
+              <span className="block text-[9px] text-slate-500 uppercase font-semibold">Secs</span>
             </div>
           </div>
 
         </div>
 
-        {/* Feature Highlights Grid */}
+        {/* Feature Highlights Grid (Clean, Prestigious White Executive Cards) */}
         <div className="mt-10 grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4 text-center">
-          <div className="bg-white/5 hover:bg-white/10 border border-white/10 rounded-2xl p-3 sm:p-4 backdrop-blur transition">
-            <div className="text-xl sm:text-2xl lg:text-3xl font-extrabold text-amber-400 font-serif-title">
+          <div className="bg-white hover:bg-amber-50/20 border border-stone-200/90 hover:border-amber-400/80 rounded-2xl p-4 sm:p-5 shadow-sm hover:shadow-md transition">
+            <div className="text-2xl sm:text-3xl lg:text-4xl font-extrabold text-kgp-crimson font-serif-title">
               {STATS[0].value}
             </div>
-            <div className="text-xs sm:text-sm font-bold text-slate-100 mt-1">
+            <div className="text-xs sm:text-sm font-bold text-slate-900 mt-1">
               {STATS[0].label}
             </div>
-            <div className="text-[10px] sm:text-[11px] text-slate-400 mt-0.5">{STATS[0].desc}</div>
+            <div className="text-[11px] sm:text-xs text-slate-500 mt-0.5">{STATS[0].desc}</div>
           </div>
 
-          <div className="bg-white/5 hover:bg-white/10 border border-white/10 rounded-2xl p-3 sm:p-4 backdrop-blur transition">
-            <div className="text-xl sm:text-2xl lg:text-3xl font-extrabold text-amber-400 font-serif-title">
+          <div className="bg-white hover:bg-amber-50/20 border border-stone-200/90 hover:border-amber-400/80 rounded-2xl p-4 sm:p-5 shadow-sm hover:shadow-md transition">
+            <div className="text-2xl sm:text-3xl lg:text-4xl font-extrabold text-kgp-crimson font-serif-title">
               {STATS[1].value}
             </div>
-            <div className="text-xs sm:text-sm font-bold text-slate-100 mt-1">
+            <div className="text-xs sm:text-sm font-bold text-slate-900 mt-1">
               {STATS[1].label}
             </div>
-            <div className="text-[10px] sm:text-[11px] text-slate-400 mt-0.5">{STATS[1].desc}</div>
+            <div className="text-[11px] sm:text-xs text-slate-500 mt-0.5">{STATS[1].desc}</div>
           </div>
 
-          <div className="bg-white/5 hover:bg-white/10 border border-white/10 rounded-2xl p-3 sm:p-4 backdrop-blur transition">
-            <div className="text-xl sm:text-2xl lg:text-3xl font-extrabold text-amber-400 font-serif-title">
+          <div className="bg-white hover:bg-amber-50/20 border border-stone-200/90 hover:border-amber-400/80 rounded-2xl p-4 sm:p-5 shadow-sm hover:shadow-md transition">
+            <div className="text-2xl sm:text-3xl lg:text-4xl font-extrabold text-kgp-crimson font-serif-title">
               {STATS[2].value}
             </div>
-            <div className="text-xs sm:text-sm font-bold text-slate-100 mt-1">
+            <div className="text-xs sm:text-sm font-bold text-slate-900 mt-1">
               {STATS[2].label}
             </div>
-            <div className="text-[10px] sm:text-[11px] text-slate-400 mt-0.5">{STATS[2].desc}</div>
+            <div className="text-[11px] sm:text-xs text-slate-500 mt-0.5">{STATS[2].desc}</div>
           </div>
 
-          <div className="bg-white/5 hover:bg-white/10 border border-white/10 rounded-2xl p-3 sm:p-4 backdrop-blur transition">
-            <div className="text-xl sm:text-2xl lg:text-3xl font-extrabold text-amber-400 font-serif-title">
+          <div className="bg-white hover:bg-amber-50/20 border border-stone-200/90 hover:border-amber-400/80 rounded-2xl p-4 sm:p-5 shadow-sm hover:shadow-md transition">
+            <div className="text-2xl sm:text-3xl lg:text-4xl font-extrabold text-kgp-crimson font-serif-title">
               {STATS[3].value}
             </div>
-            <div className="text-xs sm:text-sm font-bold text-slate-100 mt-1">
+            <div className="text-xs sm:text-sm font-bold text-slate-900 mt-1">
               {STATS[3].label}
             </div>
-            <div className="text-[10px] sm:text-[11px] text-slate-400 mt-0.5">{STATS[3].desc}</div>
+            <div className="text-[11px] sm:text-xs text-slate-500 mt-0.5">{STATS[3].desc}</div>
           </div>
         </div>
 

@@ -51,7 +51,7 @@ export default function CourseStructure({ onOpenCertificate }) {
         <div className="bg-white rounded-2xl border border-slate-200 shadow-lg overflow-hidden">
           
           {/* Level Header Banner */}
-          <div className="bg-gradient-to-r from-kgp-navy via-slate-900 to-kgp-crimson p-6 sm:p-8 text-white flex flex-col md:flex-row md:items-center justify-between gap-4">
+          <div className="bg-gradient-to-r from-kgp-crimson via-[#700000] to-kgp-darkred p-6 sm:p-8 text-white flex flex-col md:flex-row md:items-center justify-between gap-4 border-b-2 border-amber-400/40">
             <div className="space-y-1">
               <div className="flex items-center gap-2">
                 <span className="text-xs font-bold uppercase tracking-wider bg-amber-400/20 text-amber-300 px-2.5 py-0.5 rounded border border-amber-400/30">

@@ -328,7 +328,7 @@ export default function StudentLoginPage({
           </div>
 
           {/* RIGHT CARD: Program Highlights Card (Navy Card exact to IIT Madras updates-card) */}
-          <div className="w-full lg:w-7/12 bg-[#081528] rounded-2xl p-6 sm:p-10 text-white flex flex-col justify-between border border-amber-500/30 shadow-2xl relative overflow-hidden">
+          <div className="w-full lg:w-7/12 bg-gradient-to-br from-[#0c2340] via-[#102b4e] to-[#0c2340] rounded-2xl p-6 sm:p-10 text-white flex flex-col justify-between border border-amber-400/40 shadow-xl relative overflow-hidden">
             {/* Ambient Background Glow */}
             <div className="absolute top-0 right-0 w-80 h-80 bg-red-800/20 blur-[90px] rounded-full pointer-events-none" />
             <div className="absolute bottom-0 left-0 w-60 h-60 bg-amber-500/10 blur-[80px] rounded-full pointer-events-none" />

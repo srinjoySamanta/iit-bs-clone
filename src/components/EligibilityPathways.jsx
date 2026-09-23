@@ -143,25 +143,27 @@ export default function EligibilityPathways({ onOpenSignUp }) {
           </div>
 
           {/* Quick Eligibility Tool (5 Cols) */}
-          <div className="lg:col-span-5 bg-gradient-to-br from-slate-900 to-kgp-navy text-white rounded-2xl p-6 sm:p-8 flex flex-col justify-between">
+          <div className="lg:col-span-5 bg-stone-50/80 border-2 border-stone-200/90 rounded-2xl p-6 sm:p-8 flex flex-col justify-between shadow-sm relative overflow-hidden">
+            <div className="absolute top-0 left-0 right-0 h-1.5 bg-gradient-to-r from-kgp-crimson via-amber-500 to-kgp-crimson" />
+            
             <div>
               <div className="flex items-center gap-2 mb-4">
-                <Sparkles className="w-5 h-5 text-amber-400" />
-                <h3 className="text-lg font-bold font-serif-title text-white">
+                <Sparkles className="w-5 h-5 text-amber-600" />
+                <h3 className="text-lg font-bold font-serif-title text-slate-950">
                   Instant Eligibility Check
                 </h3>
               </div>
-              <p className="text-xs text-slate-300 mb-6">
+              <p className="text-xs text-slate-600 mb-6">
                 Verify your eligibility status in under 10 seconds.
               </p>
 
               <div className="space-y-4 text-xs">
                 <div>
-                  <label className="block text-slate-300 mb-1 font-medium">Do you have a valid entrance exam score?</label>
+                  <label className="block text-slate-700 mb-1 font-semibold">Do you have a valid entrance exam score?</label>
                   <select 
                     value={eligibilityCheck.hasDirectRank}
                     onChange={(e) => setEligibilityCheck({ ...eligibilityCheck, hasDirectRank: e.target.value })}
-                    className="w-full bg-slate-800 border border-slate-700 rounded-lg p-2.5 text-white focus:outline-none focus:border-amber-400"
+                    className="w-full bg-white border border-stone-300 rounded-lg p-2.5 text-slate-900 focus:outline-none focus:border-kgp-crimson shadow-sm"
                   >
                     <option value="wbjee">WBJEE Rank Holder</option>
                     <option value="jeeadv">IIT JEE Advanced Qualifier</option>
@@ -171,8 +173,8 @@ export default function EligibilityPathways({ onOpenSignUp }) {
                 </div>
 
                 <div>
-                  <label className="block text-slate-300 mb-1 font-medium">Highest Qualification</label>
-                  <select className="w-full bg-slate-800 border border-slate-700 rounded-lg p-2.5 text-white focus:outline-none focus:border-amber-400">
+                  <label className="block text-slate-700 mb-1 font-semibold">Highest Qualification</label>
+                  <select className="w-full bg-white border border-stone-300 rounded-lg p-2.5 text-slate-900 focus:outline-none focus:border-kgp-crimson shadow-sm">
                     <option>Class 12 Passed (Any Stream: Science, Arts, Commerce)</option>
                     <option>Diploma Holder (Polytechnic / 3-Year)</option>
                     <option>Enrolled in College / Degree</option>
@@ -181,12 +183,12 @@ export default function EligibilityPathways({ onOpenSignUp }) {
                   </select>
                 </div>
 
-                <div className="p-4 rounded-xl bg-white/10 border border-white/20 mt-4">
-                  <div className="flex items-center gap-2 text-emerald-400 font-bold mb-1">
-                    <CheckCircle2 className="w-4 h-4" />
+                <div className="p-4 rounded-xl bg-emerald-50/80 border border-emerald-200 mt-4 shadow-sm">
+                  <div className="flex items-center gap-2 text-emerald-800 font-bold mb-1">
+                    <CheckCircle2 className="w-4 h-4 text-emerald-600" />
                     <span>Eligible to Apply!</span>
                   </div>
-                  <p className="text-[11px] text-slate-300">
+                  <p className="text-[11px] text-emerald-900 leading-relaxed">
                     {eligibilityCheck.hasDirectRank !== 'none'
                       ? 'Congratulations! You qualify for DIRECT ADMISSION into the Foundation Level without writing the 4-week qualifier test.'
                       : 'You are eligible to apply through the universal Qualifier process. Score >= 40% to secure your seat.'}
@@ -197,7 +199,7 @@ export default function EligibilityPathways({ onOpenSignUp }) {
 
             <button
               onClick={onOpenSignUp}
-              className="mt-6 w-full py-3 bg-amber-500 hover:bg-amber-400 text-kgp-darknavy font-bold text-sm rounded-xl transition flex items-center justify-center gap-2 shadow-lg"
+              className="mt-6 w-full py-3 bg-kgp-crimson hover:bg-kgp-darkred text-white font-bold text-sm rounded-xl transition flex items-center justify-center gap-2 shadow-md hover:shadow-lg"
             >
               <span>Begin Application Profile</span>
               <ArrowRight className="w-4 h-4" />
