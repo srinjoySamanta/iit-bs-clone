@@ -23,7 +23,7 @@ A("website", "Website", [
   I("academic", "Academic Aspects", "Online Lectures + Invigilated Offline Exams", "Hyperlink"),
   I("director", "Director's Message", "Visionary message from Director, IIT Kharagpur"),
   I("degree", "Sample Degree Certificate", "Official IIT Kharagpur Degree preview"),
-  I("internship", "Internship & Placement", "Career cell & 450+ hiring recruiters"),
+  I("internship", "Internship & Placement", "Dedicated career placement cell & industry ecosystem"),
   I("campus", "Campus Immersion", "Annual Fest & 1-month campus experience at Kharagpur"),
   I("library", "Library Access", "Full Central Library digital & physical access"),
   I("alumni", "Alumni Status", "Official IIT KGP Alumni Association membership (Degree Level)"),

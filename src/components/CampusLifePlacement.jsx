@@ -127,15 +127,15 @@ export default function CampusLifePlacement() {
               </p>
             </div>
 
-            <div className="flex items-center gap-6">
-              <div className="text-center">
-                <div className="text-2xl sm:text-3xl font-extrabold text-kgp-crimson font-serif-title">480+</div>
-                <div className="text-[11px] text-slate-500 uppercase tracking-wider font-semibold">Hiring Partners</div>
+            <div className="flex flex-wrap sm:flex-nowrap items-center gap-4 sm:gap-6 bg-stone-50 border border-stone-200/80 rounded-2xl px-5 py-3">
+              <div className="text-center sm:text-left">
+                <div className="text-sm sm:text-base font-bold text-kgp-crimson font-serif-title">Inaugural Cohort</div>
+                <div className="text-[11px] text-slate-600 uppercase tracking-wider font-medium">Batch 2026–2027</div>
               </div>
-              <div className="w-px h-10 bg-stone-300" />
-              <div className="text-center">
-                <div className="text-2xl sm:text-3xl font-extrabold text-emerald-700 font-serif-title">₹18.5 LPA</div>
-                <div className="text-[11px] text-slate-500 uppercase tracking-wider font-semibold">Average Package</div>
+              <div className="hidden sm:block w-px h-8 bg-stone-300" />
+              <div className="text-center sm:text-left">
+                <div className="text-sm sm:text-base font-bold text-emerald-800 font-serif-title">Career Cell Support</div>
+                <div className="text-[11px] text-slate-600 uppercase tracking-wider font-medium">Internships &amp; Mentorship</div>
               </div>
             </div>
           </div>
@@ -143,7 +143,7 @@ export default function CampusLifePlacement() {
           {/* Recruiter Logos / Tags */}
           <div className="pt-8">
             <h4 className="text-xs font-bold uppercase tracking-wider text-slate-600 mb-4 text-center">
-              Companies Hiring Our BS Programme Learners &amp; Alumni
+              Target Industry Sectors &amp; Placement Ecosystem
             </h4>
             <div className="flex flex-wrap items-center justify-center gap-2.5 sm:gap-3">
               {RECRUITERS.map((company, idx) => (
