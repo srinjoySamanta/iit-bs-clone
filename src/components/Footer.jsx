@@ -103,6 +103,17 @@ export default function Footer({ onOpenDiagram, onOpenStudentLogin, onOpenAdminL
                 <span className="text-[10px] bg-emerald-700 text-white px-1.5 py-0.5 rounded">CBT Live</span>
               </a>
 
+              <a
+                href="#admin"
+                className="w-full text-left p-2 rounded-lg bg-slate-800 hover:bg-slate-700 border border-slate-700 text-xs font-semibold text-slate-200 transition flex items-center justify-between"
+              >
+                <div className="flex items-center gap-1.5">
+                  <ShieldCheck className="w-3.5 h-3.5 text-amber-400" />
+                  <span>Admin Control Console</span>
+                </div>
+                <span className="text-[10px] bg-amber-500/20 text-amber-300 px-1.5 py-0.5 rounded border border-amber-500/30">Staff</span>
+              </a>
+
               <button
                 onClick={onOpenDiagram}
                 className="w-full text-left p-2 rounded-lg bg-amber-500/20 hover:bg-amber-500/30 border border-amber-500/30 text-xs font-semibold text-amber-300 transition flex items-center justify-between"

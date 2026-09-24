@@ -19,6 +19,7 @@ import AdminLoginPage from './pages/AdminLoginPage';
 import QualifierRoundPortal from './components/qualifier/QualifierRoundPortal';
 import QualifierExamEngine from './components/exam/QualifierExamEngine';
 import AdmissionsChatbot from './components/chat/AdmissionsChatbot';
+import AdminSection from './components/AdminSection';
 import { Layers, ShieldCheck, UserCheck, Award, Home, Sparkles, BookOpen } from 'lucide-react';
 
 export default function App() {
@@ -39,7 +40,13 @@ export default function App() {
       const hash = window.location.hash.replace('#', '');
       if (hash.startsWith('student-login') || hash.startsWith('auth') || hash.startsWith('login') || hash.startsWith('apply') || hash.startsWith('signup')) {
         setCurrentView('student-login');
-      } else if (hash === 'admin' || hash === 'admin-login') {
+      } else if (hash === 'admin') {
+        setCurrentView('home');
+        setTimeout(() => {
+          const el = document.getElementById('admin');
+          if (el) el.scrollIntoView({ behavior: 'smooth' });
+        }, 150);
+      } else if (hash === 'admin-login') {
         setCurrentView('admin-login');
       } else if (hash === 'qualifier') {
         setCurrentView('qualifier');
@@ -171,6 +178,12 @@ export default function App() {
 
           {/* Campus Immersion, Library & Placements */}
           <CampusLifePlacement />
+
+          {/* Institutional Administration, Examination & Governance Section */}
+          <AdminSection 
+            onOpenAdminModal={() => setShowAdminModal(true)}
+            onOpenAdminLogin={() => navigateTo('admin-login')}
+          />
 
           {/* FAQs (with English & Bengali translations) */}
           <FaqSection />
