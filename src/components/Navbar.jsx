@@ -264,11 +264,6 @@ export default function Navbar({
             </div>
 
             <a href="#campus" onClick={() => onNavigate('home')} className="hover:text-kgp-crimson transition py-2">Campus & Placement</a>
-            <a href="#admin" onClick={() => onNavigate('home')} className="hover:text-kgp-crimson transition py-2 flex items-center gap-1 font-semibold text-slate-800">
-              <ShieldCheck className="w-3.5 h-3.5 text-amber-600" />
-              <span>Admin</span>
-              <span className="text-[10px] px-1.5 py-0.2 rounded-full bg-slate-900 text-amber-300 font-bold border border-slate-700">Staff</span>
-            </a>
             <a href="#faqs" onClick={() => onNavigate('home')} className="hover:text-kgp-crimson transition py-2">FAQs</a>
           </nav>
 
@@ -436,17 +431,6 @@ export default function Navbar({
               className="block py-2 hover:text-kgp-crimson"
             >
               Fee Structure &amp; Scholarship Calculator
-            </a>
-            <a 
-              href="#admin" 
-              onClick={() => { onNavigate('home'); setMobileMenuOpen(false); }}
-              className="py-2 hover:text-kgp-crimson font-bold text-slate-800 flex items-center justify-between"
-            >
-              <div className="flex items-center gap-1.5">
-                <ShieldCheck className="w-4 h-4 text-amber-600" />
-                <span>Admin &amp; Governance Console</span>
-              </div>
-              <span className="text-[10px] px-2 py-0.5 rounded bg-slate-900 text-amber-300 font-bold">Staff</span>
             </a>
             <button 
               onClick={() => { onOpenDiagram(); setMobileMenuOpen(false); }}

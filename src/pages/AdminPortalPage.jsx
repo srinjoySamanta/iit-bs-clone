@@ -172,7 +172,7 @@ const ENRICHED_STUDENTS = [
   }
 ];
 
-export default function AdminPortalPage({ onBackToHome, onOpenAdminModal }) {
+export default function AdminPortalPage({ onBackToHome, onLogout, onOpenAdminModal }) {
   const [searchTerm, setSearchTerm] = useState('');
   const [filterTrack, setFilterTrack] = useState('ALL');
   const [students, setStudents] = useState(ENRICHED_STUDENTS);
@@ -258,7 +258,7 @@ export default function AdminPortalPage({ onBackToHome, onOpenAdminModal }) {
             </div>
           </div>
 
-          {/* Right Actions: Back to Home & Super-Admin Modal */}
+          {/* Right Actions: Back to Home, Super-Admin Modal & Logout */}
           <div className="flex items-center gap-2.5">
             <button
               onClick={onOpenAdminModal}
@@ -275,6 +275,17 @@ export default function AdminPortalPage({ onBackToHome, onOpenAdminModal }) {
               <ArrowLeft className="w-3.5 h-3.5" />
               <span>Back to Main Website</span>
             </button>
+
+            {onLogout && (
+              <button
+                onClick={onLogout}
+                className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-rose-950/80 hover:bg-rose-900 border border-rose-500/40 text-rose-300 text-xs font-semibold transition"
+                title="End Staff Session"
+              >
+                <Lock className="w-3.5 h-3.5" />
+                <span>Log Out</span>
+              </button>
+            )}
           </div>
 
         </div>

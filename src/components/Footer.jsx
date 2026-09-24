@@ -1,5 +1,5 @@
 import React from 'react';
-import { Layers, Mail, Phone, MapPin, ExternalLink, ShieldCheck, Award } from 'lucide-react';
+import { Layers, Mail, Phone, MapPin, ExternalLink, ShieldCheck, Award, Lock } from 'lucide-react';
 import { IIT_KGP_INFO } from '../data/portalData';
 import iitKgpLogo from '../assets/logo';
 
@@ -103,17 +103,6 @@ export default function Footer({ onOpenDiagram, onOpenStudentLogin, onOpenAdminL
                 <span className="text-[10px] bg-emerald-700 text-white px-1.5 py-0.5 rounded">CBT Live</span>
               </a>
 
-              <a
-                href="#admin"
-                className="w-full text-left p-2 rounded-lg bg-slate-800 hover:bg-slate-700 border border-slate-700 text-xs font-semibold text-slate-200 transition flex items-center justify-between"
-              >
-                <div className="flex items-center gap-1.5">
-                  <ShieldCheck className="w-3.5 h-3.5 text-amber-400" />
-                  <span>Admin Control Console</span>
-                </div>
-                <span className="text-[10px] bg-amber-500/20 text-amber-300 px-1.5 py-0.5 rounded border border-amber-500/30">Staff</span>
-              </a>
-
               <button
                 onClick={onOpenDiagram}
                 className="w-full text-left p-2 rounded-lg bg-amber-500/20 hover:bg-amber-500/30 border border-amber-500/30 text-xs font-semibold text-amber-300 transition flex items-center justify-between"
@@ -134,12 +123,21 @@ export default function Footer({ onOpenDiagram, onOpenStudentLogin, onOpenAdminL
           <div>
             © 2026 Indian Institute of Technology Kharagpur. All rights reserved.
           </div>
-          <div className="flex items-center space-x-4">
+          <div className="flex flex-wrap items-center gap-x-4 gap-y-1">
             <span className="text-slate-400">NIRF Ranked Institute of National Importance</span>
             <span>•</span>
             <span className="text-slate-400">NEP 2020 Compliant</span>
             <span>•</span>
             <span className="text-slate-400">UGC / MoE Approved BS Degree</span>
+            <span>•</span>
+            <button
+              onClick={onOpenAdminLogin}
+              className="text-slate-400 hover:text-amber-400 transition flex items-center gap-1 font-semibold group cursor-pointer"
+              title="Restricted Staff & Admin Login"
+            >
+              <Lock className="w-3 h-3 text-amber-500/80 group-hover:text-amber-400" />
+              <span>Staff Login</span>
+            </button>
           </div>
         </div>
 

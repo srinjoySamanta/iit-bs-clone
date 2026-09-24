@@ -19,7 +19,6 @@ import AdminLoginPage from './pages/AdminLoginPage';
 import QualifierRoundPortal from './components/qualifier/QualifierRoundPortal';
 import QualifierExamEngine from './components/exam/QualifierExamEngine';
 import AdmissionsChatbot from './components/chat/AdmissionsChatbot';
-import AdminSection from './components/AdminSection';
 import AdminPortalPage from './pages/AdminPortalPage';
 import { Layers, ShieldCheck, UserCheck, Award, Home, Sparkles, BookOpen } from 'lucide-react';
 
@@ -28,6 +27,7 @@ export default function App() {
   const [currentView, setCurrentView] = useState('home');
   const [examCandidate, setExamCandidate] = useState({ name: 'Candidate', roll: 'KGP-QUAL-2026-0842' });
   const [loggedInStudent, setLoggedInStudent] = useState(null);
+  const [isAdminAuthenticated, setIsAdminAuthenticated] = useState(false);
 
   const [showDiagram, setShowDiagram] = useState(false);
   const [showStudentModal, setShowStudentModal] = useState(false);
@@ -41,16 +41,15 @@ export default function App() {
       const hash = window.location.hash.replace('#', '');
       if (hash.startsWith('student-login') || hash.startsWith('auth') || hash.startsWith('login') || hash.startsWith('apply') || hash.startsWith('signup')) {
         setCurrentView('student-login');
-      } else if (hash === 'admin' || hash === 'admin-section') {
-        setCurrentView('home');
-        setTimeout(() => {
-          const el = document.getElementById('admin');
-          if (el) el.scrollIntoView({ behavior: 'smooth' });
-        }, 150);
-      } else if (hash === 'admin-login') {
+      } else if (hash === 'admin' || hash === 'admin-login') {
         setCurrentView('admin-login');
       } else if (hash === 'admin-portal' || hash === 'admin-dashboard' || hash === 'admin-students') {
-        setCurrentView('admin-portal');
+        // Protected: verify staff login so students cannot access student records
+        if (!isAdminAuthenticated) {
+          setCurrentView('admin-login');
+        } else {
+          setCurrentView('admin-portal');
+        }
       } else if (hash === 'qualifier') {
         setCurrentView('qualifier');
       } else if (hash === 'exam') {
@@ -90,6 +89,16 @@ export default function App() {
     navigateTo('qualifier');
   };
 
+  const handleAdminLoginSuccess = () => {
+    setIsAdminAuthenticated(true);
+    navigateTo('admin-portal');
+  };
+
+  const handleAdminLogout = () => {
+    setIsAdminAuthenticated(false);
+    navigateTo('home');
+  };
+
   return (
     <div className="min-h-screen flex flex-col bg-slate-50 text-slate-900 font-sans selection:bg-amber-500 selection:text-white">
       
@@ -125,7 +134,7 @@ export default function App() {
       {/* VIEW 4: DEDICATED ADMIN LOGIN PAGE */}
       {currentView === 'admin-login' && (
         <AdminLoginPage
-          onLoginSuccess={() => navigateTo('admin-portal')}
+          onLoginSuccess={handleAdminLoginSuccess}
           onBackToHome={() => navigateTo('home')}
         />
       )}
@@ -134,6 +143,7 @@ export default function App() {
       {currentView === 'admin-portal' && (
         <AdminPortalPage
           onBackToHome={() => navigateTo('home')}
+          onLogout={handleAdminLogout}
           onOpenAdminModal={() => setShowAdminModal(true)}
         />
       )}
@@ -188,13 +198,6 @@ export default function App() {
           {/* Campus Immersion, Library & Placements */}
           <CampusLifePlacement />
 
-          {/* Institutional Administration, Examination & Governance Section */}
-          <AdminSection 
-            onNavigate={navigateTo}
-            onOpenAdminModal={() => setShowAdminModal(true)}
-            onOpenAdminLogin={() => navigateTo('admin-login')}
-          />
-
           {/* FAQs (with English & Bengali translations) */}
           <FaqSection />
 
@@ -205,7 +208,7 @@ export default function App() {
           <Footer
             onOpenDiagram={() => setShowDiagram(true)}
             onOpenStudentLogin={() => setShowStudentModal(true)}
-            onOpenAdminLogin={() => setShowAdminModal(true)}
+            onOpenAdminLogin={() => navigateTo('admin-login')}
             onOpenCertificate={() => setShowCertificate(true)}
           />
         </>
