@@ -20,6 +20,7 @@ import QualifierRoundPortal from './components/qualifier/QualifierRoundPortal';
 import QualifierExamEngine from './components/exam/QualifierExamEngine';
 import AdmissionsChatbot from './components/chat/AdmissionsChatbot';
 import AdminSection from './components/AdminSection';
+import AdminPortalPage from './pages/AdminPortalPage';
 import { Layers, ShieldCheck, UserCheck, Award, Home, Sparkles, BookOpen } from 'lucide-react';
 
 export default function App() {
@@ -40,7 +41,7 @@ export default function App() {
       const hash = window.location.hash.replace('#', '');
       if (hash.startsWith('student-login') || hash.startsWith('auth') || hash.startsWith('login') || hash.startsWith('apply') || hash.startsWith('signup')) {
         setCurrentView('student-login');
-      } else if (hash === 'admin') {
+      } else if (hash === 'admin' || hash === 'admin-section') {
         setCurrentView('home');
         setTimeout(() => {
           const el = document.getElementById('admin');
@@ -48,14 +49,14 @@ export default function App() {
         }, 150);
       } else if (hash === 'admin-login') {
         setCurrentView('admin-login');
+      } else if (hash === 'admin-portal' || hash === 'admin-dashboard' || hash === 'admin-students') {
+        setCurrentView('admin-portal');
       } else if (hash === 'qualifier') {
         setCurrentView('qualifier');
       } else if (hash === 'exam') {
         setCurrentView('exam');
       } else if (hash === 'student-portal') {
         setShowStudentModal(true);
-      } else if (hash === 'admin-portal') {
-        setShowAdminModal(true);
       } else if (hash === 'diagram') {
         setShowDiagram(true);
       } else if (hash === 'home' || hash === '') {
@@ -124,8 +125,16 @@ export default function App() {
       {/* VIEW 4: DEDICATED ADMIN LOGIN PAGE */}
       {currentView === 'admin-login' && (
         <AdminLoginPage
-          onLoginSuccess={() => setShowAdminModal(true)}
+          onLoginSuccess={() => navigateTo('admin-portal')}
           onBackToHome={() => navigateTo('home')}
+        />
+      )}
+
+      {/* VIEW 5: DEDICATED ADMIN PORTAL PAGE (WHERE ADMIN SHOWS STUDENT DETAILS) */}
+      {currentView === 'admin-portal' && (
+        <AdminPortalPage
+          onBackToHome={() => navigateTo('home')}
+          onOpenAdminModal={() => setShowAdminModal(true)}
         />
       )}
 
@@ -181,6 +190,7 @@ export default function App() {
 
           {/* Institutional Administration, Examination & Governance Section */}
           <AdminSection 
+            onNavigate={navigateTo}
             onOpenAdminModal={() => setShowAdminModal(true)}
             onOpenAdminLogin={() => navigateTo('admin-login')}
           />
