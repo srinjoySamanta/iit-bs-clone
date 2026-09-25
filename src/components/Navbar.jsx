@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { 
   Menu, X, ExternalLink, ChevronDown, GraduationCap, ShieldCheck, 
-  LogIn, UserPlus, BookOpen, Layers, Phone, HelpCircle, User, Home, Sparkles, Globe 
+  LogIn, UserPlus, BookOpen, Phone, HelpCircle, User, Home, Sparkles 
 } from 'lucide-react';
 import { IIT_KGP_INFO, ANNOUNCEMENT_TICKER } from '../data/portalData';
 import iitKgpLogo from '../assets/logo';
@@ -16,30 +16,6 @@ export default function Navbar({
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [academicsDropdown, setAcademicsDropdown] = useState(false);
   const [admissionsDropdown, setAdmissionsDropdown] = useState(false);
-  const [lang, setLang] = useState('en');
-
-  const changeLanguage = (newLang) => {
-    setLang(newLang);
-    try {
-      document.cookie = `googtrans=/en/${newLang}; path=/;`;
-      const combo = document.querySelector('.goog-te-combo');
-      if (combo) {
-        combo.value = newLang;
-        combo.dispatchEvent(new Event('change'));
-      }
-      if (document.body && document.body.style) {
-        document.body.style.top = '0px';
-      }
-      const frames = document.querySelectorAll('.goog-te-banner-frame, iframe[class*="goog-te-banner"], iframe.skiptranslate, .VIpgJd-ZVi9od-aHeUd-OwkiMe-hTkFd, .VIpgJd-ZVi9od-ORHb-OEVmcd');
-      frames.forEach(f => {
-        f.style.setProperty('display', 'none', 'important');
-        f.style.setProperty('visibility', 'hidden', 'important');
-        f.style.setProperty('height', '0px', 'important');
-      });
-    } catch (e) {
-      console.error(e);
-    }
-  };
 
   return (
     <header className="sticky top-0 z-50 bg-white/95 backdrop-blur-md shadow-md border-b border-slate-200 transition-all">
@@ -105,49 +81,6 @@ export default function Navbar({
                   <span className="text-amber-500/70 font-black">•</span>
                 </div>
               </div>
-            </div>
-          </div>
-
-          {/* Right: Trilingual Language Selector (English, Bengali, Hindi) */}
-          <div className="flex items-center gap-2 flex-shrink-0">
-            <div className="flex items-center gap-1 text-amber-300 font-bold text-[11px] mr-0.5">
-              <Globe className="w-3.5 h-3.5" />
-              <span className="hidden lg:inline">Translate:</span>
-            </div>
-            <div className="inline-flex rounded-lg p-0.5 bg-slate-900 border border-slate-700">
-              <button
-                type="button"
-                onClick={() => changeLanguage('en')}
-                className={`px-2.5 py-0.5 rounded-md text-[11px] font-bold transition ${
-                  lang === 'en'
-                    ? 'bg-amber-500 text-slate-950 shadow-xs'
-                    : 'text-slate-300 hover:text-white hover:bg-slate-800'
-                }`}
-              >
-                English
-              </button>
-              <button
-                type="button"
-                onClick={() => changeLanguage('bn')}
-                className={`px-2.5 py-0.5 rounded-md text-[11px] font-bold transition ${
-                  lang === 'bn'
-                    ? 'bg-amber-500 text-slate-950 shadow-xs'
-                    : 'text-slate-300 hover:text-white hover:bg-slate-800'
-                }`}
-              >
-                বাংলা
-              </button>
-              <button
-                type="button"
-                onClick={() => changeLanguage('hi')}
-                className={`px-2.5 py-0.5 rounded-md text-[11px] font-bold transition ${
-                  lang === 'hi'
-                    ? 'bg-amber-500 text-slate-950 shadow-xs'
-                    : 'text-slate-300 hover:text-white hover:bg-slate-800'
-                }`}
-              >
-                हिन्दी
-              </button>
             </div>
           </div>
 
@@ -269,40 +202,6 @@ export default function Navbar({
 
           {/* Action CTAs */}
           <div className="hidden lg:flex items-center space-x-3 flex-shrink-0">
-            {/* Site Translator Selector */}
-            <div className="flex items-center gap-1 px-2 py-1 bg-slate-100 border border-slate-200 rounded-xl text-xs">
-              <Globe className="w-3.5 h-3.5 text-kgp-crimson mr-0.5" />
-              <div className="inline-flex rounded-lg p-0.5 bg-slate-200/70">
-                <button
-                  type="button"
-                  onClick={() => changeLanguage('en')}
-                  className={`px-2 py-0.5 rounded text-[11px] font-bold transition ${
-                    lang === 'en' ? 'bg-white text-kgp-crimson shadow-xs' : 'text-slate-600 hover:text-slate-900'
-                  }`}
-                >
-                  EN
-                </button>
-                <button
-                  type="button"
-                  onClick={() => changeLanguage('bn')}
-                  className={`px-2 py-0.5 rounded text-[11px] font-bold transition ${
-                    lang === 'bn' ? 'bg-white text-kgp-crimson shadow-xs' : 'text-slate-600 hover:text-slate-900'
-                  }`}
-                >
-                  বাংলা
-                </button>
-                <button
-                  type="button"
-                  onClick={() => changeLanguage('hi')}
-                  className={`px-2 py-0.5 rounded text-[11px] font-bold transition ${
-                    lang === 'hi' ? 'bg-white text-kgp-crimson shadow-xs' : 'text-slate-600 hover:text-slate-900'
-                  }`}
-                >
-                  हिन्दी
-                </button>
-              </div>
-            </div>
-
             {/* Apply Now */}
             <button
               onClick={() => onNavigate('student-login')}
@@ -337,42 +236,6 @@ export default function Navbar({
       {/* Mobile Drawer */}
       {mobileMenuOpen && (
         <div className="lg:hidden border-t border-slate-200 bg-white px-4 pt-3 pb-6 space-y-3 shadow-2xl animate-in slide-in-from-top-2">
-          {/* Mobile Trilingual Selector */}
-          <div className="flex items-center justify-between p-2 bg-slate-100 rounded-xl border border-slate-200 text-xs">
-            <div className="flex items-center gap-1.5 text-slate-700 font-bold">
-              <Globe className="w-4 h-4 text-kgp-crimson" />
-              <span>Language / ভাষা / भाषा:</span>
-            </div>
-            <div className="inline-flex rounded-lg p-0.5 bg-slate-200/80">
-              <button
-                type="button"
-                onClick={() => changeLanguage('en')}
-                className={`px-2.5 py-1 rounded text-[11px] font-bold transition ${
-                  lang === 'en' ? 'bg-white text-kgp-crimson shadow-xs' : 'text-slate-600'
-                }`}
-              >
-                EN
-              </button>
-              <button
-                type="button"
-                onClick={() => changeLanguage('bn')}
-                className={`px-2.5 py-1 rounded text-[11px] font-bold transition ${
-                  lang === 'bn' ? 'bg-white text-kgp-crimson shadow-xs' : 'text-slate-600'
-                }`}
-              >
-                বাংলা
-              </button>
-              <button
-                type="button"
-                onClick={() => changeLanguage('hi')}
-                className={`px-2.5 py-1 rounded text-[11px] font-bold transition ${
-                  lang === 'hi' ? 'bg-white text-kgp-crimson shadow-xs' : 'text-slate-600'
-                }`}
-              >
-                हिन्दी
-              </button>
-            </div>
-          </div>
           <div className="grid grid-cols-2 gap-2 pt-1 pb-2">
             <button
               onClick={() => { onNavigate('home'); setMobileMenuOpen(false); }}
@@ -432,13 +295,6 @@ export default function Navbar({
             >
               Fee Structure &amp; Scholarship Calculator
             </a>
-            <button 
-              onClick={() => { onOpenDiagram(); setMobileMenuOpen(false); }}
-              className="w-full text-left py-2 text-amber-600 font-bold flex items-center justify-between"
-            >
-              <span>Explore Portal Block Diagram</span>
-              <Layers className="w-4 h-4" />
-            </button>
           </div>
         </div>
       )}

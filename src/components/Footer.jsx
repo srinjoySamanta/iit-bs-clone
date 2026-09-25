@@ -1,5 +1,5 @@
 import React from 'react';
-import { Layers, Mail, Phone, MapPin, ExternalLink, ShieldCheck, Award, Lock } from 'lucide-react';
+import { Mail, Phone, MapPin, ExternalLink, ShieldCheck, Award, Lock } from 'lucide-react';
 import { IIT_KGP_INFO } from '../data/portalData';
 import iitKgpLogo from '../assets/logo';
 
@@ -8,7 +8,7 @@ export default function Footer({ onOpenDiagram, onOpenStudentLogin, onOpenAdminL
     <footer className="bg-kgp-darknavy text-white pt-14 pb-8 border-t-4 border-kgp-crimson">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-8 pb-12 border-b border-slate-800">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 pb-12 border-b border-slate-800">
           
           {/* Col 1 & 2: Branding & Address */}
           <div className="lg:col-span-2 space-y-4">
@@ -79,41 +79,6 @@ export default function Footer({ onOpenDiagram, onOpenStudentLogin, onOpenAdminL
               <li><a href="#fees" className="hover:text-white transition">Fee & Scholarship Calculator</a></li>
               <li><a href="#faqs" className="hover:text-white transition">FAQs (English & Bengali)</a></li>
             </ul>
-          </div>
-
-          {/* Col 5: Portal Gateways */}
-          <div className="space-y-3">
-            <h5 className="text-xs font-bold uppercase tracking-wider text-amber-400">
-              System Portals
-            </h5>
-            <div className="space-y-2">
-              <button
-                onClick={onOpenStudentLogin}
-                className="w-full text-left p-2 rounded-lg bg-slate-800 hover:bg-slate-700 text-xs font-semibold text-slate-200 transition flex items-center justify-between"
-              >
-                <span>Student Login Portal</span>
-                <span className="text-[10px] bg-emerald-900/60 text-emerald-300 px-1.5 py-0.5 rounded">Active</span>
-              </button>
-
-              <a
-                href="#qualifier"
-                className="w-full text-left p-2 rounded-lg bg-emerald-950/60 hover:bg-emerald-900/80 border border-emerald-500/30 text-xs font-semibold text-emerald-300 transition flex items-center justify-between"
-              >
-                <span>Qualifier Exam Portal</span>
-                <span className="text-[10px] bg-emerald-700 text-white px-1.5 py-0.5 rounded">CBT Live</span>
-              </a>
-
-              <button
-                onClick={onOpenDiagram}
-                className="w-full text-left p-2 rounded-lg bg-amber-500/20 hover:bg-amber-500/30 border border-amber-500/30 text-xs font-semibold text-amber-300 transition flex items-center justify-between"
-              >
-                <div className="flex items-center gap-1.5">
-                  <Layers className="w-3.5 h-3.5" />
-                  <span>Portal Block Diagram</span>
-                </div>
-                <span className="text-[10px] bg-amber-400 text-kgp-darknavy font-bold px-1.5 py-0.5 rounded">Tree</span>
-              </button>
-            </div>
           </div>
 
         </div>
