@@ -9,6 +9,8 @@ import {
 } from 'lucide-react';
 import { IIT_KGP_INFO } from '../../data/portalData';
 import iitKgpLogo from '../../assets/logo';
+import { saveNewApplication } from '../../data/applicationStore';
+import StudentApplicationTrackerModal from '../student/StudentApplicationTrackerModal';
 
 // All 23 Districts of West Bengal
 const DISTRICTS_WEST_BENGAL = [
@@ -430,6 +432,12 @@ export default function QualifierRoundPortal({ initialCandidate, onStartExam, on
     applicationNo: ""
   });
 
+  // Tracking Modal & Payment Transaction States
+  const [showTrackerModal, setShowTrackerModal] = useState(false);
+  const [paymentUtr, setPaymentUtr] = useState(() => 'SBI' + Math.floor(100000000 + Math.random() * 900000000));
+  const [paymentMode, setPaymentMode] = useState('UPI (Google Pay)');
+  const [paymentBank, setPaymentBank] = useState('State Bank of India');
+
   // Keep verified credentials in sync if candidate logs in via Google
   useEffect(() => {
     if (initialCandidate) {
@@ -710,7 +718,50 @@ export default function QualifierRoundPortal({ initialCandidate, onStartExam, on
   // Complete Payment and generate final roll
   const handleCompletePayment = () => {
     const finalRoll = "KGP-QUAL-2026-" + Math.floor(1000 + Math.random() * 9000);
-    setFormData(prev => ({ ...prev, finalRollNo: finalRoll }));
+    const generatedAppNo = formData.applicationNo || ("KGP-2026-" + Math.floor(1000 + Math.random() * 9000));
+    
+    // Construct real-time application record for Admin scrutiny
+    const appRecord = {
+      id: generatedAppNo,
+      roll: finalRoll,
+      name: formData.fullName || "Candidate",
+      email: formData.email || formData.emailAddress || (initialCandidate?.email || "applicant@kgp.ac.in"),
+      phone: formData.phone || formData.phoneNo || "+91 98301 00000",
+      level: formData.program || "Foundation Level",
+      pathway: formData.jeeAdvancedQualified === 'Yes' ? "Direct Entry: JEE Advanced Exempt" : "Qualifier Round Examination",
+      category: formData.category || "General",
+      incomeTier: feeWaiverText || "> 5 LPA (Standard)",
+      status: "Pending Review",
+      rejectionReason: "",
+      submissionDate: new Date().toLocaleString(),
+      examCity: `${formData.pref1City}, ${formData.pref1State}`,
+      docs: {
+        genInfo: "Uploaded (Pending Review)",
+        education: "Uploaded (Pending Review)",
+        photo: "Uploaded",
+        fee: "Pending Reconciliation"
+      },
+      payment: {
+        amount: payableAmount,
+        utr: paymentUtr || ("SBI" + Math.floor(100000000 + Math.random() * 900000000)),
+        mode: paymentMode,
+        bank: paymentBank,
+        date: new Date().toLocaleString(),
+        status: "Pending Review",
+        bankStatus: "Awaiting Bank Settlement Scrutiny",
+        queryRemarks: "",
+        receiptName: "payment_receipt.pdf"
+      }
+    };
+
+    // Save to shared application store
+    saveNewApplication(appRecord);
+
+    setFormData(prev => ({ 
+      ...prev, 
+      finalRollNo: finalRoll,
+      applicationNo: generatedAppNo 
+    }));
     setSection(5);
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
@@ -990,6 +1041,16 @@ export default function QualifierRoundPortal({ initialCandidate, onStartExam, on
           </div>
 
           <div className="flex items-center gap-2 sm:gap-3">
+            <button
+              type="button"
+              onClick={() => setShowTrackerModal(true)}
+              className="px-3 py-1.5 rounded-xl bg-amber-50 hover:bg-amber-100 border border-amber-300 text-amber-900 text-xs font-bold transition flex items-center gap-1.5 shadow-2xs"
+              title="Track existing application and check payment scrutiny status"
+            >
+              <ShieldCheck className="w-3.5 h-3.5 text-amber-700" />
+              <span>Track Application Status</span>
+            </button>
+
             <button
               type="button"
               onClick={handleHeaderBack}
@@ -2464,26 +2525,96 @@ export default function QualifierRoundPortal({ initialCandidate, onStartExam, on
                 </div>
               </div>
 
-              {/* UPI QR Payment */}
-              <div className="p-6 rounded-2xl border-2 border-slate-200 bg-slate-50 space-y-4 text-xs text-center">
-                <div className="font-bold text-slate-800 text-sm">Scan UPI QR Code to Pay</div>
+              {/* Payment Scrutiny & UPI Submission */}
+              <div className="p-6 rounded-2xl border-2 border-slate-200 bg-slate-50 space-y-4 text-xs">
+                <div className="text-center space-y-1">
+                  <div className="font-bold text-slate-800 text-sm">Scan QR Code or Transfer to Official Account</div>
+                  <p className="text-[11px] text-slate-500">
+                    Google Pay, PhonePe, Paytm, BHIM UPI or Net Banking
+                  </p>
+                </div>
                 
-                <div className="w-44 h-44 mx-auto border-2 border-slate-300 rounded-2xl p-2.5 bg-white flex flex-col items-center justify-center shadow-md">
-                  <QrCode className="w-32 h-32 text-slate-900" />
+                <div className="w-40 h-40 mx-auto border-2 border-slate-300 rounded-2xl p-2 bg-white flex flex-col items-center justify-center shadow-md">
+                  <QrCode className="w-28 h-28 text-slate-900" />
                   <span className="text-[10px] text-slate-500 font-mono mt-1">UPI: iitkgp.bs@sbi</span>
                 </div>
 
-                <p className="text-[11px] text-slate-500">
-                  Google Pay, PhonePe, Paytm or BHIM UPI
-                </p>
+                <div className="space-y-3 pt-2 border-t border-slate-200 text-left">
+                  {/* Payment Channel */}
+                  <div>
+                    <label className="block text-[11px] font-bold text-slate-700 mb-1">
+                      Payment Channel / App <span className="text-red-500">*</span>
+                    </label>
+                    <select
+                      value={paymentMode}
+                      onChange={(e) => setPaymentMode(e.target.value)}
+                      className="w-full px-3 py-2 bg-white border border-slate-300 rounded-xl text-xs font-semibold text-slate-800 focus:outline-none focus:border-kgp-crimson"
+                    >
+                      <option value="UPI (Google Pay)">UPI (Google Pay)</option>
+                      <option value="UPI (PhonePe)">UPI (PhonePe)</option>
+                      <option value="UPI (BHIM / Paytm)">UPI (BHIM / Paytm)</option>
+                      <option value="Net Banking (SBI)">Net Banking (State Bank of India)</option>
+                      <option value="Net Banking (HDFC)">Net Banking (HDFC Bank)</option>
+                      <option value="Net Banking (ICICI)">Net Banking (ICICI Bank)</option>
+                      <option value="Debit Card / RuPay">Debit Card / RuPay</option>
+                    </select>
+                  </div>
+
+                  {/* Bank */}
+                  <div>
+                    <label className="block text-[11px] font-bold text-slate-700 mb-1">
+                      Remitter Bank <span className="text-red-500">*</span>
+                    </label>
+                    <select
+                      value={paymentBank}
+                      onChange={(e) => setPaymentBank(e.target.value)}
+                      className="w-full px-3 py-2 bg-white border border-slate-300 rounded-xl text-xs font-semibold text-slate-800 focus:outline-none focus:border-kgp-crimson"
+                    >
+                      <option value="State Bank of India">State Bank of India</option>
+                      <option value="HDFC Bank">HDFC Bank</option>
+                      <option value="ICICI Bank">ICICI Bank</option>
+                      <option value="Punjab National Bank">Punjab National Bank</option>
+                      <option value="Axis Bank">Axis Bank</option>
+                      <option value="Bank of Baroda">Bank of Baroda</option>
+                      <option value="Canara Bank">Canara Bank</option>
+                    </select>
+                  </div>
+
+                  {/* UTR / Transaction Reference */}
+                  <div>
+                    <div className="flex items-center justify-between mb-1">
+                      <label className="text-[11px] font-bold text-slate-700">
+                        Bank UTR / Transaction Ref No. <span className="text-red-500">*</span>
+                      </label>
+                      <button
+                        type="button"
+                        onClick={() => setPaymentUtr('SBI' + Math.floor(100000000 + Math.random() * 900000000))}
+                        className="text-[10px] text-kgp-crimson hover:underline font-semibold"
+                      >
+                        Generate Test UTR
+                      </button>
+                    </div>
+                    <input
+                      type="text"
+                      required
+                      placeholder="e.g. SBI928410294821 or 12-digit number"
+                      value={paymentUtr}
+                      onChange={(e) => setPaymentUtr(e.target.value.toUpperCase())}
+                      className="w-full px-3 py-2 bg-white border border-slate-300 rounded-xl text-xs font-mono font-bold text-slate-900 focus:outline-none focus:border-kgp-crimson uppercase"
+                    />
+                    <p className="text-[10px] text-slate-500 mt-1">
+                      IIT KGP Admissions Desk cross-references this UTR with bank settlement files.
+                    </p>
+                  </div>
+                </div>
 
                 <button
                   type="button"
                   onClick={handleCompletePayment}
-                  className="w-full py-3.5 bg-emerald-600 hover:bg-emerald-700 text-white font-extrabold text-sm rounded-xl shadow-lg transition flex items-center justify-center gap-2"
+                  className="w-full py-3.5 bg-emerald-600 hover:bg-emerald-700 text-white font-extrabold text-sm rounded-xl shadow-lg transition flex items-center justify-center gap-2 mt-4"
                 >
                   <CheckCircle2 className="w-5 h-5" />
-                  <span>Confirm Payment of ₹{payableAmount}</span>
+                  <span>Confirm Payment &amp; Submit Application (₹{payableAmount})</span>
                 </button>
               </div>
 
@@ -2554,10 +2685,19 @@ export default function QualifierRoundPortal({ initialCandidate, onStartExam, on
             <div className="pt-2 flex flex-col sm:flex-row items-center justify-center gap-4">
               <button
                 onClick={() => onStartExam({ name: formData.fullName, roll: formData.finalRollNo })}
-                className="w-full sm:w-auto px-10 py-4 bg-gradient-to-r from-amber-500 via-yellow-400 to-amber-500 text-slate-950 font-extrabold text-base rounded-2xl shadow-2xl hover:scale-105 transition transform flex items-center justify-center gap-3"
+                className="w-full sm:w-auto px-8 py-4 bg-gradient-to-r from-amber-500 via-yellow-400 to-amber-500 text-slate-950 font-extrabold text-sm sm:text-base rounded-2xl shadow-2xl hover:scale-105 transition transform flex items-center justify-center gap-3"
               >
                 <span>Launch Qualifier Round Examination</span>
                 <ArrowRight className="w-5 h-5" />
+              </button>
+
+              <button
+                type="button"
+                onClick={() => setShowTrackerModal(true)}
+                className="w-full sm:w-auto px-6 py-4 rounded-2xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs shadow-lg transition flex items-center justify-center gap-2"
+              >
+                <ShieldCheck className="w-4 h-4" />
+                <span>Track Application &amp; Payment Scrutiny</span>
               </button>
 
               <button
@@ -2565,7 +2705,7 @@ export default function QualifierRoundPortal({ initialCandidate, onStartExam, on
                 className="w-full sm:w-auto px-6 py-4 rounded-2xl border border-white/30 text-white hover:bg-white/10 font-bold text-xs transition flex items-center justify-center gap-2"
               >
                 <Printer className="w-4 h-4" />
-                <span>Print Application Summary</span>
+                <span>Print Application</span>
               </button>
             </div>
           </div>
@@ -2870,6 +3010,13 @@ export default function QualifierRoundPortal({ initialCandidate, onStartExam, on
           </div>
         </div>
       )}
+
+      {/* Student Application & Payment Status Tracker Modal */}
+      <StudentApplicationTrackerModal
+        isOpen={showTrackerModal}
+        onClose={() => setShowTrackerModal(false)}
+        initialQuery={formData.applicationNo || formData.finalRollNo || formData.email}
+      />
 
     </div>
   );

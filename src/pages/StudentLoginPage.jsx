@@ -6,6 +6,7 @@ import {
 } from 'lucide-react';
 import { IIT_KGP_INFO } from '../data/portalData';
 import iitKgpLogo from '../assets/logo';
+import StudentApplicationTrackerModal from '../components/student/StudentApplicationTrackerModal';
 
 export default function StudentLoginPage({ 
   onLoginSuccess, 
@@ -14,6 +15,9 @@ export default function StudentLoginPage({
   onOpenQualifier,
   onGoogleLogin 
 }) {
+  // Tracker Modal state
+  const [showTrackerModal, setShowTrackerModal] = useState(false);
+
   // Google Sign-In Modal states
   const [showGoogleModal, setShowGoogleModal] = useState(false);
   const [studentEmail, setStudentEmail] = useState('');
@@ -169,6 +173,18 @@ export default function StudentLoginPage({
                     <path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/>
                   </svg>
                   <span className="group-hover:text-slate-900 font-bold">Sign in with Google</span>
+                </button>
+              </div>
+
+              {/* Live Application & Payment Scrutiny Tracker Button */}
+              <div className="pt-2">
+                <button
+                  type="button"
+                  onClick={() => setShowTrackerModal(true)}
+                  className="w-full py-3 px-4 bg-emerald-50 hover:bg-emerald-100 border border-emerald-300 rounded-xl transition flex items-center justify-center gap-2 text-xs font-bold text-emerald-900 shadow-2xs"
+                >
+                  <ShieldCheck className="w-4 h-4 text-emerald-700" />
+                  <span>Already Applied? Track Application &amp; Payment Status</span>
                 </button>
               </div>
 
@@ -521,6 +537,12 @@ export default function StudentLoginPage({
           </div>
         </div>
       )}
+
+      {/* Student Application & Payment Status Tracker Modal */}
+      <StudentApplicationTrackerModal
+        isOpen={showTrackerModal}
+        onClose={() => setShowTrackerModal(false)}
+      />
 
     </div>
   );
