@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import Navbar from './components/Navbar';
 import Hero from './components/Hero';
+import CampusTourVideo from './components/CampusTourVideo';
 import AboutKgpDirector from './components/AboutKgpDirector';
 import CourseStructure from './components/CourseStructure';
 import EligibilityPathways from './components/EligibilityPathways';
@@ -58,7 +59,7 @@ export default function App() {
         setShowStudentModal(true);
       } else if (hash === 'diagram') {
         setShowDiagram(true);
-      } else if (hash === 'home' || hash === '') {
+      } else if (hash === 'home' || hash === '' || hash === 'campus-tour' || hash === 'campus' || hash === 'about' || hash === 'structure' || hash === 'eligibility' || hash === 'fees' || hash === 'faqs') {
         setCurrentView('home');
       }
     };
@@ -182,6 +183,9 @@ export default function App() {
               </div>
             </section>
           )}
+
+          {/* Official Campus Video Tour & Landmark Explorer */}
+          <CampusTourVideo />
 
           {/* About IIT KGP & Director's Message */}
           <AboutKgpDirector />

@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { 
   Menu, X, ExternalLink, ChevronDown, GraduationCap, ShieldCheck, 
-  LogIn, UserPlus, BookOpen, Phone, HelpCircle, User, Home, Sparkles 
+  LogIn, UserPlus, BookOpen, Phone, HelpCircle, User, Home, Sparkles, Film 
 } from 'lucide-react';
 import { IIT_KGP_INFO, ANNOUNCEMENT_TICKER } from '../data/portalData';
 import iitKgpLogo from '../assets/logo';
@@ -196,7 +196,11 @@ export default function Navbar({
               )}
             </div>
 
-            <a href="#campus" onClick={() => onNavigate('home')} className="hover:text-kgp-crimson transition py-2">Campus & Placement</a>
+            <a href="#campus-tour" onClick={() => onNavigate('home')} className="hover:text-kgp-crimson transition py-2 font-semibold text-kgp-crimson flex items-center gap-1">
+              <Film className="w-3.5 h-3.5" />
+              <span>Campus Video Tour</span>
+            </a>
+            <a href="#campus" onClick={() => onNavigate('home')} className="hover:text-kgp-crimson transition py-2">Placement &amp; Labs</a>
             <a href="#faqs" onClick={() => onNavigate('home')} className="hover:text-kgp-crimson transition py-2">FAQs</a>
           </nav>
 
@@ -267,6 +271,17 @@ export default function Navbar({
               <Sparkles className="w-4 h-4 text-emerald-600" />
               <span>Qualifier Round Exam Portal (Register, Pay & Test)</span>
             </button>
+            <a 
+              href="#campus-tour" 
+              onClick={() => { onNavigate('home'); setMobileMenuOpen(false); }}
+              className="w-full text-left py-2.5 text-kgp-crimson font-bold flex items-center justify-between"
+            >
+              <div className="flex items-center gap-1.5">
+                <Film className="w-4 h-4 text-kgp-crimson" />
+                <span>Watch Campus Video Tour &amp; Landmarks</span>
+              </div>
+              <span className="text-[10px] bg-red-100 text-kgp-crimson px-1.5 py-0.5 rounded font-black">2,100 Acres</span>
+            </a>
             <a 
               href="#about" 
               onClick={() => { onNavigate('home'); setMobileMenuOpen(false); }}
