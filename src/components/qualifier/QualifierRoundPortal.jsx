@@ -54,6 +54,105 @@ const DISTRICTS_TRIPURA = [
 // State Options restricted strictly to West Bengal and Tripura
 const EXAM_STATES = ["West Bengal", "Tripura"];
 
+// Strict Identity Proof Validation Rules & Format Specifications
+export const ID_CONFIGS = {
+  "Aadhar Card": {
+    label: "Aadhaar Card",
+    badgeLabel: "12 Digits (Numbers only)",
+    placeholder: "Enter 12-digit Aadhaar Number (e.g. 567812349012)",
+    helpText: "Aadhaar must be exactly 12 numeric digits.",
+    maxLength: 12,
+    pattern: /^\d{12}$/,
+    sanitize: (val) => (val || '').replace(/\D/g, '').slice(0, 12),
+    validate: (val) => {
+      const clean = (val || '').replace(/\D/g, '');
+      if (!clean) return { valid: false, error: "Please enter your 12-digit Aadhaar Number." };
+      if (clean.length < 12) return { valid: false, error: `Incomplete Aadhaar Number: Entered ${clean.length} of 12 digits. Exactly 12 digits required.` };
+      if (clean.length > 12 || !/^\d{12}$/.test(clean)) return { valid: false, error: "Invalid Aadhaar: Must contain exactly 12 numeric digits." };
+      return { valid: true };
+    }
+  },
+  "PAN Card": {
+    label: "PAN Card",
+    badgeLabel: "10 Characters (5 Letters + 4 Digits + 1 Letter)",
+    placeholder: "Enter 10-character PAN (e.g. ABCDE1234F)",
+    helpText: "PAN must be exactly 10 alphanumeric characters (5 uppercase letters, 4 digits, 1 uppercase letter).",
+    maxLength: 10,
+    pattern: /^[A-Z]{5}[0-9]{4}[A-Z]{1}$/,
+    sanitize: (val) => (val || '').toUpperCase().replace(/[^A-Z0-9]/g, '').slice(0, 10),
+    validate: (val) => {
+      const clean = (val || '').toUpperCase().replace(/[^A-Z0-9]/g, '');
+      if (!clean) return { valid: false, error: "Please enter your 10-character PAN Card Number." };
+      if (clean.length !== 10) return { valid: false, error: `Invalid PAN Length: Must be exactly 10 characters (currently ${clean.length} characters).` };
+      if (!/^[A-Z]{5}[0-9]{4}[A-Z]{1}$/.test(clean)) return { valid: false, error: "Invalid PAN Format: Must consist of 5 uppercase letters, followed by 4 digits, and 1 letter (e.g. ABCDE1234F)." };
+      return { valid: true };
+    }
+  },
+  "Passport": {
+    label: "Passport",
+    badgeLabel: "8 Characters (1 Letter + 7 Digits)",
+    placeholder: "Enter Passport Number (e.g. A1234567)",
+    helpText: "Passport must have 1 letter followed by 7 digits (8 characters in total).",
+    maxLength: 8,
+    pattern: /^[A-Z][0-9]{7}$/,
+    sanitize: (val) => (val || '').toUpperCase().replace(/[^A-Z0-9]/g, '').slice(0, 8),
+    validate: (val) => {
+      const clean = (val || '').toUpperCase().replace(/[^A-Z0-9]/g, '');
+      if (!clean) return { valid: false, error: "Please enter your Passport Number." };
+      if (clean.length !== 8) return { valid: false, error: `Invalid Passport Length: Must be exactly 8 characters (1 letter followed by 7 digits). Currently ${clean.length} characters.` };
+      if (!/^[A-Z][0-9]{7}$/.test(clean)) return { valid: false, error: "Invalid Passport Format: Must start with 1 alphabet letter followed by 7 digits (e.g. A1234567)." };
+      return { valid: true };
+    }
+  },
+  "Voter ID": {
+    label: "Voter ID",
+    badgeLabel: "10-character Alphanumeric",
+    placeholder: "Enter 10-character Voter ID (e.g. WBF1234567)",
+    helpText: "Voter ID must be exactly 10 characters in alphanumeric format (3 letters followed by 7 digits).",
+    maxLength: 10,
+    pattern: /^[A-Z0-9]{10}$/,
+    sanitize: (val) => (val || '').toUpperCase().replace(/[^A-Z0-9]/g, '').slice(0, 10),
+    validate: (val) => {
+      const clean = (val || '').toUpperCase().replace(/[^A-Z0-9]/g, '');
+      if (!clean) return { valid: false, error: "Please enter your Voter ID (EPIC) Number." };
+      if (clean.length !== 10) return { valid: false, error: `Invalid Voter ID Length: Must be exactly 10 alphanumeric characters (currently ${clean.length} characters).` };
+      if (!/^[A-Z0-9]{10}$/.test(clean)) return { valid: false, error: "Invalid Voter ID: Must be 10 alphanumeric characters (e.g. WBF1234567)." };
+      return { valid: true };
+    }
+  },
+  "Driving License": {
+    label: "Driving License",
+    badgeLabel: "15 Characters (2 Letters + 13 Digits)",
+    placeholder: "Enter 15-character DL (e.g. WB0120150001234)",
+    helpText: "Driving License must be a 15-character alphanumeric code containing 2 letters and 13 digits.",
+    maxLength: 15,
+    pattern: /^[A-Z]{2}[0-9]{13}$/,
+    sanitize: (val) => (val || '').toUpperCase().replace(/[^A-Z0-9]/g, '').slice(0, 15),
+    validate: (val) => {
+      const clean = (val || '').toUpperCase().replace(/[^A-Z0-9]/g, '');
+      if (!clean) return { valid: false, error: "Please enter your Driving License Number." };
+      if (clean.length !== 15) return { valid: false, error: `Invalid Driving License Length: Must be exactly 15 characters (2 state letters + 13 digits). Currently ${clean.length} characters.` };
+      if (!/^[A-Z]{2}[0-9]{13}$/.test(clean)) return { valid: false, error: "Invalid Driving License Format: Must contain 2 state letters followed by 13 digits (e.g. WB0120150001234)." };
+      return { valid: true };
+    }
+  },
+  "Government Photo ID": {
+    label: "Other Government ID with photo",
+    badgeLabel: "Flexible Length (n numbers / alphanumeric)",
+    placeholder: "Enter Government Photo ID Number (any number of digits/characters)",
+    helpText: "Flexible input: enter any valid government-issued photo ID (supports variable length / any number of digits).",
+    maxLength: 50,
+    pattern: /^[A-Z0-9/-]{3,}$/i,
+    sanitize: (val) => (val || '').toUpperCase().slice(0, 50),
+    validate: (val) => {
+      const clean = (val || '').trim();
+      if (!clean) return { valid: false, error: "Please enter your Government ID Number." };
+      if (clean.length < 3) return { valid: false, error: "ID Number is too short (minimum 3 characters)." };
+      return { valid: true };
+    }
+  }
+};
+
 // Trilingual Dictionary for Institutional Scrutiny Portal (English, Bengali, Hindi)
 const TRANSLATIONS = {
   en: {
@@ -484,6 +583,11 @@ export default function QualifierRoundPortal({ initialCandidate, onStartExam, on
   const mandatoryDocsKeys = ['photo', 'signature', 'idProof', 'class10', formData.higherSecChoice === 'diploma' ? 'diplomaCert' : 'class12'];
   const mandatoryUploadedCount = mandatoryDocsKeys.filter(k => formData.docs[k]?.uploaded).length;
 
+  // Current ID Type configuration and live validation status
+  const currentIdConfig = ID_CONFIGS[formData.idType] || ID_CONFIGS["Aadhar Card"];
+  const currentIdValidation = currentIdConfig.validate(formData.idNumber);
+  const isCurrentIdValid = currentIdValidation.valid;
+
   // Get cities based on selected state (West Bengal or Tripura)
   const getCitiesForState = (stateName) => {
     if (stateName === "Tripura") return DISTRICTS_TRIPURA;
@@ -603,8 +707,10 @@ export default function QualifierRoundPortal({ initialCandidate, onStartExam, on
       return;
     }
 
-    if (!formData.idNumber.trim()) {
-      setFormError("Please enter ID Number of the selected ID type.");
+    // Strict ID Type & Number validation as per institutional scrutiny rules
+    const idValidation = currentIdConfig.validate(formData.idNumber);
+    if (!idValidation.valid) {
+      setFormError(idValidation.error);
       return;
     }
 
@@ -730,6 +836,8 @@ export default function QualifierRoundPortal({ initialCandidate, onStartExam, on
       level: formData.program || "Foundation Level",
       pathway: formData.jeeAdvancedQualified === 'Yes' ? "Direct Entry: JEE Advanced Exempt" : "Qualifier Round Examination",
       category: formData.category || "General",
+      idType: formData.idType,
+      idNumber: formData.idNumber,
       incomeTier: feeWaiverText || "> 5 LPA (Standard)",
       status: "Pending Review",
       rejectionReason: "",
@@ -1489,41 +1597,101 @@ export default function QualifierRoundPortal({ initialCandidate, onStartExam, on
               {/* Field 4: ID Type & ID Number */}
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 bg-slate-50 p-5 rounded-2xl border border-slate-200">
                 <div className="space-y-1.5">
-                  <label className="block text-slate-800 font-bold">
-                    ID Type <span className="text-red-600">*</span>
-                  </label>
+                  <div className="flex items-center justify-between">
+                    <label className="block text-slate-800 font-bold">
+                      ID Type <span className="text-red-600">*</span>
+                    </label>
+                    <span className="text-[10px] font-mono text-slate-500 bg-white px-2 py-0.5 rounded border border-slate-200">
+                      {currentIdConfig.badgeLabel}
+                    </span>
+                  </div>
                   <p className="text-[11px] text-slate-500">
-                    ID selected here will need to be uploaded for verification.
+                    ID selected here will need to be uploaded for verification in Section 3.
                   </p>
                   <select
                     value={formData.idType}
-                    onChange={(e) => setFormData({ ...formData, idType: e.target.value })}
-                    className="w-full px-4 py-2.5 rounded-xl border border-slate-300 bg-white font-medium text-sm"
+                    onChange={(e) => {
+                      const newType = e.target.value;
+                      const newConfig = ID_CONFIGS[newType] || ID_CONFIGS["Aadhar Card"];
+                      const sanitized = newConfig.sanitize(formData.idNumber);
+                      setFormData({ ...formData, idType: newType, idNumber: sanitized });
+                      setFormError('');
+                    }}
+                    className="w-full px-4 py-2.5 rounded-xl border border-slate-300 bg-white font-semibold text-sm text-slate-900 focus:border-kgp-crimson focus:outline-none transition shadow-2xs"
                   >
-                    <option value="Aadhar Card">Aadhar Card</option>
-                    <option value="PAN Card">PAN Card</option>
-                    <option value="Passport">Passport</option>
-                    <option value="Voter ID">Voter ID</option>
-                    <option value="Driving License">Driving License</option>
-                    <option value="Government Photo ID">Other Government ID with photo</option>
+                    <option value="Aadhar Card">Aadhar Card (12 Digits)</option>
+                    <option value="PAN Card">PAN Card (10 Alphanumeric)</option>
+                    <option value="Passport">Passport (1 Letter + 7 Digits)</option>
+                    <option value="Voter ID">Voter ID (10 Alphanumeric)</option>
+                    <option value="Driving License">Driving License (2 Letters + 13 Digits)</option>
+                    <option value="Government Photo ID">Other Government ID with photo (n numbers / flexible)</option>
                   </select>
+                  <div className="p-2.5 rounded-xl bg-white border border-slate-200 text-[11px] text-slate-600 flex items-start gap-2 shadow-2xs">
+                    <Info className="w-4 h-4 text-slate-500 flex-shrink-0 mt-0.5" />
+                    <div>
+                      <span className="font-bold text-slate-700">Official Format: </span>
+                      <span>{currentIdConfig.helpText}</span>
+                    </div>
+                  </div>
                 </div>
 
                 <div className="space-y-1.5">
-                  <label className="block text-slate-800 font-bold">
-                    ID Number <span className="text-red-600">*</span>
-                  </label>
+                  <div className="flex items-center justify-between">
+                    <label className="block text-slate-800 font-bold">
+                      ID Number <span className="text-red-600">*</span>
+                    </label>
+                    {/* Real-time status / counter badge */}
+                    {formData.idNumber ? (
+                      isCurrentIdValid ? (
+                        <span className="inline-flex items-center gap-1 text-[10px] font-bold text-emerald-800 bg-emerald-100 border border-emerald-300 px-2 py-0.5 rounded-full shadow-2xs">
+                          <Check className="w-3 h-3 text-emerald-700 stroke-[3]" />
+                          <span>Valid Format ({formData.idNumber.length} {formData.idType === 'Aadhar Card' ? 'digits' : 'chars'})</span>
+                        </span>
+                      ) : (
+                        <span className="inline-flex items-center gap-1 text-[10px] font-bold text-amber-800 bg-amber-100 border border-amber-300 px-2 py-0.5 rounded-full shadow-2xs">
+                          <span>{formData.idNumber.length} / {currentIdConfig.maxLength} {formData.idType === 'Aadhar Card' ? 'digits' : 'chars'}</span>
+                        </span>
+                      )
+                    ) : (
+                      <span className="text-[10px] text-slate-400 font-mono">
+                        {formData.idType === 'Government Photo ID' ? 'Flexible input (n numbers)' : `Required: ${currentIdConfig.maxLength} ${formData.idType === 'Aadhar Card' ? 'digits' : 'chars'}`}
+                      </span>
+                    )}
+                  </div>
                   <p className="text-[11px] text-slate-500">
-                    ID number of the ID selected above.
+                    Enter the unique identifier printed on your selected document.
                   </p>
-                  <input
-                    type="text"
-                    required
-                    placeholder={t.idNumberPlaceholder}
-                    value={formData.idNumber}
-                    onChange={(e) => setFormData({ ...formData, idNumber: e.target.value })}
-                    className="w-full px-4 py-2.5 rounded-xl border border-slate-300 font-mono text-sm font-bold"
-                  />
+                  <div className="relative">
+                    <input
+                      type="text"
+                      required
+                      maxLength={currentIdConfig.maxLength}
+                      placeholder={currentIdConfig.placeholder}
+                      value={formData.idNumber}
+                      onChange={(e) => {
+                        const sanitized = currentIdConfig.sanitize(e.target.value);
+                        setFormData({ ...formData, idNumber: sanitized });
+                        if (formError) setFormError('');
+                      }}
+                      className={`w-full px-4 py-2.5 rounded-xl border-2 font-mono text-sm font-bold uppercase transition shadow-2xs ${
+                        formData.idNumber
+                          ? isCurrentIdValid 
+                            ? 'border-emerald-500 bg-emerald-50/30 text-slate-950 focus:border-emerald-600 focus:outline-none'
+                            : 'border-amber-400 bg-white text-slate-950 focus:border-kgp-crimson focus:outline-none'
+                          : 'border-slate-300 bg-white text-slate-900 focus:border-kgp-crimson focus:outline-none'
+                      }`}
+                    />
+                    {isCurrentIdValid && (
+                      <div className="absolute right-3 top-1/2 -translate-y-1/2 text-emerald-600 pointer-events-none">
+                        <CheckCircle2 className="w-4 h-4 fill-emerald-100" />
+                      </div>
+                    )}
+                  </div>
+                  <p className="text-[10px] text-slate-500">
+                    {formData.idType === "Government Photo ID" 
+                      ? "When choosing 'Other', you can enter any number of digits (n numbers) or characters as on your ID card."
+                      : currentIdConfig.helpText}
+                  </p>
                 </div>
               </div>
 
