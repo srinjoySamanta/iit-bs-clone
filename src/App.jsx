@@ -1,8 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import Navbar from './components/Navbar';
 import Hero from './components/Hero';
-import CampusTourVideo from './components/CampusTourVideo';
-import AboutKgpDirector from './components/AboutKgpDirector';
 import CourseStructure from './components/CourseStructure';
 import EligibilityPathways from './components/EligibilityPathways';
 import FeesStructure from './components/FeesStructure';
@@ -183,12 +181,6 @@ export default function App() {
               </div>
             </section>
           )}
-
-          {/* Official Campus Video Tour & Landmark Explorer */}
-          <CampusTourVideo />
-
-          {/* About IIT KGP & Director's Message */}
-          <AboutKgpDirector />
 
           {/* Course Structure & Syllabus (Exclusively Data Science & AI) */}
           <CourseStructure onOpenCertificate={() => setShowCertificate(true)} />

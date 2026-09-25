@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { 
   ArrowRight, ShieldCheck, CheckCircle2, Award, Calendar, 
   Sparkles, Download, Users, BookOpen, ChevronRight, ChevronLeft,
-  Building2, MapPin, Eye, GraduationCap, Clock, Film, Play
+  Building2, MapPin, Eye, GraduationCap, Clock
 } from 'lucide-react';
 import { IIT_KGP_INFO } from '../data/portalData';
 import iitKgpLogo from '../assets/logo';
@@ -121,14 +121,6 @@ export default function Hero({ onOpenSignUp, onOpenDiagram, onOpenCertificate, o
         {/* Subtle Bottom Scrim for Title Legibility */}
         <div className="absolute inset-x-0 bottom-0 h-28 bg-gradient-to-t from-slate-950/85 via-slate-950/30 to-transparent z-20 pointer-events-none" />
 
-        {/* Watch Official Campus Video Tour Button (Top-Right on Banner) */}
-        <a
-          href="#campus-tour"
-          className="absolute top-4 right-4 sm:right-8 z-30 inline-flex items-center gap-2 px-3.5 py-2 rounded-xl bg-gradient-to-r from-kgp-crimson to-red-800 hover:from-kgp-darkred hover:to-kgp-crimson text-white font-extrabold text-xs shadow-xl transition transform hover:scale-105 border border-red-300/40"
-        >
-          <Play className="w-3.5 h-3.5 fill-current text-amber-300" />
-          <span>Watch Campus Video Tour</span>
-        </a>
 
         {/* Floating Landmark Caption Overlay (Bottom-Left) */}
         <div className="absolute bottom-4 left-4 sm:left-8 z-30 flex items-center gap-3">
