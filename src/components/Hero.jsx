@@ -204,7 +204,7 @@ export default function Hero({ onOpenSignUp, onOpenDiagram, onOpenCertificate, o
         {/* Program Eyebrow */}
         <div className="mb-2">
           <span className="px-3.5 py-1 rounded-md bg-stone-100 text-amber-900 border border-amber-300 font-bold text-xs uppercase tracking-widest shadow-2xs">
-            Official 4-Year Undergraduate Degree Programme
+            4-Year Undergraduate Degree Programme
           </span>
         </div>
 
