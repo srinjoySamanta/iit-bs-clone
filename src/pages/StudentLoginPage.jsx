@@ -306,7 +306,7 @@ export default function StudentLoginPage({
                     <span>Modular Degree Exits</span>
                   </h3>
                   <p className="text-xs sm:text-sm text-slate-300 leading-relaxed">
-                    Flexibility to exit with Foundation Certificate, Diploma in Programming, Diploma in Data Science, B.Sc. Degree, or the complete 4-Year BS Degree with lifelong <strong>IIT KGP Alumni Status</strong>.
+                    Flexibility to exit with Foundation Certificate, Diploma in Programming, Diploma in Data Science, B.Sc. Degree, or the complete 4-Year BS Degree with lifelong <strong>IIT Kharagpur Alumni Status</strong>.
                   </p>
                 </div>
               </div>

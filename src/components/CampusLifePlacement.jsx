@@ -133,7 +133,7 @@ export default function CampusLifePlacement() {
               <ul className="text-xs text-slate-700 space-y-2 mt-auto">
                 <li className="flex items-center gap-2">
                   <CheckCircle2 className="w-4 h-4 text-emerald-600 flex-shrink-0" />
-                  <span>Official IIT KGP Alumni Card &amp; Email ID</span>
+                  <span>Official IIT Kharagpur Alumni Card &amp; Email ID</span>
                 </li>
                 <li className="flex items-center gap-2">
                   <CheckCircle2 className="w-4 h-4 text-emerald-600 flex-shrink-0" />

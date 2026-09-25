@@ -174,7 +174,7 @@ export default function DirectorMessage({ onOpenQualifier, onOpenSignUp }) {
                       <span>On-Campus Immersion &amp; Alumni Status</span>
                     </div>
                     <p className="text-[12px] text-slate-600 leading-normal">
-                      Hands-on practical laboratory immersion on the 2,100-acre Kharagpur campus, access to Central Library resources, and permanent IIT KGP Alumni membership upon graduation.
+                      Hands-on practical campus immersion on the 2,100-acre Kharagpur campus, access to Central Library resources, and permanent IIT Kharagpur Alumni membership upon graduation.
                     </p>
                   </div>
 

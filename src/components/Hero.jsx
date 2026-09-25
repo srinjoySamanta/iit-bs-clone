@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { 
   ArrowRight, ShieldCheck, CheckCircle2, Award, Calendar, 
   Sparkles, Download, Users, BookOpen, ChevronRight, ChevronLeft,
-  Building2, MapPin, Eye, GraduationCap, Clock
+  MapPin, Eye, GraduationCap, Clock
 } from 'lucide-react';
 import { IIT_KGP_INFO } from '../data/portalData';
 import iitKgpLogo from '../assets/logo';
@@ -118,39 +118,12 @@ export default function Hero({ onOpenSignUp, onOpenDiagram, onOpenCertificate, o
           </div>
         ))}
 
-        {/* Subtle Bottom Scrim for Title Legibility */}
-        <div className="absolute inset-x-0 bottom-0 h-28 bg-gradient-to-t from-slate-950/85 via-slate-950/30 to-transparent z-20 pointer-events-none" />
-
-
-        {/* Floating Landmark Caption Overlay (Bottom-Left) */}
-        <div className="absolute bottom-4 left-4 sm:left-8 z-30 flex items-center gap-3">
-          <div className="w-10 h-10 rounded-xl bg-slate-950/80 text-amber-400 border border-amber-400/40 flex items-center justify-center shadow-lg">
-            <Building2 className="w-5 h-5" />
-          </div>
-          <div>
-            <div className="flex items-center gap-2">
-              <span className="text-[10px] sm:text-xs font-black uppercase tracking-wider text-amber-300">
-                IIT Kharagpur Campus Landmark ({currentSlide + 1}/{slides.length})
-              </span>
-              <span className="text-[10px] px-2 py-0.5 rounded-full bg-amber-400 text-slate-950 font-bold">
-                {slides[currentSlide].badge}
-              </span>
-            </div>
-            <div className="text-sm sm:text-lg font-bold font-serif-title text-white drop-shadow-md">
-              {slides[currentSlide].title}
-            </div>
-            <div className="text-xs text-slate-300 hidden sm:block">
-              {slides[currentSlide].caption}
-            </div>
-          </div>
-        </div>
-
         {/* Previous / Next Arrow Navigation Controls */}
         <button
           type="button"
           onClick={prevSlide}
           className="absolute left-3 top-1/2 -translate-y-1/2 z-30 w-10 h-10 rounded-full bg-black/60 hover:bg-black/90 text-white flex items-center justify-center transition shadow-lg opacity-80 hover:opacity-100"
-          aria-label="Previous Landmark"
+          aria-label="Previous Photo"
           title="Previous Photo"
         >
           <ChevronLeft className="w-6 h-6" />
@@ -160,28 +133,28 @@ export default function Hero({ onOpenSignUp, onOpenDiagram, onOpenCertificate, o
           type="button"
           onClick={nextSlide}
           className="absolute right-3 top-1/2 -translate-y-1/2 z-30 w-10 h-10 rounded-full bg-black/60 hover:bg-black/90 text-white flex items-center justify-center transition shadow-lg opacity-80 hover:opacity-100"
-          aria-label="Next Landmark"
+          aria-label="Next Photo"
           title="Next Photo"
         >
           <ChevronRight className="w-6 h-6" />
         </button>
 
-        {/* Slide Selector Buttons (Bottom-Right on Banner) */}
-        <div className="absolute bottom-4 right-4 sm:right-8 z-30 flex items-center gap-1.5 bg-slate-950/85 px-3 py-1.5 rounded-2xl border border-white/20 shadow-lg">
+        {/* Slide Selector Indicators (Clean Numbers 1 to 6 - No Text Names Over Image) */}
+        <div className="absolute bottom-4 right-4 sm:right-8 z-30 flex items-center gap-1.5 bg-slate-950/80 backdrop-blur-xs px-3 py-1.5 rounded-2xl border border-white/20 shadow-lg">
           {slides.map((s, idx) => (
             <button
               key={s.id}
               type="button"
               onClick={() => setCurrentSlide(idx)}
-              className={`px-2.5 py-1 rounded-lg text-xs font-bold transition flex items-center gap-1 ${
+              className={`w-7 h-7 rounded-xl text-xs font-bold transition flex items-center justify-center ${
                 currentSlide === idx
                   ? 'bg-amber-400 text-slate-950 font-black shadow-md scale-105'
                   : 'text-slate-300 hover:text-white hover:bg-white/10'
               }`}
-              title={s.title}
+              aria-label={`Slide ${idx + 1}`}
+              title={`Slide ${idx + 1}`}
             >
-              <span>{idx + 1}.</span>
-              <span className="hidden md:inline">{s.shortTitle}</span>
+              <span>{idx + 1}</span>
             </button>
           ))}
         </div>
@@ -246,7 +219,7 @@ export default function Hero({ onOpenSignUp, onOpenDiagram, onOpenCertificate, o
         {/* Program Narrative Description */}
         <p className="mt-4 text-sm sm:text-base md:text-lg text-slate-700 font-normal max-w-3xl mx-auto leading-relaxed">
           Earn an authentic undergraduate degree from the <strong className="text-slate-950 font-bold">Indian Institute of Technology Kharagpur</strong>. 
-          Enjoy flexible online learning with in-person proctored exams, on-campus laboratory immersion, modular exit awards (<span className="text-kgp-crimson font-semibold">Certificate, Diploma, B.Sc., BS</span>), and lifelong <strong className="text-slate-950 font-bold">IIT KGP Alumni Status</strong>.
+          Enjoy flexible online learning with in-person proctored exams, campus immersion, modular exit awards (<span className="text-kgp-crimson font-semibold">Certificate, Diploma, B.Sc., BS</span>), and lifelong <strong className="text-slate-950 font-bold">IIT Kharagpur Alumni Status</strong>.
         </p>
 
         {/* Primary Action Buttons */}

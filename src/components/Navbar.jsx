@@ -63,7 +63,7 @@ export default function Navbar({
             <div className="flex items-center gap-1.5 flex-shrink-0">
               <span className="w-2 h-2 rounded-full bg-amber-400 animate-ping"></span>
               <span className="font-black tracking-wider text-amber-400 uppercase text-xs">
-                IIT KGP
+                IIT Kharagpur
               </span>
             </div>
 
