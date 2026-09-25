@@ -153,6 +153,31 @@ export const ID_CONFIGS = {
   }
 };
 
+// Country Calling Codes for Applicant Mobile Number
+export const COUNTRY_CODES = [
+  { code: "+91", label: "+91 (India)" },
+  { code: "+1", label: "+1 (USA / Canada)" },
+  { code: "+44", label: "+44 (United Kingdom)" },
+  { code: "+971", label: "+971 (UAE)" },
+  { code: "+65", label: "+65 (Singapore)" },
+  { code: "+880", label: "+880 (Bangladesh)" },
+  { code: "+977", label: "+977 (Nepal)" },
+  { code: "+975", label: "+975 (Bhutan)" },
+  { code: "+94", label: "+94 (Sri Lanka)" },
+  { code: "+61", label: "+61 (Australia)" },
+  { code: "+49", label: "+49 (Germany)" },
+  { code: "+33", label: "+33 (France)" },
+  { code: "+81", label: "+81 (Japan)" },
+  { code: "+966", label: "+966 (Saudi Arabia)" },
+  { code: "+968", label: "+968 (Oman)" },
+  { code: "+974", label: "+974 (Qatar)" },
+  { code: "+965", label: "+965 (Kuwait)" },
+  { code: "+60", label: "+60 (Malaysia)" }
+];
+
+// Class 12 / Higher Secondary Qualifying Passing Years from 1970 toward current admission year
+export const PASSING_YEARS = Array.from({ length: 2027 - 1970 + 1 }, (_, i) => 2027 - i);
+
 // Trilingual Dictionary for Institutional Scrutiny Portal (English, Bengali, Hindi)
 const TRANSLATIONS = {
   en: {
@@ -714,8 +739,35 @@ export default function QualifierRoundPortal({ initialCandidate, onStartExam, on
       return;
     }
 
+    // Parameter: Mobile number must be always exactly 10 digits
     if (!formData.phone.trim()) {
-      setFormError("Please enter Mobile Phone number.");
+      setFormError("Please enter your 10-digit Mobile Phone number.");
+      return;
+    }
+    if (formData.phone.length !== 10) {
+      setFormError(`Invalid Mobile Number: Mobile number must be always exactly 10 digits (currently ${formData.phone.length} digits).`);
+      return;
+    }
+    if (!/^\d{10}$/.test(formData.phone)) {
+      setFormError("Invalid Mobile Number: Mobile number must contain numbers only.");
+      return;
+    }
+
+    // E-Document verification: If selecting "Yes", relevant document must be uploaded
+    if (formData.jeeAdvancedQualified === 'Yes' && !formData.docs.jeeProof.uploaded) {
+      setFormError("Missing E-Document: Since you selected 'Yes' for JEE Advanced eligibility, please upload your relevant document in the document upload section.");
+      return;
+    }
+    if (formData.isPwd === 'Yes' && !formData.docs.pwdCert.uploaded) {
+      setFormError("Missing E-Document: Since you selected 'Yes' for Person with Disabilities (PwD), please upload your relevant disability certificate in the document upload section.");
+      return;
+    }
+    if (formData.isDefencePersonnel === 'Yes' && !formData.docs.defenceCert.uploaded) {
+      setFormError("Missing E-Document: Since you selected 'Yes' for Defence personnel quota, please upload your relevant certificate in the document upload section.");
+      return;
+    }
+    if (formData.isWorkingProfessional === 'Yes' && !formData.docs.employmentProof.uploaded) {
+      setFormError("Missing E-Document: Since you selected 'Yes' for Working Professional, please upload your relevant employment verification in the document upload section.");
       return;
     }
 
@@ -1012,6 +1064,77 @@ export default function QualifierRoundPortal({ initialCandidate, onStartExam, on
           </div>
 
         </div>
+      </div>
+    );
+  };
+
+  // Mini E-Document Uploader for Section 1 (when candidate selects "Yes")
+  const InlineDocUploadBox = ({ docKey, label, description, fileAccept = ".pdf,image/jpeg,image/jpg" }) => {
+    const docData = formData.docs[docKey] || { uploaded: false, name: "", size: "" };
+    const inlineInputRef = useRef(null);
+
+    return (
+      <div className="mt-3 p-3.5 rounded-xl bg-amber-50/90 border border-amber-300 space-y-2 animate-in fade-in">
+        <div className="flex items-center justify-between">
+          <span className="font-bold text-slate-900 text-xs flex items-center gap-1.5">
+            <FileText className="w-3.5 h-3.5 text-amber-700" />
+            <span>{label}</span>
+          </span>
+          <span className="text-[10px] bg-red-100 text-red-800 font-extrabold px-2 py-0.5 rounded border border-red-200 uppercase tracking-wide">
+            Mandatory for "Yes"
+          </span>
+        </div>
+        <p className="text-[11px] text-slate-600">
+          {description}
+        </p>
+
+        <input 
+          ref={inlineInputRef}
+          type="file" 
+          accept={fileAccept}
+          className="hidden" 
+          onChange={(e) => {
+            if (e.target.files && e.target.files[0]) {
+              handleFileUpload(docKey, e.target.files[0]);
+              setFormError('');
+            }
+          }} 
+        />
+
+        {docData.uploaded ? (
+          <div className="flex flex-wrap items-center justify-between gap-2 p-2.5 bg-white rounded-lg border border-emerald-300 shadow-2xs">
+            <div className="flex items-center gap-2 text-xs font-bold text-emerald-800 truncate">
+              <CheckCircle2 className="w-4 h-4 text-emerald-600 flex-shrink-0" />
+              <span className="truncate">{docData.name} ({docData.size})</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <button
+                type="button"
+                onClick={() => setPreviewModalDoc({ title: label, ...docData })}
+                className="text-[11px] text-slate-600 hover:text-slate-900 font-bold"
+              >
+                Preview
+              </button>
+              <span className="text-slate-300">•</span>
+              <button
+                type="button"
+                onClick={() => inlineInputRef.current?.click()}
+                className="text-[11px] text-kgp-crimson hover:underline font-bold"
+              >
+                Change E-Document
+              </button>
+            </div>
+          </div>
+        ) : (
+          <button
+            type="button"
+            onClick={() => inlineInputRef.current?.click()}
+            className="inline-flex items-center gap-2 px-3.5 py-1.5 bg-slate-900 hover:bg-kgp-crimson text-white font-bold text-xs rounded-xl shadow-xs transition"
+          >
+            <Upload className="w-3.5 h-3.5" />
+            <span>Upload E-Document (PDF / JPG)</span>
+          </button>
+        )}
       </div>
     );
   };
@@ -1739,6 +1862,14 @@ export default function QualifierRoundPortal({ initialCandidate, onStartExam, on
                     </label>
                   ))}
                 </div>
+
+                {formData.jeeAdvancedQualified === 'Yes' && (
+                  <InlineDocUploadBox
+                    docKey="jeeProof"
+                    label="E-Document Upload: JEE Advanced Eligibility Proof"
+                    description="Upload your official JEE Advanced Admit Card or Rank Card (PDF / JPG format – 50KB to 2MB)."
+                  />
+                )}
               </div>
 
               {/* Field 7: Person with Disabilities */}
@@ -1764,6 +1895,14 @@ export default function QualifierRoundPortal({ initialCandidate, onStartExam, on
                     </label>
                   ))}
                 </div>
+
+                {formData.isPwd === 'Yes' && (
+                  <InlineDocUploadBox
+                    docKey="pwdCert"
+                    label="E-Document Upload: PwD Disability Certificate"
+                    description="Upload your official Disability Certificate / UDID Card (40% or more disability) issued by competent Medical Board (PDF / JPG format – 50KB to 2MB)."
+                  />
+                )}
               </div>
 
               {/* Field 8: Defence / Paramilitary Personnel */}
@@ -1789,6 +1928,14 @@ export default function QualifierRoundPortal({ initialCandidate, onStartExam, on
                     </label>
                   ))}
                 </div>
+
+                {formData.isDefencePersonnel === 'Yes' && (
+                  <InlineDocUploadBox
+                    docKey="defenceCert"
+                    label="E-Document Upload: Defence Ward / Disability Proof"
+                    description="Upload your official service / disability / casualty certificate issued by Record Office or Zila Sainik Board (PDF / JPG format – 50KB to 2MB)."
+                  />
+                )}
               </div>
 
               {/* Field 9: Working Professional Question */}
@@ -1814,6 +1961,14 @@ export default function QualifierRoundPortal({ initialCandidate, onStartExam, on
                     </label>
                   ))}
                 </div>
+
+                {formData.isWorkingProfessional === 'Yes' && (
+                  <InlineDocUploadBox
+                    docKey="employmentProof"
+                    label="E-Document Upload: Employment Verification Document"
+                    description="Upload your Employee ID Card or Official Employment Letter / NOC from your organization (PDF / JPG format – 50KB to 2MB)."
+                  />
+                )}
               </div>
 
               {/* Field 10: Completion of Class 12 */}
@@ -1840,15 +1995,23 @@ export default function QualifierRoundPortal({ initialCandidate, onStartExam, on
 
               {/* Field 11: Year of Passing Class 12 */}
               <div className="space-y-1.5">
-                <label className="block text-slate-800 font-bold">
-                  Year of Passing Class 12 or Equivalent Exam <span className="text-red-600">*</span>
-                </label>
+                <div className="flex items-center justify-between max-w-sm">
+                  <label className="block text-slate-800 font-bold">
+                    Year of Passing Class 12 or Equivalent Exam <span className="text-red-600">*</span>
+                  </label>
+                  <span className="text-[10px] font-mono text-slate-500 bg-slate-100 px-2 py-0.5 rounded border border-slate-200">
+                    1970 – 2027
+                  </span>
+                </div>
+                <p className="text-[11px] text-slate-500">
+                  Select your Class 12 qualifying year (eligible from 1970 toward current admissions year).
+                </p>
                 <select
                   value={formData.class12PassingYear}
                   onChange={(e) => setFormData({ ...formData, class12PassingYear: e.target.value })}
-                  className="w-full sm:w-48 px-4 py-2.5 rounded-xl border border-slate-300 bg-white font-mono font-bold text-sm"
+                  className="w-full sm:w-56 px-4 py-2.5 rounded-xl border border-slate-300 bg-white font-mono font-bold text-sm text-slate-900 focus:border-kgp-crimson focus:outline-none shadow-2xs"
                 >
-                  {[2026, 2025, 2024, 2023, 2022, 2021, 2020, 2019, 2018, 2017, 2016, 2015, 2014, 2013, 2012, 2010].map(y => (
+                  {PASSING_YEARS.map(y => (
                     <option key={y} value={y}>{y}</option>
                   ))}
                 </select>
@@ -1856,22 +2019,72 @@ export default function QualifierRoundPortal({ initialCandidate, onStartExam, on
 
               {/* Field 12: Mobile Phone Number */}
               <div className="space-y-1.5">
-                <label className="block text-slate-800 font-bold">
-                  Mobile Phone number <span className="text-red-600">*</span>
-                </label>
-                <div className="flex max-w-sm">
-                  <span className="inline-flex items-center px-4 rounded-l-xl border border-r-0 border-slate-300 bg-slate-100 text-slate-700 font-mono text-sm font-bold">
-                    +91
-                  </span>
-                  <input
-                    type="tel"
-                    required
-                    placeholder={t.phonePlaceholder}
-                    value={formData.phone}
-                    onChange={(e) => setFormData({ ...formData, phone: e.target.value.replace(/[^0-9]/g, '') })}
-                    className="w-full px-4 py-2.5 rounded-r-xl border border-slate-300 focus:border-kgp-crimson focus:outline-none font-mono text-sm font-bold"
-                  />
+                <div className="flex items-center justify-between max-w-lg">
+                  <label className="block text-slate-800 font-bold">
+                    Mobile Phone number <span className="text-red-600">*</span>
+                  </label>
+                  {formData.phone ? (
+                    formData.phone.length === 10 ? (
+                      <span className="inline-flex items-center gap-1 text-[10px] font-bold text-emerald-800 bg-emerald-100 border border-emerald-300 px-2 py-0.5 rounded-full shadow-2xs">
+                        <Check className="w-3 h-3 text-emerald-700 stroke-[3]" />
+                        <span>Valid 10 Digits</span>
+                      </span>
+                    ) : (
+                      <span className="inline-flex items-center gap-1 text-[10px] font-bold text-amber-800 bg-amber-100 border border-amber-300 px-2 py-0.5 rounded-full shadow-2xs">
+                        <span>{formData.phone.length} / 10 Digits</span>
+                      </span>
+                    )
+                  ) : (
+                    <span className="text-[10px] text-slate-400 font-mono">
+                      Strictly 10 digits required
+                    </span>
+                  )}
                 </div>
+                <p className="text-[11px] text-slate-500">
+                  Select your country code and enter your 10-digit mobile number (numbers only).
+                </p>
+
+                <div className="flex flex-col sm:flex-row gap-2 sm:gap-0 max-w-lg">
+                  {/* Country Code Select */}
+                  <select
+                    value={formData.phoneCountryCode || "+91"}
+                    onChange={(e) => setFormData({ ...formData, phoneCountryCode: e.target.value })}
+                    className="sm:w-48 px-3 py-2.5 rounded-xl sm:rounded-r-none border border-slate-300 bg-slate-50 font-bold text-xs text-slate-800 focus:border-kgp-crimson focus:outline-none transition shadow-2xs"
+                  >
+                    {COUNTRY_CODES.map(c => (
+                      <option key={c.code} value={c.code}>{c.label}</option>
+                    ))}
+                  </select>
+
+                  {/* 10-Digit Mobile Input */}
+                  <div className="relative flex-1">
+                    <input
+                      type="tel"
+                      required
+                      maxLength={10}
+                      placeholder="Enter 10-digit mobile number"
+                      value={formData.phone}
+                      onChange={(e) => {
+                        const clean = e.target.value.replace(/\D/g, '').slice(0, 10);
+                        setFormData({ ...formData, phone: clean });
+                        if (formError) setFormError('');
+                      }}
+                      className={`w-full px-4 py-2.5 rounded-xl sm:rounded-l-none border sm:border-l-0 font-mono text-sm font-bold transition shadow-2xs ${
+                        formData.phone.length === 10
+                          ? 'border-emerald-500 bg-emerald-50/20 text-slate-950 focus:border-emerald-600 focus:outline-none'
+                          : 'border-slate-300 bg-white text-slate-900 focus:border-kgp-crimson focus:outline-none'
+                      }`}
+                    />
+                    {formData.phone.length === 10 && (
+                      <div className="absolute right-3 top-1/2 -translate-y-1/2 text-emerald-600 pointer-events-none">
+                        <CheckCircle2 className="w-4 h-4 fill-emerald-100" />
+                      </div>
+                    )}
+                  </div>
+                </div>
+                <p className="text-[10px] text-slate-400">
+                  Parameter: Mobile number must be always exactly 10 digits (digits only, max 10).
+                </p>
               </div>
 
               {/* Field 13: Declaration Checkbox */}
@@ -2140,10 +2353,10 @@ export default function QualifierRoundPortal({ initialCandidate, onStartExam, on
                   <span>Admissions Scrutiny Board • Verification Desk</span>
                 </div>
                 <h2 className="text-xl sm:text-2xl font-bold font-serif-title text-slate-900 mt-1">
-                  Section 3 of 3: File &amp; Document Uploads
+                  Section 3 of 3: File &amp; E-Document Uploads
                 </h2>
                 <p className="text-xs text-slate-500 mt-1">
-                  Submit compliant digital scans for identity verification, reservation quota validation, and official CBT admit card issuance.
+                  Submit compliant digital scans and e-documents for identity verification, reservation quota validation, and official CBT admit card issuance.
                 </p>
               </div>
             </div>
@@ -2156,6 +2369,17 @@ export default function QualifierRoundPortal({ initialCandidate, onStartExam, on
               </div>
               <p className="text-slate-600 leading-relaxed">
                 All certificates must be scanned from original documents at a minimum resolution of 200 DPI. Mobile phone photographs with glare, tilted angles, or obscured registration seals will be rejected during document scrutiny.
+              </p>
+            </div>
+
+            {/* E-Document Upload Directive for Selecting "Yes" */}
+            <div className="bg-gradient-to-r from-amber-50 to-orange-50 border border-amber-300 p-4 rounded-2xl text-xs space-y-1.5 shadow-2xs">
+              <div className="font-bold text-amber-950 flex items-center gap-2">
+                <FileCheck className="w-4 h-4 text-amber-800" />
+                <span>E-DOCUMENT UPLOAD DIRECTIVE FOR CONDITIONAL ELIGIBILITY:</span>
+              </div>
+              <p className="text-amber-900/90 leading-relaxed">
+                If you selected <strong>"Yes"</strong> in Section 1 for <strong>JEE Advanced Qualified</strong>, <strong>Person with Disabilities (PwD)</strong>, <strong>Defence / Paramilitary Personnel</strong>, or <strong>Employed Working Professional</strong>, you are required to upload the corresponding valid verification e-document in the designated upload sections below.
               </p>
             </div>
 
