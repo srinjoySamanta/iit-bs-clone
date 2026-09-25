@@ -7,6 +7,7 @@ import FeesStructure from './components/FeesStructure';
 import CampusLifePlacement from './components/CampusLifePlacement';
 import FaqSection from './components/FaqSection';
 import ContactSection from './components/ContactSection';
+import DirectorMessage from './components/DirectorMessage';
 import Footer from './components/Footer';
 import BlockDiagramViewer from './components/BlockDiagramViewer';
 import StudentPortalModal from './components/student/StudentPortalModal';
@@ -57,7 +58,7 @@ export default function App() {
         setShowStudentModal(true);
       } else if (hash === 'diagram') {
         setShowDiagram(true);
-      } else if (hash === 'home' || hash === '' || hash === 'campus-tour' || hash === 'campus' || hash === 'about' || hash === 'structure' || hash === 'eligibility' || hash === 'fees' || hash === 'faqs') {
+      } else if (hash === 'home' || hash === '' || hash === 'campus-tour' || hash === 'campus' || hash === 'about' || hash === 'structure' || hash === 'eligibility' || hash === 'fees' || hash === 'faqs' || hash === 'director-message') {
         setCurrentView('home');
       }
     };
@@ -165,6 +166,12 @@ export default function App() {
             onOpenDiagram={() => setShowDiagram(true)}
             onOpenCertificate={() => setShowCertificate(true)}
             onOpenQualifier={() => navigateTo('qualifier')}
+          />
+
+          {/* Current Director's Message (Times of India Exclusive Feature) */}
+          <DirectorMessage
+            onOpenQualifier={() => navigateTo('qualifier')}
+            onOpenSignUp={() => navigateTo('student-login')}
           />
 
           {/* Block Diagram Section (toggled) */}

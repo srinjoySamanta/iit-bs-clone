@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { 
   Menu, X, ExternalLink, ChevronDown, GraduationCap, ShieldCheck, 
-  LogIn, UserPlus, BookOpen, Phone, HelpCircle, User, Home, Sparkles 
+  LogIn, UserPlus, BookOpen, Phone, HelpCircle, User, Home, Sparkles, Newspaper 
 } from 'lucide-react';
 import { IIT_KGP_INFO, ANNOUNCEMENT_TICKER } from '../data/portalData';
 import iitKgpLogo from '../assets/logo';
@@ -188,6 +188,14 @@ export default function Navbar({
               )}
             </div>
 
+            <a 
+              href="#director-message" 
+              onClick={() => onNavigate('home')} 
+              className="hover:text-kgp-crimson transition py-2 flex items-center gap-1.5 font-semibold text-kgp-crimson"
+            >
+              <Newspaper className="w-3.5 h-3.5 text-kgp-crimson" />
+              <span>Director's Message (TOI)</span>
+            </a>
             <a href="#campus" onClick={() => onNavigate('home')} className="hover:text-kgp-crimson transition py-2">Campus Life &amp; Placement</a>
             <a href="#faqs" onClick={() => onNavigate('home')} className="hover:text-kgp-crimson transition py-2">FAQs</a>
           </nav>
@@ -259,6 +267,17 @@ export default function Navbar({
               <Sparkles className="w-4 h-4 text-emerald-600" />
               <span>Qualifier Round Exam Portal (Register, Pay & Test)</span>
             </button>
+            <a 
+              href="#director-message" 
+              onClick={() => { onNavigate('home'); setMobileMenuOpen(false); }}
+              className="w-full text-left py-2.5 text-kgp-crimson font-bold flex items-center justify-between"
+            >
+              <div className="flex items-center gap-1.5">
+                <Newspaper className="w-4 h-4 text-kgp-crimson" />
+                <span>Director's Message (Times of India)</span>
+              </div>
+              <span className="text-[10px] bg-red-100 text-kgp-crimson px-1.5 py-0.5 rounded font-black">TOI Exclusive</span>
+            </a>
             <a 
               href="#structure" 
               onClick={() => { onNavigate('home'); setMobileMenuOpen(false); }}

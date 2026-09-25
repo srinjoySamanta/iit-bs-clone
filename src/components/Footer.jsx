@@ -72,6 +72,7 @@ export default function Footer({ onOpenDiagram, onOpenStudentLogin, onOpenAdminL
               Admissions
             </h5>
             <ul className="text-xs text-slate-400 space-y-2">
+              <li><a href="#director-message" className="hover:text-amber-300 transition text-amber-300 font-semibold">Director's Message (Times of India)</a></li>
               <li><a href="#eligibility" className="hover:text-white transition">WBJEE Direct Admission</a></li>
               <li><a href="#eligibility" className="hover:text-white transition">JEE Advanced Qualifier Entry</a></li>
               <li><a href="#eligibility" className="hover:text-white transition">Tripura JEE Direct Entry</a></li>
