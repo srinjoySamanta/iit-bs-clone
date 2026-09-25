@@ -5,6 +5,10 @@ import {
 } from 'lucide-react';
 import { RECRUITERS, IIT_KGP_INFO } from '../data/portalData';
 
+import imgMainBuilding from '../assets/images/iit-kgp-main-building.jpg';
+import imgCentralLibrary from '../assets/images/iit-kgp-central-library.jpg';
+import imgPuriGate from '../assets/images/iit-kgp-puri-gate.jpg';
+
 export default function CampusLifePlacement() {
   return (
     <section id="campus" className="py-16 bg-white border-b border-slate-200">
@@ -27,84 +31,120 @@ export default function CampusLifePlacement() {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-14">
           
           {/* Card 1: Campus Immersion */}
-          <div className="rounded-2xl border border-slate-200 bg-slate-50/50 p-6 shadow-sm hover:shadow-md transition">
-            <div className="w-12 h-12 rounded-xl bg-kgp-crimson/10 text-kgp-crimson flex items-center justify-center mb-5">
-              <MapPin className="w-6 h-6" />
+          <div className="rounded-2xl border border-slate-200 bg-white overflow-hidden shadow-sm hover:shadow-md transition flex flex-col">
+            <div className="relative aspect-[16/10] overflow-hidden bg-slate-900">
+              <img 
+                src={imgMainBuilding} 
+                alt="IIT Kharagpur Historic Campus" 
+                className="w-full h-full object-cover hover:scale-105 transition-transform duration-500"
+              />
+              <div className="absolute top-2.5 left-2.5 px-2.5 py-1 rounded-md bg-slate-950/80 backdrop-blur-xs text-[11px] font-bold text-amber-300 border border-amber-400/30">
+                2,100-Acre Heritage Campus
+              </div>
             </div>
-            <h3 className="text-lg font-bold text-slate-900 font-serif-title mb-2">
-              Campus Immersion Experience
-            </h3>
-            <p className="text-xs text-slate-600 leading-relaxed mb-4">
-              Step onto the historic Kharagpur campus for an annual student-led techno-cultural festival, hackathons, sports meets, and a 1-month intensive summer/winter lab immersion.
-            </p>
-            <ul className="text-xs text-slate-700 space-y-2">
-              <li className="flex items-center gap-2">
-                <CheckCircle2 className="w-4 h-4 text-emerald-600 flex-shrink-0" />
-                <span>Interact with on-campus faculty & researchers</span>
-              </li>
-              <li className="flex items-center gap-2">
-                <CheckCircle2 className="w-4 h-4 text-emerald-600 flex-shrink-0" />
-                <span>Hostel stay & dining hall experience</span>
-              </li>
-              <li className="flex items-center gap-2">
-                <CheckCircle2 className="w-4 h-4 text-emerald-600 flex-shrink-0" />
-                <span>Hands-on lab workshops at CoEAI</span>
-              </li>
-            </ul>
+            <div className="p-6 flex-1 flex flex-col">
+              <div className="flex items-center gap-2 mb-2">
+                <MapPin className="w-5 h-5 text-kgp-crimson flex-shrink-0" />
+                <h3 className="text-lg font-bold text-slate-900 font-serif-title">
+                  Campus Immersion Experience
+                </h3>
+              </div>
+              <p className="text-xs text-slate-600 leading-relaxed mb-4">
+                Step onto the historic Kharagpur campus for an annual student-led techno-cultural festival, hackathons, sports meets, and a 1-month intensive summer/winter lab immersion.
+              </p>
+              <ul className="text-xs text-slate-700 space-y-2 mt-auto">
+                <li className="flex items-center gap-2">
+                  <CheckCircle2 className="w-4 h-4 text-emerald-600 flex-shrink-0" />
+                  <span>Interact with on-campus faculty &amp; researchers</span>
+                </li>
+                <li className="flex items-center gap-2">
+                  <CheckCircle2 className="w-4 h-4 text-emerald-600 flex-shrink-0" />
+                  <span>Hostel stay &amp; dining hall experience</span>
+                </li>
+                <li className="flex items-center gap-2">
+                  <CheckCircle2 className="w-4 h-4 text-emerald-600 flex-shrink-0" />
+                  <span>Hands-on lab workshops at CoEAI</span>
+                </li>
+              </ul>
+            </div>
           </div>
 
           {/* Card 2: Central Library Access */}
-          <div className="rounded-2xl border border-slate-200 bg-slate-50/50 p-6 shadow-sm hover:shadow-md transition">
-            <div className="w-12 h-12 rounded-xl bg-blue-500/10 text-blue-600 flex items-center justify-center mb-5">
-              <BookOpen className="w-6 h-6" />
+          <div className="rounded-2xl border border-slate-200 bg-white overflow-hidden shadow-sm hover:shadow-md transition flex flex-col">
+            <div className="relative aspect-[16/10] overflow-hidden bg-slate-900">
+              <img 
+                src={imgCentralLibrary} 
+                alt="IIT Kharagpur Central Library" 
+                className="w-full h-full object-cover hover:scale-105 transition-transform duration-500"
+              />
+              <div className="absolute top-2.5 left-2.5 px-2.5 py-1 rounded-md bg-slate-950/80 backdrop-blur-xs text-[11px] font-bold text-amber-300 border border-amber-400/30">
+                Asia's Premier Tech Library
+              </div>
             </div>
-            <h3 className="text-lg font-bold text-slate-900 font-serif-title mb-2">
-              Central Library Digital Access
-            </h3>
-            <p className="text-xs text-slate-600 leading-relaxed mb-4">
-              All enrolled students gain verified remote institutional credentials to IIT Kharagpur's renowned Central Library, one of the largest academic repositories in Asia.
-            </p>
-            <ul className="text-xs text-slate-700 space-y-2">
-              <li className="flex items-center gap-2">
-                <CheckCircle2 className="w-4 h-4 text-emerald-600 flex-shrink-0" />
-                <span>Access to IEEE Xplore, ACM, Springer & ScienceDirect</span>
-              </li>
-              <li className="flex items-center gap-2">
-                <CheckCircle2 className="w-4 h-4 text-emerald-600 flex-shrink-0" />
-                <span>400,000+ textbooks, journals & research dissertations</span>
-              </li>
-              <li className="flex items-center gap-2">
-                <CheckCircle2 className="w-4 h-4 text-emerald-600 flex-shrink-0" />
-                <span>Institutional OpenVPN for campus-licensed software</span>
-              </li>
-            </ul>
+            <div className="p-6 flex-1 flex flex-col">
+              <div className="flex items-center gap-2 mb-2">
+                <BookOpen className="w-5 h-5 text-blue-600 flex-shrink-0" />
+                <h3 className="text-lg font-bold text-slate-900 font-serif-title">
+                  Central Library Digital Access
+                </h3>
+              </div>
+              <p className="text-xs text-slate-600 leading-relaxed mb-4">
+                All enrolled students gain verified remote institutional credentials to IIT Kharagpur's renowned Central Library, one of the largest academic repositories in Asia.
+              </p>
+              <ul className="text-xs text-slate-700 space-y-2 mt-auto">
+                <li className="flex items-center gap-2">
+                  <CheckCircle2 className="w-4 h-4 text-emerald-600 flex-shrink-0" />
+                  <span>Access to IEEE Xplore, ACM, Springer &amp; ScienceDirect</span>
+                </li>
+                <li className="flex items-center gap-2">
+                  <CheckCircle2 className="w-4 h-4 text-emerald-600 flex-shrink-0" />
+                  <span>400,000+ textbooks, journals &amp; research dissertations</span>
+                </li>
+                <li className="flex items-center gap-2">
+                  <CheckCircle2 className="w-4 h-4 text-emerald-600 flex-shrink-0" />
+                  <span>Institutional OpenVPN for campus-licensed software</span>
+                </li>
+              </ul>
+            </div>
           </div>
 
           {/* Card 3: Alumni Status */}
-          <div className="rounded-2xl border border-slate-200 bg-slate-50/50 p-6 shadow-sm hover:shadow-md transition">
-            <div className="w-12 h-12 rounded-xl bg-amber-500/10 text-amber-600 flex items-center justify-center mb-5">
-              <GraduationCap className="w-6 h-6" />
+          <div className="rounded-2xl border border-slate-200 bg-white overflow-hidden shadow-sm hover:shadow-md transition flex flex-col">
+            <div className="relative aspect-[16/10] overflow-hidden bg-slate-900">
+              <img 
+                src={imgPuriGate} 
+                alt="IIT Kharagpur Puri Gate" 
+                className="w-full h-full object-cover hover:scale-105 transition-transform duration-500"
+              />
+              <div className="absolute top-2.5 left-2.5 px-2.5 py-1 rounded-md bg-slate-950/80 backdrop-blur-xs text-[11px] font-bold text-amber-300 border border-amber-400/30">
+                Puri Gate &amp; Convocation
+              </div>
             </div>
-            <h3 className="text-lg font-bold text-slate-900 font-serif-title mb-2">
-              Official Alumni Status (Degree Level)
-            </h3>
-            <p className="text-xs text-slate-600 leading-relaxed mb-4">
-              Graduating with the B.Sc. or BS Degree inducts you into the prestigious <strong>IIT Kharagpur Global Alumni Association</strong> with permanent alumni privileges.
-            </p>
-            <ul className="text-xs text-slate-700 space-y-2">
-              <li className="flex items-center gap-2">
-                <CheckCircle2 className="w-4 h-4 text-emerald-600 flex-shrink-0" />
-                <span>Official IIT KGP Alumni Card & Email ID</span>
-              </li>
-              <li className="flex items-center gap-2">
-                <CheckCircle2 className="w-4 h-4 text-emerald-600 flex-shrink-0" />
-                <span>Worldwide chapters (Silicon Valley, London, Singapore)</span>
-              </li>
-              <li className="flex items-center gap-2">
-                <CheckCircle2 className="w-4 h-4 text-emerald-600 flex-shrink-0" />
-                <span>Formal In-Person Convocation Ceremony on campus</span>
-              </li>
-            </ul>
+            <div className="p-6 flex-1 flex flex-col">
+              <div className="flex items-center gap-2 mb-2">
+                <GraduationCap className="w-5 h-5 text-amber-600 flex-shrink-0" />
+                <h3 className="text-lg font-bold text-slate-900 font-serif-title">
+                  Official Alumni Status (Degree Level)
+                </h3>
+              </div>
+              <p className="text-xs text-slate-600 leading-relaxed mb-4">
+                Graduating with the B.Sc. or BS Degree inducts you into the prestigious <strong>IIT Kharagpur Global Alumni Association</strong> with permanent alumni privileges.
+              </p>
+              <ul className="text-xs text-slate-700 space-y-2 mt-auto">
+                <li className="flex items-center gap-2">
+                  <CheckCircle2 className="w-4 h-4 text-emerald-600 flex-shrink-0" />
+                  <span>Official IIT KGP Alumni Card &amp; Email ID</span>
+                </li>
+                <li className="flex items-center gap-2">
+                  <CheckCircle2 className="w-4 h-4 text-emerald-600 flex-shrink-0" />
+                  <span>Worldwide chapters (Silicon Valley, London, Singapore)</span>
+                </li>
+                <li className="flex items-center gap-2">
+                  <CheckCircle2 className="w-4 h-4 text-emerald-600 flex-shrink-0" />
+                  <span>Formal In-Person Convocation Ceremony on campus</span>
+                </li>
+              </ul>
+            </div>
           </div>
 
         </div>
