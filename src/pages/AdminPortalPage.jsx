@@ -5,7 +5,7 @@ import {
   FileText, Check, Clock, RefreshCw, Mail, Phone, 
   ChevronRight, ChevronLeft, Lock, Eye, AlertCircle, Database, Bell, 
   CreditCard, AlertTriangle, Send, QrCode, ThumbsUp, ThumbsDown,
-  Upload, Sparkles, History, FileSpreadsheet
+  Upload, Sparkles, History, FileSpreadsheet, Trash2, ShieldAlert
 } from 'lucide-react';
 import { IIT_KGP_INFO } from '../data/portalData';
 import iitKgpLogo from '../assets/logo';
@@ -21,7 +21,12 @@ import {
 } from '../data/applicationStore';
 import {
   bulkImportStudents,
-  triggerDummySimulation
+  triggerDummySimulation,
+  deleteStudentApplication,
+  verifyApplication as apiVerifyApplication,
+  getCurrentAdminUser,
+  clearAdminSession,
+  fetchStudents as apiFetchStudents
 } from '../services/apiService';
 
 export default function AdminPortalPage({ onBackToHome, onLogout, onOpenAdminModal }) {
@@ -32,6 +37,12 @@ export default function AdminPortalPage({ onBackToHome, onLogout, onOpenAdminMod
   const [students, setStudents] = useState([]);
   const [selectedStudent, setSelectedStudent] = useState(null);
   const [toastMessage, setToastMessage] = useState(null);
+
+  // RBAC & Authentication State
+  const [currentAdmin, setCurrentAdmin] = useState(getCurrentAdminUser());
+  const [isForbidden, setIsForbidden] = useState(false);
+  const [forbiddenReason, setForbiddenReason] = useState('');
+  const [isLoadingStudents, setIsLoadingStudents] = useState(true);
 
   // Pagination state
   const [rosterPage, setRosterPage] = useState(1);
@@ -65,13 +76,35 @@ export default function AdminPortalPage({ onBackToHome, onLogout, onOpenAdminMod
   const [customQueryNote, setCustomQueryNote] = useState('');
 
   useEffect(() => {
-    // Initial load from store
-    const initialList = getStoredApplications();
-    setStudents(initialList);
-    if (initialList.length > 0) {
-      setSelectedStudent(initialList[0]);
+    async function loadApplications() {
+      setIsLoadingStudents(true);
+      const user = getCurrentAdminUser();
+      setCurrentAdmin(user);
+
+      // Verify RBAC access by requesting protected backend API
+      const res = await apiFetchStudents({ limit: 100 });
+      if (res && res.statusCode === 403) {
+        setIsForbidden(true);
+        setForbiddenReason(res.error || "403 Forbidden: Administrator credentials required to access student applications.");
+        setIsLoadingStudents(false);
+        return;
+      }
+
+      if (res && res.students && res.students.length > 0) {
+        setStudents(res.students);
+        setSelectedStudent(res.students[0]);
+      } else {
+        const initialList = getStoredApplications();
+        setStudents(initialList);
+        if (initialList.length > 0) {
+          setSelectedStudent(initialList[0]);
+        }
+      }
+      setAuditLogs(getStoredAuditLogs());
+      setIsLoadingStudents(false);
     }
-    setAuditLogs(getStoredAuditLogs());
+
+    loadApplications();
 
     // Subscribe to reactive store changes (e.g. when student re-submits a payment or applies)
     const unsubscribeStore = subscribeToStore((updatedList) => {
@@ -111,19 +144,39 @@ export default function AdminPortalPage({ onBackToHome, onLogout, onOpenAdminMod
   };
 
   // ADMIN ACTION: Verify Application
-  const handleApproveApplication = (roll) => {
+  const handleApproveApplication = async (roll) => {
     const updated = updateApplicationVerification(roll, 'Verified');
     setStudents(updated);
+    await apiVerifyApplication(roll, 'Verified', '', currentAdmin?.name || 'Admissions Officer');
     showToast(`Application ${roll} has been officially VERIFIED & APPROVED ✓`);
   };
 
   // ADMIN ACTION: Reject Application
-  const handleConfirmReject = () => {
+  const handleConfirmReject = async () => {
     if (!selectedStudent) return;
     const updated = updateApplicationVerification(selectedStudent.roll, 'Rejected', rejectionReason);
     setStudents(updated);
+    await apiVerifyApplication(selectedStudent.roll, 'Rejected', rejectionReason, currentAdmin?.name || 'Admissions Officer');
     setShowRejectModal(false);
     showToast(`Application ${selectedStudent.roll} has been REJECTED with reason recorded.`);
+  };
+
+  // ADMIN ACTION: Delete Application (Admin Only)
+  const handleDeleteApplication = async (roll) => {
+    if (!window.confirm(`Are you sure you want to permanently delete application for Roll ${roll}? This administrative action will be recorded in the audit ledger.`)) {
+      return;
+    }
+    const res = await deleteStudentApplication(roll);
+    if (res && res.success) {
+      const updated = students.filter(s => s.roll !== roll && s.id !== roll);
+      setStudents(updated);
+      if (selectedStudent && selectedStudent.roll === roll) {
+        setSelectedStudent(updated[0] || null);
+      }
+      showToast(`Application ${roll} has been PERMANENTLY DELETED ✓`);
+    } else {
+      showToast(`Failed to delete application ${roll}.`);
+    }
   };
 
   // ADMIN ACTION: Verify Payment
@@ -408,9 +461,14 @@ KGP-2026-9013,24BS0083,"Meenakshi Sundaram","meenakshi.s@gmail.com","+91 97654 3
                 <span className="text-[11px] font-bold text-amber-400 uppercase tracking-wider">
                   Admin Information System
                 </span>
-                <span className="bg-amber-500/20 text-amber-300 text-[10px] font-bold px-2 py-0.2 rounded border border-amber-500/40">
-                  Super Admin • Full Access
+                <span className="bg-amber-500/20 text-amber-300 text-[10px] font-bold px-2 py-0.5 rounded border border-amber-500/40">
+                  {currentAdmin?.role === 'superadmin' ? 'Super Admin • Full Access' : (currentAdmin?.designation || 'Administrator')}
                 </span>
+                {currentAdmin?.name && (
+                  <span className="hidden sm:inline-block text-[11px] text-slate-300 font-medium">
+                    ({currentAdmin.name})
+                  </span>
+                )}
               </div>
               <h1 className="text-sm sm:text-base font-bold font-serif-title text-white">
                 {IIT_KGP_INFO.name} — Academic &amp; Payment Administration Console
@@ -461,8 +519,69 @@ KGP-2026-9013,24BS0083,"Meenakshi Sundaram","meenakshi.s@gmail.com","+91 97654 3
         </div>
       )}
 
-      {/* 3. MAIN DASHBOARD CONTENT */}
-      <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-6">
+      {/* 3. MAIN DASHBOARD CONTENT (WITH RBAC 403 FORBIDDEN GUARD) */}
+      {isForbidden ? (
+        <main className="flex-1 max-w-4xl w-full mx-auto px-4 sm:px-6 py-12 flex flex-col items-center justify-center">
+          <div className="w-full bg-slate-900/90 border border-rose-500/40 rounded-3xl p-8 sm:p-10 shadow-2xl relative overflow-hidden backdrop-blur">
+            <div className="absolute top-0 right-0 w-96 h-96 bg-rose-500/10 blur-3xl rounded-full pointer-events-none" />
+            <div className="flex flex-col items-center text-center space-y-5 relative z-10">
+              <div className="w-20 h-20 rounded-2xl bg-rose-500/20 border-2 border-rose-500/40 flex items-center justify-center text-rose-400 shadow-xl shadow-rose-950/50">
+                <ShieldAlert className="w-10 h-10 animate-pulse" />
+              </div>
+              <div>
+                <span className="inline-block px-3 py-1 rounded-full bg-rose-500/20 border border-rose-500/30 text-rose-300 font-mono font-bold text-xs uppercase tracking-wider mb-2">
+                  HTTP 403 Forbidden • Access Denied
+                </span>
+                <h2 className="text-2xl sm:text-3xl font-bold font-serif-title text-white">
+                  Strict Role-Based Access Control (RBAC) Active
+                </h2>
+                <p className="text-slate-300 text-sm mt-2 max-w-xl mx-auto leading-relaxed">
+                  {forbiddenReason || "Your current session credentials lack the required administrative privileges to view the student master roster. Regular student accounts cannot access other applicants' confidential academic and payment data."}
+                </p>
+              </div>
+
+              {/* Security Context Ledger */}
+              <div className="w-full bg-slate-950/80 border border-slate-800 rounded-2xl p-5 text-left font-mono text-xs space-y-2 text-slate-300">
+                <div className="flex justify-between items-center pb-2 border-b border-slate-800/80">
+                  <span className="text-slate-500">Security Clearance:</span>
+                  <span className="text-rose-400 font-bold">STUDENT_ROLE_RESTRICTED</span>
+                </div>
+                <div className="flex justify-between items-center pb-2 border-b border-slate-800/80">
+                  <span className="text-slate-500">Authenticated User:</span>
+                  <span className="text-white font-semibold">{currentAdmin?.name || currentAdmin?.email || "Student Account"}</span>
+                </div>
+                <div className="flex justify-between items-center pb-2 border-b border-slate-800/80">
+                  <span className="text-slate-500">Attempted Endpoint:</span>
+                  <span className="text-amber-400 font-bold">GET /api/students (Protected)</span>
+                </div>
+                <div className="flex justify-between items-center">
+                  <span className="text-slate-500">Institutional Policy:</span>
+                  <span className="text-emerald-400">Principle of Least Privilege (PoLP) Enforced</span>
+                </div>
+              </div>
+
+              {/* Action Buttons */}
+              <div className="flex flex-col sm:flex-row gap-3 pt-2 w-full sm:w-auto">
+                <button
+                  onClick={onLogout || onBackToHome}
+                  className="px-6 py-3 rounded-xl bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-slate-950 font-bold text-sm shadow-lg transition flex items-center justify-center gap-2 cursor-pointer"
+                >
+                  <Key className="w-4 h-4" />
+                  <span>Login with Admin Credentials</span>
+                </button>
+                <button
+                  onClick={onBackToHome}
+                  className="px-6 py-3 rounded-xl bg-slate-800 hover:bg-slate-700 text-white font-medium text-sm border border-slate-700 transition flex items-center justify-center gap-2 cursor-pointer"
+                >
+                  <ArrowLeft className="w-4 h-4" />
+                  <span>Back to Home</span>
+                </button>
+              </div>
+            </div>
+          </div>
+        </main>
+      ) : (
+        <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-6">
         
         {/* Top Summary Banner with Metric Cards */}
         <div className="bg-gradient-to-r from-slate-900 via-kgp-navy to-slate-900 border border-slate-800 rounded-3xl p-6 sm:p-8 shadow-2xl relative overflow-hidden">
@@ -726,6 +845,13 @@ KGP-2026-9013,24BS0083,"Meenakshi Sundaram","meenakshi.s@gmail.com","+91 97654 3
                                   >
                                     <XCircle className="w-3.5 h-3.5" />
                                   </button>
+                                  <button
+                                    onClick={() => handleDeleteApplication(student.roll)}
+                                    className="p-1.5 rounded-lg bg-red-950/70 hover:bg-red-700 text-red-300 hover:text-white transition"
+                                    title="Delete Application (Admin Only)"
+                                  >
+                                    <Trash2 className="w-3.5 h-3.5" />
+                                  </button>
                                 </div>
                               </td>
                             </tr>
@@ -786,6 +912,14 @@ KGP-2026-9013,24BS0083,"Meenakshi Sundaram","meenakshi.s@gmail.com","+91 97654 3
                       <span>Reject Application</span>
                     </button>
                   </div>
+
+                  <button
+                    onClick={() => handleDeleteApplication(selectedStudent.roll)}
+                    className="w-full py-2 px-3 bg-red-950/50 hover:bg-red-900/80 border border-red-800/60 text-red-300 hover:text-white text-xs font-semibold rounded-xl shadow transition flex items-center justify-center gap-1.5"
+                  >
+                    <Trash2 className="w-3.5 h-3.5" />
+                    <span>Delete Record from Database</span>
+                  </button>
 
                   {/* Candidate Details */}
                   <div className="space-y-2.5 text-xs bg-slate-950/70 p-3.5 rounded-xl border border-slate-800/80">
@@ -1171,6 +1305,7 @@ KGP-2026-9013,24BS0083,"Meenakshi Sundaram","meenakshi.s@gmail.com","+91 97654 3
         )}
 
       </main>
+      )}
 
       {/* 5. MODAL: REJECT APPLICATION CONFIRMATION */}
       {showRejectModal && selectedStudent && (

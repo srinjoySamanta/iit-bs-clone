@@ -1,6 +1,6 @@
-// API Service with seamless hybrid capability:
-// Automatically uses backend REST API if server is reachable,
-// or falls back gracefully to local applicationStore when running statically on GitHub Pages.
+// API Service with strict Role-Based Access Control (RBAC) & Hybrid Architecture:
+// Uses protected backend REST API with JWT authorization,
+// with seamless fallback to local applicationStore when running statically on GitHub Pages.
 
 import { 
   getStoredApplications, 
@@ -18,6 +18,106 @@ const API_BASE = import.meta.env.VITE_API_URL || (typeof window !== 'undefined' 
 
 let isBackendAvailable = null;
 
+// ==========================================
+// SESSION & JWT TOKEN MANAGEMENT
+// ==========================================
+
+export function getAdminToken() {
+  if (typeof window === 'undefined') return null;
+  return sessionStorage.getItem('iitkgp_admin_jwt') || localStorage.getItem('iitkgp_admin_jwt');
+}
+
+export function setAdminSession(token, user) {
+  if (typeof window === 'undefined') return;
+  if (token) {
+    sessionStorage.setItem('iitkgp_admin_jwt', token);
+    localStorage.setItem('iitkgp_admin_jwt', token);
+  }
+  if (user) {
+    sessionStorage.setItem('iitkgp_admin_user', JSON.stringify(user));
+    localStorage.setItem('iitkgp_admin_user', JSON.stringify(user));
+  }
+}
+
+export function clearAdminSession() {
+  if (typeof window === 'undefined') return;
+  sessionStorage.removeItem('iitkgp_admin_jwt');
+  sessionStorage.removeItem('iitkgp_admin_user');
+  localStorage.removeItem('iitkgp_admin_jwt');
+  localStorage.removeItem('iitkgp_admin_user');
+}
+
+export function getCurrentAdminUser() {
+  if (typeof window === 'undefined') return null;
+  try {
+    const raw = sessionStorage.getItem('iitkgp_admin_user') || localStorage.getItem('iitkgp_admin_user');
+    return raw ? JSON.parse(raw) : null;
+  } catch (e) {
+    return null;
+  }
+}
+
+export async function adminLogin(identifier, password) {
+  try {
+    const res = await fetch(`${API_BASE}/auth/login`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email: identifier, password })
+    });
+    const data = await res.json();
+    if (res.ok && data.token) {
+      isBackendAvailable = true;
+      setAdminSession(data.token, data.user);
+      return { success: true, user: data.user, token: data.token };
+    }
+    return { success: false, error: data.error || 'Authentication failed' };
+  } catch (err) {
+    // Standalone fallback: If offline/GitHub Pages, verify against demo credentials
+    if (identifier === 'admin@iitkgp.ac.in' || identifier === 'ADMIN-KGP-2026' || identifier === 'admin_kgp') {
+      if (password === 'Admin@KGP2026!' || password === 'IITKgp@Admin#Master') {
+        const mockUser = {
+          id: 1,
+          username: 'admin_kgp',
+          email: 'admin@iitkgp.ac.in',
+          role: 'admin',
+          name: 'Prof. Admissions Chair',
+          designation: 'Dean of Academic Affairs'
+        };
+        const mockToken = 'mock_admin_jwt_standalone_' + Date.now();
+        setAdminSession(mockToken, mockUser);
+        return { success: true, user: mockUser, token: mockToken };
+      }
+    }
+    return { success: false, error: 'Authentication failed. Please verify your administrator credentials.' };
+  }
+}
+
+// Student Token Generator (For testing RBAC: Demonstrates 403 Forbidden on Admin endpoints)
+export async function generateStudentTestToken(roll = '24BS0001', email = 'subho.roy@kgp.ac.in') {
+  try {
+    const res = await fetch(`${API_BASE}/auth/student-token`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ roll, email })
+    });
+    const data = await res.json();
+    if (res.ok && data.token) {
+      setAdminSession(data.token, { ...data.student, role: 'student' });
+      return { success: true, user: { ...data.student, role: 'student' }, token: data.token };
+    }
+    return { success: false, error: data.error || 'Failed to generate student token' };
+  } catch (e) {
+    const mockStudent = { roll, email, role: 'student', name: 'Test Student' };
+    const mockToken = 'mock_student_jwt_' + Date.now();
+    setAdminSession(mockToken, mockStudent);
+    return { success: true, user: mockStudent, token: mockToken };
+  }
+}
+
+// ==========================================
+// SYSTEM HEALTHCHECK
+// ==========================================
+
 export async function checkBackendHealth() {
   try {
     const controller = new AbortController();
@@ -31,14 +131,20 @@ export async function checkBackendHealth() {
   } catch (e) {
     isBackendAvailable = false;
   }
-  return { status: 'STANDALONE_CLIENT', database: 'Client-Side LocalStorage' };
+  return { status: 'STANDALONE_CLIENT', database: 'Client-Side LocalStorage', rbac: 'Client-Side RBAC' };
 }
 
+// ==========================================
+// PROTECTED API ENDPOINTS (REQUIRE ADMIN JWT)
+// ==========================================
+
 export async function fetchStudents({ page = 1, limit = 10, q = '', status = 'ALL', level = 'ALL', sortBy = 'submissionDate', sortOrder = 'desc' } = {}) {
+  const token = getAdminToken();
+
   try {
     if (isBackendAvailable !== false) {
       const controller = new AbortController();
-      const timeoutId = setTimeout(() => controller.abort(), 2000);
+      const timeoutId = setTimeout(() => controller.abort(), 3000);
       const url = new URL(`${API_BASE}/students`);
       url.searchParams.set('page', page);
       url.searchParams.set('limit', limit);
@@ -48,8 +154,38 @@ export async function fetchStudents({ page = 1, limit = 10, q = '', status = 'AL
       url.searchParams.set('sortBy', sortBy);
       url.searchParams.set('sortOrder', sortOrder);
 
-      const res = await fetch(url.toString(), { signal: controller.signal });
+      const res = await fetch(url.toString(), {
+        signal: controller.signal,
+        headers: {
+          'Content-Type': 'application/json',
+          ...(token ? { 'Authorization': `Bearer ${token}` } : {})
+        }
+      });
       clearTimeout(timeoutId);
+
+      // Handle 403 Forbidden or 401 Unauthorized strictly
+      if (res.status === 403) {
+        const errorJson = await res.json().catch(() => ({}));
+        return {
+          error: errorJson.error || 'Forbidden: Administrator credentials required.',
+          statusCode: 403,
+          code: 'ADMIN_ACCESS_REQUIRED',
+          students: [],
+          total: 0
+        };
+      }
+
+      if (res.status === 401) {
+        const errorJson = await res.json().catch(() => ({}));
+        return {
+          error: errorJson.error || 'Unauthorized: Session expired or invalid.',
+          statusCode: 401,
+          code: 'TOKEN_INVALID',
+          students: [],
+          total: 0
+        };
+      }
+
       if (res.ok) {
         isBackendAvailable = true;
         return await res.json();
@@ -114,23 +250,24 @@ export async function submitStudentApplication(studentData) {
       });
       if (res.ok) {
         const data = await res.json();
-        // Also sync local store
         saveNewApplication(data.student);
         return data.student;
       }
     }
-  } catch (e) {
-    // Ignore and use local store
-  }
+  } catch (e) {}
   return saveNewApplication(studentData);
 }
 
 export async function verifyApplication(roll, status, reason = '', actor = 'Admissions Officer') {
+  const token = getAdminToken();
   try {
     if (isBackendAvailable) {
       await fetch(`${API_BASE}/students/${roll}/verify`, {
         method: 'PATCH',
-        headers: { 'Content-Type': 'application/json' },
+        headers: {
+          'Content-Type': 'application/json',
+          ...(token ? { 'Authorization': `Bearer ${token}` } : {})
+        },
         body: JSON.stringify({ status, reason, actor })
       });
     }
@@ -139,11 +276,15 @@ export async function verifyApplication(roll, status, reason = '', actor = 'Admi
 }
 
 export async function verifyPayment(roll, paymentStatus, bankStatus, queryRemarks = '', actor = 'Accounts Desk') {
+  const token = getAdminToken();
   try {
     if (isBackendAvailable) {
       await fetch(`${API_BASE}/students/${roll}/payment`, {
         method: 'PATCH',
-        headers: { 'Content-Type': 'application/json' },
+        headers: {
+          'Content-Type': 'application/json',
+          ...(token ? { 'Authorization': `Bearer ${token}` } : {})
+        },
         body: JSON.stringify({ paymentStatus, bankStatus, queryRemarks, actor })
       });
     }
@@ -151,12 +292,41 @@ export async function verifyPayment(roll, paymentStatus, bankStatus, queryRemark
   return updatePaymentVerification(roll, paymentStatus, bankStatus, queryRemarks);
 }
 
+export async function deleteStudentApplication(roll) {
+  const token = getAdminToken();
+  try {
+    if (isBackendAvailable) {
+      const res = await fetch(`${API_BASE}/students/${roll}`, {
+        method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json',
+          ...(token ? { 'Authorization': `Bearer ${token}` } : {})
+        }
+      });
+      if (res.ok) {
+        return await res.json();
+      }
+    }
+  } catch (e) {}
+
+  // Fallback deletion from local store
+  const current = getStoredApplications();
+  const updated = current.filter(s => s.roll !== roll && s.id !== roll);
+  localStorage.setItem('iit_kgp_applications_v1', JSON.stringify(updated));
+  recordAuditLog('DELETE_APPLICATION', roll, `Student application ${roll} permanently deleted.`, 'Admin', 'Admissions Officer');
+  return { success: true, roll };
+}
+
 export async function bulkImportStudents(studentsList, csvText = '') {
+  const token = getAdminToken();
   try {
     if (isBackendAvailable) {
       const res = await fetch(`${API_BASE}/students/bulk-import`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: {
+          'Content-Type': 'application/json',
+          ...(token ? { 'Authorization': `Bearer ${token}` } : {})
+        },
         body: JSON.stringify({ students: studentsList, csvText })
       });
       if (res.ok) {
@@ -170,9 +340,15 @@ export async function bulkImportStudents(studentsList, csvText = '') {
 }
 
 export async function fetchAuditLogs({ page = 1, limit = 20, q = '' } = {}) {
+  const token = getAdminToken();
   try {
     if (isBackendAvailable) {
-      const res = await fetch(`${API_BASE}/audit-logs?page=${page}&limit=${limit}&q=${encodeURIComponent(q)}`);
+      const res = await fetch(`${API_BASE}/audit-logs?page=${page}&limit=${limit}&q=${encodeURIComponent(q)}`, {
+        headers: {
+          'Content-Type': 'application/json',
+          ...(token ? { 'Authorization': `Bearer ${token}` } : {})
+        }
+      });
       if (res.ok) {
         return await res.json();
       }
@@ -199,11 +375,15 @@ export async function fetchAuditLogs({ page = 1, limit = 20, q = '' } = {}) {
 }
 
 export async function triggerDummySimulation(count = 50) {
+  const token = getAdminToken();
   try {
     if (isBackendAvailable) {
       const res = await fetch(`${API_BASE}/test/generate-dummy-students`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: {
+          'Content-Type': 'application/json',
+          ...(token ? { 'Authorization': `Bearer ${token}` } : {})
+        },
         body: JSON.stringify({ count })
       });
       if (res.ok) {

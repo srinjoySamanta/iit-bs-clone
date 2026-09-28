@@ -2,6 +2,7 @@ import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import pg from 'pg';
+import bcrypt from 'bcryptjs';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -9,6 +10,40 @@ const __dirname = path.dirname(__filename);
 // Data directory for local fallback persistence
 const DATA_DIR = path.join(__dirname, 'data');
 const LOCAL_DB_FILE = path.join(DATA_DIR, 'iit_kgp_db.json');
+
+// Default Seed Users for Role-Based Access Control (RBAC)
+const SEED_USERS = [
+  {
+    id: 1,
+    username: "admin_kgp",
+    email: "admin@iitkgp.ac.in",
+    password_hash: bcrypt.hashSync("Admin@KGP2026!", 10),
+    role: "admin",
+    name: "Prof. Admissions Chair",
+    designation: "Dean of Academic Affairs",
+    roll_number: null
+  },
+  {
+    id: 2,
+    username: "officer_kgp",
+    email: "officer@iitkgp.ac.in",
+    password_hash: bcrypt.hashSync("Officer@KGP2026!", 10),
+    role: "admin",
+    name: "Dr. S. K. Mukherjee",
+    designation: "Admissions Scrutiny Officer",
+    roll_number: null
+  },
+  {
+    id: 3,
+    username: "student_kgp",
+    email: "subho.roy@kgp.ac.in",
+    password_hash: bcrypt.hashSync("Student@KGP2026!", 10),
+    role: "student",
+    name: "Subhashis Roy",
+    designation: "Undergraduate Student",
+    roll_number: "24BS0001"
+  }
+];
 
 // Initial seed applications
 const SEED_APPLICATIONS = [
@@ -249,15 +284,19 @@ class DatabaseService {
         this.memoryDb = JSON.parse(raw);
         if (!this.memoryDb.students || this.memoryDb.students.length === 0) {
           this.memoryDb.students = [...SEED_APPLICATIONS];
-          this.saveLocal();
         }
+        if (!this.memoryDb.users || this.memoryDb.users.length === 0) {
+          this.memoryDb.users = [...SEED_USERS];
+        }
+        this.saveLocal();
       } catch (e) {
-        this.memoryDb = { students: [...SEED_APPLICATIONS], audit_logs: [] };
+        this.memoryDb = { students: [...SEED_APPLICATIONS], users: [...SEED_USERS], audit_logs: [] };
         this.saveLocal();
       }
     } else {
       this.memoryDb = {
         students: [...SEED_APPLICATIONS],
+        users: [...SEED_USERS],
         audit_logs: [
           {
             id: 1,
@@ -266,7 +305,7 @@ class DatabaseService {
             entity_id: 'SYSTEM',
             actor_role: 'System',
             actor_name: 'IIT Kharagpur BS Server',
-            details: 'Initial database created with official seeded records.',
+            details: 'Initial database created with official seeded records and secure admin accounts.',
             timestamp: new Date().toISOString()
           }
         ]
@@ -290,12 +329,25 @@ class DatabaseService {
     if (fs.existsSync(schemaPath)) {
       const sql = fs.readFileSync(schemaPath, 'utf-8');
       await this.pgPool.query(sql);
-      // Check if seeded
+      // Check if students seeded
       const countRes = await this.pgPool.query('SELECT COUNT(*) FROM students');
       if (parseInt(countRes.rows[0].count, 10) === 0) {
         console.log('🌱 Seeding initial applications into PostgreSQL...');
         for (const app of SEED_APPLICATIONS) {
           await this.saveStudent(app, 'System Initializer');
+        }
+      }
+      // Check if users seeded
+      const userCountRes = await this.pgPool.query('SELECT COUNT(*) FROM users');
+      if (parseInt(userCountRes.rows[0].count, 10) === 0) {
+        console.log('🌱 Seeding initial administrative and student accounts into PostgreSQL...');
+        for (const user of SEED_USERS) {
+          await this.pgPool.query(
+            `INSERT INTO users (username, email, password_hash, role, name, designation, roll_number)
+             VALUES ($1, $2, $3, $4, $5, $6, $7)
+             ON CONFLICT (username) DO NOTHING`,
+            [user.username, user.email, user.password_hash, user.role, user.name, user.designation, user.roll_number]
+          );
         }
       }
     }
@@ -706,6 +758,102 @@ class DatabaseService {
       generatedCount: newStudents.length,
       totalCount: await this.getTotalCount()
     };
+  }
+
+  // ==========================================
+  // USER / RBAC AUTHENTICATION METHODS
+  // ==========================================
+  async getUserByEmailOrUsername(identifier) {
+    if (!identifier) return null;
+    const clean = String(identifier).trim().toLowerCase();
+    if (this.isPg) {
+      const res = await this.pgPool.query(
+        'SELECT * FROM users WHERE LOWER(email) = $1 OR LOWER(username) = $1 LIMIT 1',
+        [clean]
+      );
+      return res.rows[0] || null;
+    } else {
+      const users = this.memoryDb.users || [];
+      return users.find(u =>
+        (u.email && u.email.toLowerCase() === clean) ||
+        (u.username && u.username.toLowerCase() === clean)
+      ) || null;
+    }
+  }
+
+  async getUserById(id) {
+    if (this.isPg) {
+      const res = await this.pgPool.query('SELECT * FROM users WHERE id = $1 LIMIT 1', [id]);
+      return res.rows[0] || null;
+    } else {
+      const users = this.memoryDb.users || [];
+      return users.find(u => u.id === id || String(u.id) === String(id)) || null;
+    }
+  }
+
+  async createUser(userData) {
+    const { username, email, password, role = 'student', name, designation = '', roll_number = null } = userData;
+    const password_hash = bcrypt.hashSync(password, 10);
+
+    if (this.isPg) {
+      const res = await this.pgPool.query(
+        `INSERT INTO users (username, email, password_hash, role, name, designation, roll_number)
+         VALUES ($1, $2, $3, $4, $5, $6, $7)
+         RETURNING id, username, email, role, name, designation, roll_number, created_at`,
+        [username, email, password_hash, role, name, designation, roll_number]
+      );
+      return res.rows[0];
+    } else {
+      if (!this.memoryDb.users) this.memoryDb.users = [];
+      const newUser = {
+        id: this.memoryDb.users.length + 1,
+        username,
+        email,
+        password_hash,
+        role,
+        name,
+        designation,
+        roll_number,
+        created_at: new Date().toISOString()
+      };
+      this.memoryDb.users.push(newUser);
+      this.saveLocal();
+      const { password_hash: _, ...safeUser } = newUser;
+      return safeUser;
+    }
+  }
+
+  // ==========================================
+  // DELETE STUDENT APPLICATION (ADMIN ONLY)
+  // ==========================================
+  async deleteStudent(roll, actor = 'Admissions Officer') {
+    let deletedStudent = null;
+    if (this.isPg) {
+      const res = await this.pgPool.query('SELECT * FROM students WHERE roll = $1 OR id = $1', [roll]);
+      if (res.rows.length > 0) {
+        deletedStudent = res.rows[0];
+        await this.pgPool.query('DELETE FROM students WHERE roll = $1 OR id = $1', [roll]);
+      }
+    } else {
+      const idx = this.memoryDb.students.findIndex(s => s.roll === roll || s.id === roll);
+      if (idx >= 0) {
+        deletedStudent = this.memoryDb.students.splice(idx, 1)[0];
+        this.saveLocal();
+      }
+    }
+
+    if (deletedStudent) {
+      await this.logAudit({
+        action: 'DELETE_APPLICATION',
+        entityType: 'STUDENT',
+        entityId: roll,
+        actorRole: 'Admin',
+        actorName: actor,
+        details: `Deleted student application: ${deletedStudent.name} (${roll}).`
+      });
+      return { success: true, roll, student: deletedStudent };
+    }
+    return { success: false, error: 'Student record not found' };
   }
 }
 

@@ -4,6 +4,8 @@ import path from 'path';
 import fs from 'fs';
 import { fileURLToPath } from 'url';
 import dotenv from 'dotenv';
+import jwt from 'jsonwebtoken';
+import bcrypt from 'bcryptjs';
 import { db } from './db.js';
 
 dotenv.config();
@@ -13,6 +15,7 @@ const __dirname = path.dirname(__filename);
 
 const app = express();
 const PORT = process.env.PORT || 5000;
+const JWT_SECRET = process.env.JWT_SECRET || 'iitkgp_super_secret_jwt_key_2026';
 
 // Middleware
 app.use(cors({
@@ -39,7 +42,194 @@ app.use((req, res, next) => {
 await db.init();
 
 // ==========================================
-// 1. HEALTHCHECK & METRICS
+// AUTHENTICATION & RBAC MIDDLEWARES
+// ==========================================
+
+// 1. Authenticate Token from Authorization Header or Query Param
+function authenticateToken(req, res, next) {
+  let token = null;
+  const authHeader = req.headers['authorization'];
+  if (authHeader && authHeader.startsWith('Bearer ')) {
+    token = authHeader.split(' ')[1];
+  } else if (req.query && req.query.token) {
+    token = req.query.token;
+  }
+
+  if (!token) {
+    return res.status(401).json({
+      error: 'Unauthorized: Authentication required. Bearer JWT token missing.',
+      code: 'TOKEN_MISSING'
+    });
+  }
+
+  jwt.verify(token, JWT_SECRET, (err, user) => {
+    if (err) {
+      return res.status(401).json({
+        error: 'Unauthorized: Invalid or expired session token.',
+        code: 'TOKEN_INVALID'
+      });
+    }
+    req.user = user;
+    next();
+  });
+}
+
+// 2. Require Administrator Role (admin or superadmin)
+function requireAdmin(req, res, next) {
+  if (!req.user || (req.user.role !== 'admin' && req.user.role !== 'superadmin')) {
+    return res.status(403).json({
+      error: 'Forbidden: Restricted endpoint. Only authorized IIT Kharagpur Administrators can access this resource.',
+      code: 'ADMIN_ACCESS_REQUIRED'
+    });
+  }
+  next();
+}
+
+// 3. Require Student Owner or Administrator Role
+function requireStudentOrAdmin(req, res, next) {
+  if (!req.user) {
+    return res.status(401).json({ error: 'Authentication required' });
+  }
+
+  // Admins have universal read permissions
+  if (req.user.role === 'admin' || req.user.role === 'superadmin') {
+    return next();
+  }
+
+  // Regular students can only view their own student record
+  const requestedRoll = req.params.roll;
+  if (
+    req.user.role === 'student' && 
+    (req.user.roll === requestedRoll || req.user.roll_number === requestedRoll || req.user.id === requestedRoll)
+  ) {
+    return next();
+  }
+
+  return res.status(403).json({
+    error: `Forbidden: Access denied. You are authenticated as student (${req.user.roll || req.user.email}) and cannot view application records of other students (${requestedRoll}).`,
+    code: 'RECORD_ACCESS_FORBIDDEN'
+  });
+}
+
+// ==========================================
+// 1. AUTHENTICATION & LOGIN ENDPOINTS
+// ==========================================
+
+// Admin / Staff Login
+app.post('/api/auth/login', async (req, res) => {
+  try {
+    const { email, username, identifier: idField, password } = req.body;
+    const identifier = (email || username || idField || '').trim();
+
+    if (!identifier || !password) {
+      return res.status(400).json({ error: 'Administrator email/username and password are required.' });
+    }
+
+    const user = await db.getUserByEmailOrUsername(identifier);
+    if (!user) {
+      return res.status(401).json({ error: 'Authentication failed. Administrator account not found.' });
+    }
+
+    const isMatch = bcrypt.compareSync(password, user.password_hash);
+    if (!isMatch) {
+      return res.status(401).json({ error: 'Authentication failed. Invalid password.' });
+    }
+
+    // Generate signed JWT
+    const token = jwt.sign(
+      {
+        id: user.id,
+        username: user.username,
+        email: user.email,
+        role: user.role,
+        name: user.name,
+        designation: user.designation,
+        roll: user.roll_number
+      },
+      JWT_SECRET,
+      { expiresIn: '24h' }
+    );
+
+    await db.logAudit({
+      action: 'ADMIN_LOGIN',
+      entityType: 'USER',
+      entityId: user.username,
+      actorRole: user.role,
+      actorName: user.name,
+      details: `Successful administrator authentication for ${user.name} (${user.role}).`
+    });
+
+    res.json({
+      message: 'Authentication successful',
+      token,
+      user: {
+        id: user.id,
+        username: user.username,
+        email: user.email,
+        role: user.role,
+        name: user.name,
+        designation: user.designation,
+        roll: user.roll_number
+      }
+    });
+  } catch (err) {
+    res.status(500).json({ error: 'Login service failed', details: err.message });
+  }
+});
+
+// Student Token Generation (For testing student access vs 403 Forbidden)
+app.post('/api/auth/student-token', async (req, res) => {
+  try {
+    const { roll, email } = req.body;
+    if (!roll && !email) {
+      return res.status(400).json({ error: 'Roll number or email required to generate student token.' });
+    }
+
+    const all = await db.getAllStudents();
+    const student = all.find(s => 
+      (roll && (s.roll === roll || s.id === roll)) || 
+      (email && s.email.toLowerCase() === email.toLowerCase())
+    );
+
+    if (!student) {
+      return res.status(404).json({ error: 'No matching student application found.' });
+    }
+
+    const token = jwt.sign(
+      {
+        id: student.id,
+        role: 'student',
+        roll: student.roll,
+        email: student.email,
+        name: student.name
+      },
+      JWT_SECRET,
+      { expiresIn: '12h' }
+    );
+
+    res.json({
+      message: 'Student session token generated successfully',
+      token,
+      role: 'student',
+      student: {
+        id: student.id,
+        roll: student.roll,
+        name: student.name,
+        email: student.email
+      }
+    });
+  } catch (err) {
+    res.status(500).json({ error: 'Failed to generate student token', details: err.message });
+  }
+});
+
+// Verify Current User Session
+app.get('/api/auth/me', authenticateToken, async (req, res) => {
+  res.json({ user: req.user });
+});
+
+// ==========================================
+// 2. HEALTHCHECK & METRICS (PUBLIC)
 // ==========================================
 app.get('/api/health', async (req, res) => {
   try {
@@ -50,6 +240,7 @@ app.get('/api/health', async (req, res) => {
       timestamp: new Date().toISOString(),
       service: 'IIT Kharagpur BS Portal Enterprise Backend',
       database: db.isPg ? 'PostgreSQL 16' : 'Local JSON/Memory Engine (Active Fallback)',
+      rbac: 'Enabled (JWT + bcrypt)',
       metrics: {
         totalStudents,
         uptimeSeconds: Math.floor(process.uptime()),
@@ -63,9 +254,10 @@ app.get('/api/health', async (req, res) => {
 });
 
 // ==========================================
-// 2. STUDENTS ROSTER & ADVANCED SEARCH
+// 3. STUDENTS ROSTER (STRICTLY ADMIN PROTECTED)
 // ==========================================
-app.get('/api/students', async (req, res) => {
+// Requires valid Admin JWT token. Regular students receive 403 Forbidden.
+app.get('/api/students', authenticateToken, requireAdmin, async (req, res) => {
   try {
     const { page = 1, limit = 10, q = '', status = 'ALL', level = 'ALL', sortBy = 'submissionDate', sortOrder = 'desc' } = req.query;
     const result = await db.getStudents({
@@ -84,9 +276,9 @@ app.get('/api/students', async (req, res) => {
 });
 
 // ==========================================
-// 5. ENTERPRISE CSV BULK IMPORT & EXPORT
+// 4. ENTERPRISE CSV EXPORT (ADMIN PROTECTED)
 // ==========================================
-app.get('/api/students/export-csv', async (req, res) => {
+app.get('/api/students/export-csv', authenticateToken, requireAdmin, async (req, res) => {
   try {
     const students = await db.getAllStudents();
     const headers = [
@@ -131,8 +323,8 @@ app.get('/api/students/export-csv', async (req, res) => {
       action: 'EXPORT_CSV',
       entityType: 'STUDENTS_ROSTER',
       entityId: `EXPORT_${students.length}`,
-      actorRole: 'Admin',
-      actorName: 'Admissions Officer',
+      actorRole: req.user.role,
+      actorName: req.user.name || 'Admissions Officer',
       details: `Exported ${students.length} student enrollment records to CSV.`
     });
 
@@ -144,9 +336,11 @@ app.get('/api/students/export-csv', async (req, res) => {
   }
 });
 
-app.post('/api/students/bulk-import', async (req, res) => {
+// Bulk Import (Admin Protected)
+app.post('/api/students/bulk-import', authenticateToken, requireAdmin, async (req, res) => {
   try {
-    const { students = [], csvText = '', actor = 'Admin Bulk Uploader' } = req.body;
+    const { students = [], csvText = '' } = req.body;
+    const actor = req.user.name || 'Administrator';
     let listToImport = students;
 
     if (csvText && csvText.trim()) {
@@ -192,8 +386,8 @@ app.post('/api/students/bulk-import', async (req, res) => {
   }
 });
 
-// Single student lookup by Roll or ID
-app.get('/api/students/:roll', async (req, res) => {
+// Single student lookup: PROTECTED - Only student owner or Admin can view
+app.get('/api/students/:roll', authenticateToken, requireStudentOrAdmin, async (req, res) => {
   try {
     const { roll } = req.params;
     const all = await db.getAllStudents();
@@ -208,7 +402,7 @@ app.get('/api/students/:roll', async (req, res) => {
 });
 
 // ==========================================
-// 3. STUDENT REGISTRATION
+// 5. STUDENT REGISTRATION (PUBLIC)
 // ==========================================
 app.post('/api/students', async (req, res) => {
   try {
@@ -228,12 +422,14 @@ app.post('/api/students', async (req, res) => {
 });
 
 // ==========================================
-// 4. ADMIN VERIFICATION ACTIONS
+// 6. ADMIN VERIFICATION ACTIONS (ADMIN ONLY)
 // ==========================================
-app.patch('/api/students/:roll/verify', async (req, res) => {
+app.patch('/api/students/:roll/verify', authenticateToken, requireAdmin, async (req, res) => {
   try {
     const { roll } = req.params;
-    const { status, reason = '', actor = 'Admissions Officer' } = req.body;
+    const { status, reason = '' } = req.body;
+    const actor = req.user.name || 'Admissions Officer';
+
     if (!status || !['Verified', 'Rejected', 'Pending Review'].includes(status)) {
       return res.status(400).json({ error: "Status must be 'Verified', 'Rejected', or 'Pending Review'." });
     }
@@ -248,10 +444,12 @@ app.patch('/api/students/:roll/verify', async (req, res) => {
   }
 });
 
-app.patch('/api/students/:roll/payment', async (req, res) => {
+app.patch('/api/students/:roll/payment', authenticateToken, requireAdmin, async (req, res) => {
   try {
     const { roll } = req.params;
-    const { paymentStatus, bankStatus = '', queryRemarks = '', actor = 'Accounts Desk' } = req.body;
+    const { paymentStatus, bankStatus = '', queryRemarks = '' } = req.body;
+    const actor = req.user.name || 'Accounts Desk';
+
     if (!paymentStatus || !['Verified', 'Query Raised', 'Rejected', 'Pending Review'].includes(paymentStatus)) {
       return res.status(400).json({ error: 'Invalid payment status provided.' });
     }
@@ -266,11 +464,30 @@ app.patch('/api/students/:roll/payment', async (req, res) => {
   }
 });
 
+// DELETE STUDENT RECORD (ADMIN ONLY)
+app.delete('/api/students/:roll', authenticateToken, requireAdmin, async (req, res) => {
+  try {
+    const { roll } = req.params;
+    const actor = req.user.name || 'Admissions Administrator';
+    const result = await db.deleteStudent(roll, actor);
+
+    if (!result.success) {
+      return res.status(404).json({ error: result.error || 'Student not found' });
+    }
+
+    res.json({
+      message: `Student application ${roll} permanently deleted.`,
+      result
+    });
+  } catch (err) {
+    res.status(500).json({ error: 'Failed to delete student record', details: err.message });
+  }
+});
 
 // ==========================================
-// 6. AUDIT LOGGING SYSTEM
+// 7. AUDIT LOGGING SYSTEM (ADMIN ONLY)
 // ==========================================
-app.get('/api/audit-logs', async (req, res) => {
+app.get('/api/audit-logs', authenticateToken, requireAdmin, async (req, res) => {
   try {
     const { page = 1, limit = 20, q = '' } = req.query;
     const result = await db.getAuditLogs({
@@ -285,12 +502,12 @@ app.get('/api/audit-logs', async (req, res) => {
 });
 
 // ==========================================
-// 7. MASS DUMMY DATA GENERATOR (TESTING)
+// 8. MASS DUMMY DATA GENERATOR (ADMIN ONLY)
 // ==========================================
-app.post('/api/test/generate-dummy-students', async (req, res) => {
+app.post('/api/test/generate-dummy-students', authenticateToken, requireAdmin, async (req, res) => {
   try {
     const count = parseInt(req.body.count || 50, 10);
-    const actor = req.body.actor || 'QA Test Automation';
+    const actor = req.user.name || 'QA Test Automation';
     const result = await db.generateDummyStudents(count, actor);
     res.json({
       message: `Generated ${result.generatedCount} test dummy student records for pagination and performance verification.`,
@@ -302,7 +519,7 @@ app.post('/api/test/generate-dummy-students', async (req, res) => {
 });
 
 // ==========================================
-// 8. SERVE PRODUCTION FRONTEND BUILD
+// 9. SERVE PRODUCTION FRONTEND BUILD
 // ==========================================
 const distPath = path.join(__dirname, '..', 'dist');
 if (fs.existsSync(distPath)) {
@@ -321,8 +538,8 @@ app.listen(PORT, '0.0.0.0', () => {
   console.log(`====================================================`);
   console.log(`  IIT Kharagpur BS Portal Enterprise Backend Server`);
   console.log(`  Running on: http://localhost:${PORT}`);
+  console.log(`  RBAC Security: Enabled (Admin JWT + bcrypt)`);
   console.log(`  Health API: http://localhost:${PORT}/api/health`);
-  console.log(`  Students:   http://localhost:${PORT}/api/students`);
-  console.log(`  Audit Logs: http://localhost:${PORT}/api/audit-logs`);
+  console.log(`  Login API:  http://localhost:${PORT}/api/auth/login`);
   console.log(`====================================================`);
 });

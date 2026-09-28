@@ -20,6 +20,7 @@ import QualifierRoundPortal from './components/qualifier/QualifierRoundPortal';
 import QualifierExamEngine from './components/exam/QualifierExamEngine';
 import AdmissionsChatbot from './components/chat/AdmissionsChatbot';
 import AdminPortalPage from './pages/AdminPortalPage';
+import { clearAdminSession, getCurrentAdminUser, getAdminToken } from './services/apiService';
 import { Layers, ShieldCheck, UserCheck, Award, Home, Sparkles, BookOpen } from 'lucide-react';
 
 export default function App() {
@@ -27,7 +28,7 @@ export default function App() {
   const [currentView, setCurrentView] = useState('home');
   const [examCandidate, setExamCandidate] = useState({ name: 'Candidate', roll: 'KGP-QUAL-2026-0842' });
   const [loggedInStudent, setLoggedInStudent] = useState(null);
-  const [isAdminAuthenticated, setIsAdminAuthenticated] = useState(false);
+  const [isAdminAuthenticated, setIsAdminAuthenticated] = useState(() => Boolean(getAdminToken()));
 
   const [showDiagram, setShowDiagram] = useState(false);
   const [showStudentModal, setShowStudentModal] = useState(false);
@@ -95,8 +96,9 @@ export default function App() {
   };
 
   const handleAdminLogout = () => {
+    clearAdminSession();
     setIsAdminAuthenticated(false);
-    navigateTo('home');
+    navigateTo('admin-login');
   };
 
   return (
