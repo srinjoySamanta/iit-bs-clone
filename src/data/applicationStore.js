@@ -347,3 +347,273 @@ export function subscribeToStore(callback) {
     window.removeEventListener('storage', handler);
   };
 }
+
+// ========================================================
+// ENTERPRISE EXTENSIONS: CSV IMPORT / EXPORT & AUDIT LOGS
+// ========================================================
+
+const AUDIT_STORAGE_KEY = 'iit_kgp_audit_logs_v1';
+
+export function getStoredAuditLogs() {
+  try {
+    const raw = localStorage.getItem(AUDIT_STORAGE_KEY);
+    if (!raw) {
+      const initialLogs = [
+        {
+          id: 1,
+          action: 'SYSTEM_BOOT',
+          entity_type: 'DATABASE',
+          entity_id: 'SYSTEM',
+          actor_role: 'System',
+          actor_name: 'IIT Kharagpur BS Portal',
+          details: 'Application database initialized with verified student rosters.',
+          timestamp: '2026-09-22 10:00 AM'
+        }
+      ];
+      localStorage.setItem(AUDIT_STORAGE_KEY, JSON.stringify(initialLogs));
+      return initialLogs;
+    }
+    return JSON.parse(raw);
+  } catch (e) {
+    return [];
+  }
+}
+
+export function recordAuditLog(action, entityId, details, actorRole = 'Admin', actorName = 'Admissions Officer') {
+  try {
+    const logs = getStoredAuditLogs();
+    const newLog = {
+      id: Date.now(),
+      action,
+      entity_type: 'STUDENT',
+      entity_id: entityId,
+      actor_role: actorRole,
+      actor_name: actorName,
+      details,
+      timestamp: new Date().toLocaleString()
+    };
+    const updated = [newLog, ...logs.slice(0, 499)]; // Keep latest 500
+    localStorage.setItem(AUDIT_STORAGE_KEY, JSON.stringify(updated));
+    if (typeof window !== 'undefined') {
+      window.dispatchEvent(new CustomEvent('iit_kgp_audit_updated'));
+    }
+    return updated;
+  } catch (e) {
+    console.error('Failed to record audit log:', e);
+  }
+}
+
+export function subscribeToAuditLogs(callback) {
+  if (typeof window === 'undefined') return () => {};
+  const handler = () => callback(getStoredAuditLogs());
+  window.addEventListener('iit_kgp_audit_updated', handler);
+  return () => window.removeEventListener('iit_kgp_audit_updated', handler);
+}
+
+// Bulk Import Applications
+export function bulkImportApplications(newStudents) {
+  try {
+    const current = getStoredApplications();
+    const existingRolls = new Set(current.map(s => s.roll));
+    const merged = [...current];
+
+    let count = 0;
+    for (const student of newStudents) {
+      if (student.roll && !existingRolls.has(student.roll)) {
+        merged.unshift(student);
+        existingRolls.add(student.roll);
+        count++;
+      } else if (student.roll) {
+        // Update existing
+        const idx = merged.findIndex(s => s.roll === student.roll);
+        if (idx >= 0) {
+          merged[idx] = { ...merged[idx], ...student };
+          count++;
+        }
+      }
+    }
+
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(merged));
+    recordAuditLog('BULK_IMPORT', `BATCH_${count}`, `Bulk imported ${count} student records via CSV/Excel upload.`);
+    notifyStoreChange();
+    return merged;
+  } catch (e) {
+    console.error('Error in bulk import:', e);
+    return getStoredApplications();
+  }
+}
+
+// Generate CSV string from list of students
+export function exportStudentsToCSV(studentsList) {
+  const headers = [
+    'Application ID', 'Roll Number', 'Full Name', 'Email Address', 'Phone Number',
+    'Academic Level', 'Admission Pathway', 'Category', 'Income Tier',
+    'Application Status', 'Rejection Reason', 'Submission Date', 'Exam City',
+    'Fee Amount', 'Payment UTR', 'Payment Mode', 'Bank Name', 'Payment Status', 'Bank Status', 'Query Remarks'
+  ];
+
+  const escapeCsv = (val) => {
+    if (val === null || val === undefined) return '""';
+    const str = String(val).replace(/"/g, '""');
+    return `"${str}"`;
+  };
+
+  const rows = (studentsList || []).map(s => [
+    escapeCsv(s.id),
+    escapeCsv(s.roll),
+    escapeCsv(s.name),
+    escapeCsv(s.email),
+    escapeCsv(s.phone),
+    escapeCsv(s.level),
+    escapeCsv(s.pathway),
+    escapeCsv(s.category),
+    escapeCsv(s.incomeTier),
+    escapeCsv(s.status),
+    escapeCsv(s.rejectionReason),
+    escapeCsv(s.submissionDate),
+    escapeCsv(s.examCity),
+    escapeCsv(s.payment?.amount || ''),
+    escapeCsv(s.payment?.utr || ''),
+    escapeCsv(s.payment?.mode || ''),
+    escapeCsv(s.payment?.bank || ''),
+    escapeCsv(s.payment?.status || ''),
+    escapeCsv(s.payment?.bankStatus || ''),
+    escapeCsv(s.payment?.queryRemarks || '')
+  ].join(','));
+
+  recordAuditLog('EXPORT_CSV', `EXPORT_${studentsList.length}`, `Exported ${studentsList.length} student records to CSV.`);
+  return [headers.join(','), ...rows].join('\r\n');
+}
+
+// Parse uploaded CSV string into student objects
+export function parseCSVToStudents(csvText) {
+  if (!csvText || !csvText.trim()) return [];
+  const lines = csvText.trim().split(/\r?\n/);
+  if (lines.length < 2) return [];
+
+  const headers = lines[0].split(',').map(h => h.trim().replace(/^"|"$/g, ''));
+  const parsed = [];
+
+  for (let i = 1; i < lines.length; i++) {
+    // Basic CSV row split handling quotes
+    const regex = /(?:^|,)(?:"([^"]*)"|([^,]*))/g;
+    const cols = [];
+    let match;
+    while ((match = regex.exec(lines[i])) !== null) {
+      cols.push(match[1] !== undefined ? match[1] : match[2]);
+    }
+
+    if (cols.length >= 3 && cols[0]) {
+      const getVal = (headerName, fallbackIdx) => {
+        const idx = headers.indexOf(headerName);
+        return idx >= 0 && cols[idx] !== undefined ? cols[idx].trim() : (cols[fallbackIdx] || '').trim();
+      };
+
+      const roll = getVal('Roll Number', 1) || `24BS${Math.floor(10000 + Math.random() * 90000)}`;
+      const name = getVal('Full Name', 2) || getVal('Name', 2);
+      const email = getVal('Email Address', 3) || getVal('Email', 3);
+
+      if (name && email) {
+        parsed.push({
+          id: getVal('Application ID', 0) || `KGP-2026-${Math.floor(1000 + Math.random() * 9000)}`,
+          roll,
+          name,
+          email,
+          phone: getVal('Phone Number', 4) || '+91 98000 00000',
+          level: getVal('Academic Level', 5) || 'Foundation Level',
+          pathway: getVal('Admission Pathway', 6) || 'Direct Entry: WBJEE',
+          category: getVal('Category', 7) || 'General',
+          incomeTier: getVal('Income Tier', 8) || '> 5 LPA (Standard)',
+          status: getVal('Application Status', 9) || 'Verified',
+          rejectionReason: getVal('Rejection Reason', 10) || '',
+          submissionDate: getVal('Submission Date', 11) || new Date().toLocaleString(),
+          examCity: getVal('Exam City', 12) || 'Kolkata Salt Lake',
+          docs: {
+            genInfo: 'Verified',
+            education: 'Verified',
+            photo: 'Verified',
+            fee: 'Verified'
+          },
+          payment: {
+            amount: parseInt(getVal('Fee Amount', 13) || '1500', 10),
+            utr: getVal('Payment UTR', 14) || `UTR${Date.now()}`,
+            mode: getVal('Payment Mode', 15) || 'UPI (Online)',
+            bank: getVal('Bank Name', 16) || 'State Bank of India',
+            status: getVal('Payment Status', 17) || 'Verified',
+            bankStatus: getVal('Bank Status', 18) || 'Bank Settlement Confirmed',
+            queryRemarks: getVal('Query Remarks', 19) || ''
+          }
+        });
+      }
+    }
+  }
+
+  return parsed;
+}
+
+// Mass Dummy Student Generator for Local Testing
+export function generateMassDummyApplications(count = 50) {
+  const firstNames = ['Aarav', 'Ananya', 'Rohan', 'Sneha', 'Vikram', 'Pooja', 'Aditya', 'Riya', 'Rahul', 'Isha', 'Amit', 'Meera', 'Kunal', 'Shreya', 'Deepak', 'Sujata', 'Kalyan', 'Tanya', 'Sayan', 'Moumita'];
+  const lastNames = ['Banerjee', 'Chatterjee', 'Das', 'Sen', 'Mukherjee', 'Ghosh', 'Roy', 'Dutta', 'Gupta', 'Sharma', 'Mondal', 'Chakraborty', 'Bose', 'Mitra'];
+  const pathways = ['Qualifier CBT (Score: 85-98%)', 'Direct Entry: WBJEE', 'Direct Entry: JEE Advanced', 'Direct Entry: Tripura JEE'];
+  const levels = ['Foundation Level', 'Diploma in Programming', 'Diploma in Data Science & AI', 'B.Sc. Degree Level', 'BS Degree Level'];
+  const categories = ['General', 'OBC-NCL', 'SC', 'ST', 'EWS'];
+  const incomeTiers = ['< 1 LPA (75% Waiver)', '1 - 5 LPA (50% Waiver)', '> 5 LPA (Standard)'];
+  const cities = ['Kolkata Salt Lake', 'Kharagpur Main Campus', 'Bhubaneswar', 'Delhi NCR', 'Mumbai', 'Bangalore', 'Siliguri', 'Durgapur'];
+  const banks = ['State Bank of India', 'HDFC Bank', 'ICICI Bank', 'Punjab National Bank', 'Axis Bank'];
+
+  const generated = [];
+  const baseRoll = 240000 + Math.floor(Math.random() * 50000);
+
+  for (let i = 0; i < count; i++) {
+    const fn = firstNames[Math.floor(Math.random() * firstNames.length)];
+    const ln = lastNames[Math.floor(Math.random() * lastNames.length)];
+    const roll = `24BS${baseRoll + i}`;
+    const id = `KGP-2026-${1000 + (baseRoll % 9000) + i}`;
+    const isVerified = Math.random() > 0.3;
+    const status = isVerified ? 'Verified' : Math.random() > 0.5 ? 'Pending Review' : 'Query Raised';
+    const income = incomeTiers[Math.floor(Math.random() * incomeTiers.length)];
+    const amount = income.includes('75%') ? 375 : income.includes('50%') ? 750 : 1500;
+    const bank = banks[Math.floor(Math.random() * banks.length)];
+
+    generated.push({
+      id,
+      roll,
+      name: `${fn} ${ln}`,
+      email: `${fn.toLowerCase()}.${ln.toLowerCase()}${Math.floor(Math.random() * 999)}@gmail.com`,
+      phone: `+91 ${Math.floor(6000000000 + Math.random() * 3999999999)}`,
+      level: levels[Math.floor(Math.random() * levels.length)],
+      pathway: pathways[Math.floor(Math.random() * pathways.length)],
+      category: categories[Math.floor(Math.random() * categories.length)],
+      incomeTier: income,
+      status,
+      rejectionReason: '',
+      submissionDate: new Date(Date.now() - Math.floor(Math.random() * 7 * 86400000)).toLocaleString(),
+      examCity: cities[Math.floor(Math.random() * cities.length)],
+      docs: {
+        genInfo: status === 'Verified' ? 'Verified' : 'Under Review',
+        education: status === 'Verified' ? 'Verified' : 'Pending',
+        photo: 'Verified',
+        fee: status === 'Verified' ? 'Verified' : status === 'Query Raised' ? 'Query Raised' : 'Pending Review'
+      },
+      payment: {
+        amount,
+        utr: `${bank.slice(0, 4).toUpperCase()}${Math.floor(100000000000 + Math.random() * 900000000000)}`,
+        mode: 'UPI (Online)',
+        bank,
+        date: new Date().toLocaleString(),
+        status: status === 'Verified' ? 'Verified' : status === 'Query Raised' ? 'Query Raised' : 'Pending Review',
+        bankStatus: status === 'Verified' ? 'Bank Settlement Confirmed' : status === 'Query Raised' ? 'Discrepancy Flagged' : 'Awaiting Settlement',
+        queryRemarks: status === 'Query Raised' ? 'Simulated query: Verify category certificate validity.' : '',
+        receiptName: `payment_proof_${roll}.pdf`
+      }
+    });
+  }
+
+  const current = getStoredApplications();
+  const updated = [...generated, ...current];
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(updated));
+  recordAuditLog('MASS_SIMULATION', `SIM_${count}`, `Generated ${count} test dummy student records for pagination and performance verification.`, 'System QA', 'Test Automation');
+  notifyStoreChange();
+  return updated;
+}

@@ -1,0 +1,57 @@
+version: '3.8'
+
+services:
+  # ========================================================
+  # Database: PostgreSQL 16 Alpine
+  # ========================================================
+  db:
+    image: postgres:16-alpine
+    container_name: iit_kgp_postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-iitkgp_admin}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-iitkgp_secure_password_2026}
+      POSTGRES_DB: ${POSTGRES_DB:-iitkgp_bs_portal}
+    ports:
+      - "${POSTGRES_PORT:-5432}:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./server/schema.sql:/docker-entrypoint-initdb.d/init.sql:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-iitkgp_admin} -d ${POSTGRES_DB:-iitkgp_bs_portal}"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    networks:
+      - iitkgp_network
+
+  # ========================================================
+  # Full-Stack Application: Node Express + React Frontend
+  # ========================================================
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: iit_kgp_app
+    restart: unless-stopped
+    ports:
+      - "${PORT:-5000}:5000"
+    environment:
+      NODE_ENV: production
+      PORT: 5000
+      DATABASE_URL: postgres://${POSTGRES_USER:-iitkgp_admin}:${POSTGRES_PASSWORD:-iitkgp_secure_password_2026}@db:5432/${POSTGRES_DB:-iitkgp_bs_portal}
+      SESSION_SECRET: ${SESSION_SECRET:-iit_kharagpur_super_secret_session_key_2026}
+      CORS_ORIGIN: ${CORS_ORIGIN:-*}
+    depends_on:
+      db:
+        condition: service_healthy
+    networks:
+      - iitkgp_network
+
+volumes:
+  postgres_data:
+    driver: local
+
+networks:
+  iitkgp_network:
+    driver: bridge
