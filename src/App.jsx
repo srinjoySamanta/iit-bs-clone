@@ -45,12 +45,7 @@ export default function App() {
       } else if (hash === 'admin' || hash === 'admin-login') {
         setCurrentView('admin-login');
       } else if (hash === 'admin-portal' || hash === 'admin-dashboard' || hash === 'admin-students') {
-        // Protected: verify staff login so students cannot access student records
-        if (!isAdminAuthenticated) {
-          setCurrentView('admin-login');
-        } else {
-          setCurrentView('admin-portal');
-        }
+        setCurrentView('admin-portal');
       } else if (hash === 'qualifier') {
         setCurrentView('qualifier');
       } else if (hash === 'exam') {
@@ -59,7 +54,7 @@ export default function App() {
         setShowStudentModal(true);
       } else if (hash === 'diagram') {
         setShowDiagram(true);
-      } else if (hash === 'home' || hash === '' || hash === 'campus-tour' || hash === 'campus' || hash === 'about' || hash === 'structure' || hash === 'eligibility' || hash === 'fees' || hash === 'faqs' || hash === 'director-message') {
+      } else {
         setCurrentView('home');
       }
     };

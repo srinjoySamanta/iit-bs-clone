@@ -81,9 +81,16 @@ export default function AdminPortalPage({ onBackToHome, onLogout, onOpenAdminMod
       const user = getCurrentAdminUser();
       setCurrentAdmin(user);
 
+      if (user && user.role === 'student') {
+        setIsForbidden(true);
+        setForbiddenReason("403 Forbidden: Regular student accounts are restricted from accessing the institutional student master roster.");
+        setIsLoadingStudents(false);
+        return;
+      }
+
       // Verify RBAC access by requesting protected backend API
       const res = await apiFetchStudents({ limit: 100 });
-      if (res && res.statusCode === 403) {
+      if (res && (res.statusCode === 403 || res.statusCode === 401)) {
         setIsForbidden(true);
         setForbiddenReason(res.error || "403 Forbidden: Administrator credentials required to access student applications.");
         setIsLoadingStudents(false);
@@ -304,38 +311,57 @@ KGP-2026-9013,24BS0083,"Meenakshi Sundaram","meenakshi.s@gmail.com","+91 97654 3
     }
   };
 
-  // Filter students for Roster Tab
-  const filteredStudents = students.filter(s => {
+  // Filter students for Roster Tab (defensive null checks to prevent runtime crashes)
+  const filteredStudents = (students || []).filter(s => {
+    if (!s || typeof s !== 'object') return false;
+    const term = (searchTerm || '').toLowerCase();
+    const name = (s.name || '').toLowerCase();
+    const roll = (s.roll || '').toLowerCase();
+    const email = (s.email || '').toLowerCase();
+    const pathway = (s.pathway || '').toLowerCase();
+    const utr = (s.payment && s.payment.utr ? s.payment.utr : '').toLowerCase();
+
     const matchesSearch = 
-      s.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      s.roll.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      s.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      s.pathway.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      (s.payment && s.payment.utr && s.payment.utr.toLowerCase().includes(searchTerm.toLowerCase()));
+      name.includes(term) ||
+      roll.includes(term) ||
+      email.includes(term) ||
+      pathway.includes(term) ||
+      utr.includes(term);
+
+    const level = s.level || '';
+    const pathwayRaw = s.pathway || '';
+    const incomeTier = s.incomeTier || '';
+    const status = s.status || '';
 
     if (filterTrack === 'ALL') return matchesSearch;
-    if (filterTrack === 'FOUNDATION') return matchesSearch && s.level.includes('Foundation');
-    if (filterTrack === 'DIPLOMA') return matchesSearch && s.level.includes('Diploma');
-    if (filterTrack === 'DIRECT') return matchesSearch && (s.pathway.includes('Direct') || s.pathway.includes('WBJEE') || s.pathway.includes('JEE') || s.pathway.includes('Tripura'));
-    if (filterTrack === 'WAIVER') return matchesSearch && s.incomeTier.includes('Waiver');
-    if (filterTrack === 'PENDING') return matchesSearch && s.status === 'Pending Review';
-    if (filterTrack === 'REJECTED') return matchesSearch && s.status === 'Rejected';
+    if (filterTrack === 'FOUNDATION') return matchesSearch && level.includes('Foundation');
+    if (filterTrack === 'DIPLOMA') return matchesSearch && level.includes('Diploma');
+    if (filterTrack === 'DIRECT') return matchesSearch && (pathwayRaw.includes('Direct') || pathwayRaw.includes('WBJEE') || pathwayRaw.includes('JEE') || pathwayRaw.includes('Tripura'));
+    if (filterTrack === 'WAIVER') return matchesSearch && incomeTier.includes('Waiver');
+    if (filterTrack === 'PENDING') return matchesSearch && status === 'Pending Review';
+    if (filterTrack === 'REJECTED') return matchesSearch && status === 'Rejected';
     return matchesSearch;
   });
 
-  // Filter payments for Payments Tab
-  const filteredPayments = students.filter(s => {
-    const matchesSearch = 
-      s.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      s.roll.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      (s.payment && s.payment.utr && s.payment.utr.toLowerCase().includes(searchTerm.toLowerCase()));
+  // Filter payments for Payments Tab (defensive null checks)
+  const filteredPayments = (students || []).filter(s => {
+    if (!s || !s.payment) return false;
+    const term = (searchTerm || '').toLowerCase();
+    const name = (s.name || '').toLowerCase();
+    const roll = (s.roll || '').toLowerCase();
+    const utr = (s.payment.utr || '').toLowerCase();
 
-    if (!s.payment) return false;
+    const matchesSearch = 
+      name.includes(term) ||
+      roll.includes(term) ||
+      utr.includes(term);
+
+    const pStatus = s.payment.status || '';
     if (paymentFilter === 'ALL') return matchesSearch;
-    if (paymentFilter === 'PENDING') return matchesSearch && s.payment.status === 'Pending Review';
-    if (paymentFilter === 'QUERY') return matchesSearch && s.payment.status === 'Query Raised';
-    if (paymentFilter === 'VERIFIED') return matchesSearch && s.payment.status === 'Verified';
-    if (paymentFilter === 'REJECTED') return matchesSearch && s.payment.status === 'Rejected';
+    if (paymentFilter === 'PENDING') return matchesSearch && pStatus === 'Pending Review';
+    if (paymentFilter === 'QUERY') return matchesSearch && pStatus === 'Query Raised';
+    if (paymentFilter === 'VERIFIED') return matchesSearch && pStatus === 'Verified';
+    if (paymentFilter === 'REJECTED') return matchesSearch && pStatus === 'Rejected';
     return matchesSearch;
   });
 
@@ -438,11 +464,11 @@ KGP-2026-9013,24BS0083,"Meenakshi Sundaram","meenakshi.s@gmail.com","+91 97654 3
     );
   };
 
-  // Aggregate stats
-  const totalVerifiedCount = students.filter(s => s.status === 'Verified').length;
-  const totalPendingCount = students.filter(s => s.status === 'Pending Review').length;
-  const totalQueryCount = students.filter(s => s.payment && s.payment.status === 'Query Raised').length;
-  const totalCollections = students.reduce((sum, s) => sum + (s.payment?.amount || 0), 0);
+  // Aggregate stats (null-guarded)
+  const totalVerifiedCount = (students || []).filter(s => s && s.status === 'Verified').length;
+  const totalPendingCount = (students || []).filter(s => s && s.status === 'Pending Review').length;
+  const totalQueryCount = (students || []).filter(s => s && s.payment && s.payment.status === 'Query Raised').length;
+  const totalCollections = (students || []).reduce((sum, s) => sum + (s?.payment?.amount || 0), 0);
 
   return (
     <div className="min-h-screen bg-slate-950 text-white flex flex-col font-sans selection:bg-amber-500 selection:text-white">

@@ -144,8 +144,8 @@ export async function fetchStudents({ page = 1, limit = 10, q = '', status = 'AL
   try {
     if (isBackendAvailable !== false) {
       const controller = new AbortController();
-      const timeoutId = setTimeout(() => controller.abort(), 3000);
-      const url = new URL(`${API_BASE}/students`);
+      const baseOrigin = typeof window !== 'undefined' && window.location?.origin ? window.location.origin : 'http://localhost:5000';
+      const url = new URL(`${API_BASE}/students`, baseOrigin);
       url.searchParams.set('page', page);
       url.searchParams.set('limit', limit);
       url.searchParams.set('q', q);
