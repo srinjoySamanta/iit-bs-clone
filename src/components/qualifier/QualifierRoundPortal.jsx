@@ -215,19 +215,19 @@ const TRANSLATIONS = {
     programLabel: "Which is the program you are most likely to pursue?",
     programSub: "You can change it later as per the allowed rules, if you wish.",
     nameLabel: "Applicant's Full Name",
-    nameSub: "Name should be identical to the Name list on the Std X/Std XII marksheet. This name will be used on your final degree certificate, and no change is possible on this. Only Capital letters are allowed.",
+    nameSub: "Name should be identical to the Name list on the Std X/Std XII marksheet. This name will be used on your final degree certificate, and no change is possible on this.",
     namePlaceholder: "ENTER FULL NAME AS ON MARKSHEET",
     dobLabel: "Date of Birth",
     dobSub: "Must not exceed today's date.",
     genderLabel: "Gender",
     citizenshipLabel: "Country of Citizenship",
     idTypeLabel: "ID Type",
-    idTypeSub: "ID selected here will need to be uploaded for verification.",
+    idTypeSub: "",
     idNumberLabel: "ID Number",
     idNumberSub: "ID number of the ID selected above.",
     idNumberPlaceholder: "Enter ID number (e.g. 12-digit Aadhaar / PAN)",
     categoryLabel: "Category",
-    categorySub: "If selecting SC / ST / EWS / OBC-NCL please upload relevant documents to avail waivers in fee / cut-off scores.",
+    categorySub: "",
     jeeLabel: "Did you qualify to appear for JEE Advanced in last 2 years?",
     jeeSub: "If selecting \"yes\", please upload relevant document in the document upload section.",
     pwdLabel: "Are you a Person with Disabilities (40% or more)?",
@@ -1640,7 +1640,7 @@ export default function QualifierRoundPortal({ initialCandidate, onStartExam, on
                   Applicant's Full Name <span className="text-red-600">*</span>
                 </label>
                 <p className="text-[11px] text-slate-500 leading-relaxed">
-                  Name should be identical to the Name list on the Std X/Std XII marksheet. This name will be used on your final degree certificate, and no change is possible on this. <strong>Only Capital letters are allowed.</strong>
+                  Name should be identical to the Name list on the Std X/Std XII marksheet. This name will be used on your final degree certificate, and no change is possible on this.
                 </p>
                 <input
                   type="text"
@@ -1728,9 +1728,6 @@ export default function QualifierRoundPortal({ initialCandidate, onStartExam, on
                       {currentIdConfig.badgeLabel}
                     </span>
                   </div>
-                  <p className="text-[11px] text-slate-500">
-                    ID selected here will need to be uploaded for verification in Section 3.
-                  </p>
                   <select
                     value={formData.idType}
                     onChange={(e) => {
@@ -1781,9 +1778,6 @@ export default function QualifierRoundPortal({ initialCandidate, onStartExam, on
                       </span>
                     )}
                   </div>
-                  <p className="text-[11px] text-slate-500">
-                    Enter the unique identifier printed on your selected document.
-                  </p>
                   <div className="relative">
                     <input
                       type="text"
@@ -1823,9 +1817,6 @@ export default function QualifierRoundPortal({ initialCandidate, onStartExam, on
                 <label className="block text-slate-800 font-bold text-sm">
                   Category <span className="text-red-600">*</span>
                 </label>
-                <p className="text-[11px] text-slate-500">
-                  If selecting SC / ST / EWS / OBC-NCL please upload relevant documents to avail waivers in fee / cut-off scores.
-                </p>
                 <select
                   value={formData.category}
                   onChange={(e) => setFormData({ ...formData, category: e.target.value })}
