@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { 
   Menu, X, ExternalLink, ChevronDown, GraduationCap, ShieldCheck, 
   LogIn, UserPlus, BookOpen, Phone, HelpCircle, User, Home, Sparkles, Globe,
@@ -19,7 +19,19 @@ export default function Navbar({
   const [academicsDropdown, setAcademicsDropdown] = useState(false);
   const [admissionsDropdown, setAdmissionsDropdown] = useState(false);
   const [loginDropdown, setLoginDropdown] = useState(false);
+  const loginDropdownRef = useRef(null);
   const [lang, setLang] = useState('en');
+
+  // Keep dropdown open stably and close only on outside click
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (loginDropdownRef.current && !loginDropdownRef.current.contains(event.target)) {
+        setLoginDropdown(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
 
   useEffect(() => {
     try {
@@ -324,93 +336,110 @@ export default function Navbar({
 
             {/* Login Button (Directly beside Apply Now) with Student / Staff / Admin options */}
             <div 
+              ref={loginDropdownRef}
               className="relative"
               onMouseEnter={() => setLoginDropdown(true)}
               onMouseLeave={() => setLoginDropdown(false)}
             >
               <button
                 type="button"
-                onClick={() => setLoginDropdown(!loginDropdown)}
-                className="flex items-center space-x-1.5 px-4 py-2.5 text-xs sm:text-sm font-bold text-slate-800 bg-white hover:bg-slate-50 border-2 border-slate-300 hover:border-kgp-crimson rounded-xl shadow-xs transition cursor-pointer"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setLoginDropdown(prev => !prev);
+                }}
+                className={`flex items-center space-x-1.5 px-4 py-2.5 text-xs sm:text-sm font-bold rounded-xl shadow-xs transition cursor-pointer select-none ${
+                  loginDropdown 
+                    ? 'bg-slate-900 text-white border-2 border-slate-900' 
+                    : 'text-slate-800 bg-white hover:bg-slate-50 border-2 border-slate-300 hover:border-kgp-crimson'
+                }`}
                 title="Institutional Login: Student / Staff / Admin"
               >
-                <LogIn className="w-4 h-4 text-kgp-crimson" />
+                <LogIn className={`w-4 h-4 ${loginDropdown ? 'text-amber-400' : 'text-kgp-crimson'}`} />
                 <span>Login</span>
-                <ChevronDown className={`w-3.5 h-3.5 text-slate-500 transition-transform ${loginDropdown ? 'rotate-180' : ''}`} />
+                <ChevronDown className={`w-3.5 h-3.5 transition-transform duration-200 ${loginDropdown ? 'rotate-180 text-white' : 'text-slate-500'}`} />
               </button>
 
               {loginDropdown && (
-                <div className="absolute right-0 mt-1.5 w-80 bg-white rounded-2xl shadow-2xl border border-slate-200 py-3 z-50 animate-in fade-in slide-in-from-top-2">
-                  <div className="px-4 pb-2.5 border-b border-slate-100 flex items-center justify-between">
-                    <div>
-                      <div className="text-[10px] font-bold uppercase tracking-wider text-slate-400">Institutional Access</div>
-                      <div className="text-xs font-bold text-slate-900 font-serif">Select Login Portal</div>
+                <div 
+                  className="absolute right-0 top-full pt-1 w-84 z-50 animate-in fade-in slide-in-from-top-1"
+                  onClick={(e) => e.stopPropagation()}
+                >
+                  <div className="bg-white rounded-2xl shadow-2xl border border-slate-200 py-3">
+                    <div className="px-4 pb-2.5 border-b border-slate-100 flex items-center justify-between">
+                      <div>
+                        <div className="text-[10px] font-bold uppercase tracking-wider text-slate-400">Institutional Access</div>
+                        <div className="text-xs font-bold text-slate-900 font-serif">Select Login Portal</div>
+                      </div>
+                      <span className="text-[9px] font-mono bg-amber-50 text-amber-800 border border-amber-200 px-1.5 py-0.5 rounded font-bold">ERP &amp; LMS</span>
                     </div>
-                    <span className="text-[9px] font-mono bg-amber-50 text-amber-800 border border-amber-200 px-1.5 py-0.5 rounded font-bold">ERP &amp; LMS</span>
-                  </div>
 
-                  <div className="p-2 space-y-1">
-                    {/* Student Section */}
-                    <a
-                      href={getErpLoginUrl('student')}
-                      className="group flex items-start gap-3 p-2.5 rounded-xl hover:bg-emerald-50 transition border border-transparent hover:border-emerald-200"
-                    >
-                      <div className="w-8 h-8 rounded-lg bg-emerald-100 text-emerald-700 flex items-center justify-center flex-shrink-0 mt-0.5 group-hover:scale-105 transition shadow-2xs">
-                        <GraduationCap className="w-4 h-4" />
-                      </div>
-                      <div className="flex-1 min-w-0">
-                        <div className="flex items-center justify-between">
-                          <span className="text-xs font-bold text-slate-900 group-hover:text-emerald-800">Student Login</span>
-                          <span className="text-[9px] font-bold px-1.5 py-0.5 rounded bg-emerald-100 text-emerald-800">Student</span>
+                    <div className="p-2 space-y-1">
+                      {/* Student Section */}
+                      <a
+                        href={getErpLoginUrl('student')}
+                        onClick={() => setLoginDropdown(false)}
+                        className="group flex items-start gap-3 p-2.5 rounded-xl hover:bg-emerald-50 transition border border-transparent hover:border-emerald-200"
+                      >
+                        <div className="w-8 h-8 rounded-lg bg-emerald-100 text-emerald-700 flex items-center justify-center flex-shrink-0 mt-0.5 group-hover:scale-105 transition shadow-2xs">
+                          <GraduationCap className="w-4 h-4" />
                         </div>
-                        <p className="text-[11px] text-slate-500 line-clamp-1">LMS, video lectures, exams &amp; scores</p>
-                      </div>
-                    </a>
-
-                    {/* Staff Section */}
-                    <a
-                      href={getErpLoginUrl('employee')}
-                      className="group flex items-start gap-3 p-2.5 rounded-xl hover:bg-sky-50 transition border border-transparent hover:border-sky-200"
-                    >
-                      <div className="w-8 h-8 rounded-lg bg-sky-100 text-sky-700 flex items-center justify-center flex-shrink-0 mt-0.5 group-hover:scale-105 transition shadow-2xs">
-                        <UserCheck className="w-4 h-4" />
-                      </div>
-                      <div className="flex-1 min-w-0">
-                        <div className="flex items-center justify-between">
-                          <span className="text-xs font-bold text-slate-900 group-hover:text-sky-800">Staff Login</span>
-                          <span className="text-[9px] font-bold px-1.5 py-0.5 rounded bg-sky-100 text-sky-800">Staff</span>
+                        <div className="flex-1 min-w-0">
+                          <div className="flex items-center justify-between">
+                            <span className="text-xs font-bold text-slate-900 group-hover:text-emerald-800">Student Login</span>
+                            <span className="text-[9px] font-bold px-1.5 py-0.5 rounded bg-emerald-100 text-emerald-800">Student</span>
+                          </div>
+                          <p className="text-[11px] text-slate-500 line-clamp-1">LMS, video lectures, exams &amp; scores</p>
                         </div>
-                        <p className="text-[11px] text-slate-500 line-clamp-1">Verification queue, tasks &amp; progress</p>
-                      </div>
-                    </a>
+                      </a>
 
-                    {/* Admin Section */}
-                    <a
-                      href={getErpLoginUrl('admin')}
-                      className="group flex items-start gap-3 p-2.5 rounded-xl hover:bg-amber-50 transition border border-transparent hover:border-amber-200"
-                    >
-                      <div className="w-8 h-8 rounded-lg bg-amber-100 text-amber-800 flex items-center justify-center flex-shrink-0 mt-0.5 group-hover:scale-105 transition shadow-2xs">
-                        <ShieldCheck className="w-4 h-4" />
-                      </div>
-                      <div className="flex-1 min-w-0">
-                        <div className="flex items-center justify-between">
-                          <span className="text-xs font-bold text-slate-900 group-hover:text-amber-800">Admin Login</span>
-                          <span className="text-[9px] font-bold px-1.5 py-0.5 rounded bg-amber-100 text-amber-900">Admin</span>
+                      {/* Staff Section */}
+                      <a
+                        href={getErpLoginUrl('employee')}
+                        onClick={() => setLoginDropdown(false)}
+                        className="group flex items-start gap-3 p-2.5 rounded-xl hover:bg-sky-50 transition border border-transparent hover:border-sky-200"
+                      >
+                        <div className="w-8 h-8 rounded-lg bg-sky-100 text-sky-700 flex items-center justify-center flex-shrink-0 mt-0.5 group-hover:scale-105 transition shadow-2xs">
+                          <UserCheck className="w-4 h-4" />
                         </div>
-                        <p className="text-[11px] text-slate-500 line-clamp-1">Master console, admissions &amp; cutoffs</p>
-                      </div>
-                    </a>
-                  </div>
+                        <div className="flex-1 min-w-0">
+                          <div className="flex items-center justify-between">
+                            <span className="text-xs font-bold text-slate-900 group-hover:text-sky-800">Staff Login</span>
+                            <span className="text-[9px] font-bold px-1.5 py-0.5 rounded bg-sky-100 text-sky-800">Staff</span>
+                          </div>
+                          <p className="text-[11px] text-slate-500 line-clamp-1">Verification queue, tasks &amp; progress</p>
+                        </div>
+                      </a>
 
-                  <div className="px-3 pt-2 border-t border-slate-100 flex items-center justify-between text-[11px]">
-                    <a
-                      href={getErpLoginUrl()}
-                      className="text-kgp-crimson hover:underline font-bold flex items-center gap-1"
-                    >
-                      <span>Unified Login Screen</span>
-                      <ArrowRight className="w-3 h-3" />
-                    </a>
-                    <span className="text-[10px] text-slate-400 font-mono">ERP &amp; LMS</span>
+                      {/* Admin Section */}
+                      <a
+                        href={getErpLoginUrl('admin')}
+                        onClick={() => setLoginDropdown(false)}
+                        className="group flex items-start gap-3 p-2.5 rounded-xl hover:bg-amber-50 transition border border-transparent hover:border-amber-200"
+                      >
+                        <div className="w-8 h-8 rounded-lg bg-amber-100 text-amber-800 flex items-center justify-center flex-shrink-0 mt-0.5 group-hover:scale-105 transition shadow-2xs">
+                          <ShieldCheck className="w-4 h-4" />
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <div className="flex items-center justify-between">
+                            <span className="text-xs font-bold text-slate-900 group-hover:text-amber-800">Admin Login</span>
+                            <span className="text-[9px] font-bold px-1.5 py-0.5 rounded bg-amber-100 text-amber-900">Admin</span>
+                          </div>
+                          <p className="text-[11px] text-slate-500 line-clamp-1">Master console, admissions &amp; cutoffs</p>
+                        </div>
+                      </a>
+                    </div>
+
+                    <div className="px-3 pt-2 border-t border-slate-100 flex items-center justify-between text-[11px]">
+                      <a
+                        href={getErpLoginUrl()}
+                        onClick={() => setLoginDropdown(false)}
+                        className="text-kgp-crimson hover:underline font-bold flex items-center gap-1"
+                      >
+                        <span>Unified Login Screen</span>
+                        <ArrowRight className="w-3 h-3" />
+                      </a>
+                      <span className="text-[10px] text-slate-400 font-mono">ERP &amp; LMS</span>
+                    </div>
                   </div>
                 </div>
               )}
