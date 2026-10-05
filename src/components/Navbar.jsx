@@ -313,7 +313,16 @@ export default function Navbar({
               </div>
             </div>
 
-            {/* Institutional Portal Login Dropdown (Student LMS / Staff Operations / Super Admin) */}
+            {/* Apply Now */}
+            <button
+              onClick={() => onNavigate('student-login')}
+              className="flex items-center space-x-1.5 px-5 py-2.5 text-xs sm:text-sm font-bold text-white bg-gradient-to-r from-kgp-crimson to-red-800 hover:from-kgp-darkred hover:to-kgp-crimson rounded-xl shadow-md hover:shadow-lg transition transform hover:-translate-y-0.5 cursor-pointer"
+            >
+              <UserPlus className="w-4 h-4" />
+              <span>Apply Now</span>
+            </button>
+
+            {/* Login Button (Directly beside Apply Now) with Student / Staff / Admin options */}
             <div 
               className="relative"
               onMouseEnter={() => setLoginDropdown(true)}
@@ -322,22 +331,22 @@ export default function Navbar({
               <button
                 type="button"
                 onClick={() => setLoginDropdown(!loginDropdown)}
-                className="flex items-center space-x-1.5 px-4 py-2.5 text-xs sm:text-sm font-bold text-slate-800 bg-white hover:bg-slate-50 border border-slate-300 hover:border-kgp-crimson rounded-xl shadow-xs transition cursor-pointer"
-                title="IIT KGP Portal Login (Student LMS / Staff Operations / Super Admin)"
+                className="flex items-center space-x-1.5 px-4 py-2.5 text-xs sm:text-sm font-bold text-slate-800 bg-white hover:bg-slate-50 border-2 border-slate-300 hover:border-kgp-crimson rounded-xl shadow-xs transition cursor-pointer"
+                title="Institutional Login: Student / Staff / Admin"
               >
                 <LogIn className="w-4 h-4 text-kgp-crimson" />
-                <span>Portal Login</span>
-                <ChevronDown className={`w-3.5 h-3.5 text-slate-400 transition-transform ${loginDropdown ? 'rotate-180' : ''}`} />
+                <span>Login</span>
+                <ChevronDown className={`w-3.5 h-3.5 text-slate-500 transition-transform ${loginDropdown ? 'rotate-180' : ''}`} />
               </button>
 
               {loginDropdown && (
-                <div className="absolute right-0 mt-1 w-80 bg-white rounded-2xl shadow-2xl border border-slate-200 py-3 z-50 animate-in fade-in slide-in-from-top-2">
+                <div className="absolute right-0 mt-1.5 w-80 bg-white rounded-2xl shadow-2xl border border-slate-200 py-3 z-50 animate-in fade-in slide-in-from-top-2">
                   <div className="px-4 pb-2.5 border-b border-slate-100 flex items-center justify-between">
                     <div>
-                      <div className="text-[10px] font-bold uppercase tracking-wider text-slate-400">Institutional Access Gates</div>
-                      <div className="text-xs font-bold text-slate-900 font-serif">IIT Kharagpur BS ERP &amp; LMS</div>
+                      <div className="text-[10px] font-bold uppercase tracking-wider text-slate-400">Institutional Access</div>
+                      <div className="text-xs font-bold text-slate-900 font-serif">Select Login Portal</div>
                     </div>
-                    <span className="text-[9px] font-mono bg-amber-50 text-amber-800 border border-amber-200 px-1.5 py-0.5 rounded font-bold">ERP Hub</span>
+                    <span className="text-[9px] font-mono bg-amber-50 text-amber-800 border border-amber-200 px-1.5 py-0.5 rounded font-bold">ERP &amp; LMS</span>
                   </div>
 
                   <div className="p-2 space-y-1">
@@ -351,10 +360,10 @@ export default function Navbar({
                       </div>
                       <div className="flex-1 min-w-0">
                         <div className="flex items-center justify-between">
-                          <span className="text-xs font-bold text-slate-900 group-hover:text-emerald-800">Student LMS Gate</span>
+                          <span className="text-xs font-bold text-slate-900 group-hover:text-emerald-800">Student Login</span>
                           <span className="text-[9px] font-bold px-1.5 py-0.5 rounded bg-emerald-100 text-emerald-800">Student</span>
                         </div>
-                        <p className="text-[11px] text-slate-500 line-clamp-1">Learning Hub, video lectures, exams</p>
+                        <p className="text-[11px] text-slate-500 line-clamp-1">LMS, video lectures, exams &amp; scores</p>
                       </div>
                     </a>
 
@@ -368,10 +377,10 @@ export default function Navbar({
                       </div>
                       <div className="flex-1 min-w-0">
                         <div className="flex items-center justify-between">
-                          <span className="text-xs font-bold text-slate-900 group-hover:text-sky-800">Staff Operations Gate</span>
+                          <span className="text-xs font-bold text-slate-900 group-hover:text-sky-800">Staff Login</span>
                           <span className="text-[9px] font-bold px-1.5 py-0.5 rounded bg-sky-100 text-sky-800">Staff</span>
                         </div>
-                        <p className="text-[11px] text-slate-500 line-clamp-1">Verification queue, tasks, progress</p>
+                        <p className="text-[11px] text-slate-500 line-clamp-1">Verification queue, tasks &amp; progress</p>
                       </div>
                     </a>
 
@@ -385,10 +394,10 @@ export default function Navbar({
                       </div>
                       <div className="flex-1 min-w-0">
                         <div className="flex items-center justify-between">
-                          <span className="text-xs font-bold text-slate-900 group-hover:text-amber-800">Super Admin Directorate</span>
+                          <span className="text-xs font-bold text-slate-900 group-hover:text-amber-800">Admin Login</span>
                           <span className="text-[9px] font-bold px-1.5 py-0.5 rounded bg-amber-100 text-amber-900">Admin</span>
                         </div>
-                        <p className="text-[11px] text-slate-500 line-clamp-1">Master console, admissions, cutoffs</p>
+                        <p className="text-[11px] text-slate-500 line-clamp-1">Master console, admissions &amp; cutoffs</p>
                       </div>
                     </a>
                   </div>
@@ -406,15 +415,6 @@ export default function Navbar({
                 </div>
               )}
             </div>
-
-            {/* Apply Now */}
-            <button
-              onClick={() => onNavigate('student-login')}
-              className="flex items-center space-x-1.5 px-5 py-2.5 text-xs sm:text-sm font-bold text-white bg-gradient-to-r from-kgp-crimson to-red-800 hover:from-kgp-darkred hover:to-kgp-crimson rounded-xl shadow-md hover:shadow-lg transition transform hover:-translate-y-0.5"
-            >
-              <UserPlus className="w-4 h-4" />
-              <span>Apply Now</span>
-            </button>
           </div>
 
           {/* Mobile Navigation Controls */}
