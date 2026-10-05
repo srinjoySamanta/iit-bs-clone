@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { 
   Menu, X, ExternalLink, ChevronDown, GraduationCap, ShieldCheck, 
   LogIn, UserPlus, BookOpen, Phone, HelpCircle, User, Home, Sparkles, Globe,
-  UserCheck, ArrowRight
+  UserCheck, ArrowRight, Layers, Building2, Quote, Award, Briefcase, FileText, CheckCircle2
 } from 'lucide-react';
 import { IIT_KGP_INFO, ANNOUNCEMENT_TICKER } from '../data/portalData';
 import iitKgpLogo from '../assets/logo';
@@ -13,24 +13,71 @@ export default function Navbar({
   onOpenDiagram, 
   onOpenSignUp,
   onOpenCertificate,
+  onOpenHowToApply,
   currentView
 }) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [academicsDropdown, setAcademicsDropdown] = useState(false);
   const [admissionsDropdown, setAdmissionsDropdown] = useState(false);
+  const [campusDropdown, setCampusDropdown] = useState(false);
+  const [supportDropdown, setSupportDropdown] = useState(false);
   const [loginDropdown, setLoginDropdown] = useState(false);
   const loginDropdownRef = useRef(null);
+  const dropdownTimers = useRef({});
   const [lang, setLang] = useState('en');
+
+  const openDropdown = (key) => {
+    if (dropdownTimers.current[key]) {
+      clearTimeout(dropdownTimers.current[key]);
+      delete dropdownTimers.current[key];
+    }
+    if (key === 'academics') setAcademicsDropdown(true);
+    if (key === 'admissions') setAdmissionsDropdown(true);
+    if (key === 'campus') setCampusDropdown(true);
+    if (key === 'support') setSupportDropdown(true);
+    if (key === 'login') setLoginDropdown(true);
+  };
+
+  const closeDropdownWithDelay = (key, delay = 350) => {
+    if (dropdownTimers.current[key]) {
+      clearTimeout(dropdownTimers.current[key]);
+    }
+    dropdownTimers.current[key] = setTimeout(() => {
+      if (key === 'academics') setAcademicsDropdown(false);
+      if (key === 'admissions') setAdmissionsDropdown(false);
+      if (key === 'campus') setCampusDropdown(false);
+      if (key === 'support') setSupportDropdown(false);
+      if (key === 'login') setLoginDropdown(false);
+      delete dropdownTimers.current[key];
+    }, delay);
+  };
+
+  const toggleDropdown = (key, e) => {
+    if (e) e.stopPropagation();
+    if (dropdownTimers.current[key]) {
+      clearTimeout(dropdownTimers.current[key]);
+      delete dropdownTimers.current[key];
+    }
+    if (key === 'academics') setAcademicsDropdown(prev => !prev);
+    if (key === 'admissions') setAdmissionsDropdown(prev => !prev);
+    if (key === 'campus') setCampusDropdown(prev => !prev);
+    if (key === 'support') setSupportDropdown(prev => !prev);
+    if (key === 'login') setLoginDropdown(prev => !prev);
+  };
 
   // Keep dropdown open stably and close only on outside click
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (loginDropdownRef.current && !loginDropdownRef.current.contains(event.target)) {
+        if (dropdownTimers.current['login']) clearTimeout(dropdownTimers.current['login']);
         setLoginDropdown(false);
       }
     };
     document.addEventListener('mousedown', handleClickOutside);
-    return () => document.removeEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+      Object.values(dropdownTimers.current).forEach(t => clearTimeout(t));
+    };
   }, []);
 
   useEffect(() => {
@@ -216,74 +263,213 @@ export default function Navbar({
             </div>
           </button>
 
-          {/* Desktop Navigation Links */}
-          <nav className="hidden xl:flex items-center space-x-5 text-sm font-medium text-slate-700">
-            {/* Academics Dropdown */}
+          {/* Desktop Navigation Links (Organized into Eye-Soothing Dropdowns matching Block Diagram) */}
+          <nav className="hidden xl:flex items-center space-x-6 text-sm font-semibold text-slate-700">
+            
+            {/* 1. Academics Dropdown */}
             <div 
               className="relative"
-              onMouseEnter={() => setAcademicsDropdown(true)}
-              onMouseLeave={() => setAcademicsDropdown(false)}
+              onMouseEnter={() => openDropdown('academics')}
+              onMouseLeave={() => closeDropdownWithDelay('academics', 350)}
             >
-              <button className="flex items-center space-x-1 hover:text-kgp-crimson transition py-2">
+              <button 
+                type="button"
+                onClick={(e) => toggleDropdown('academics', e)}
+                className="flex items-center space-x-1 hover:text-kgp-crimson transition py-2"
+              >
                 <span>Academics</span>
-                <ChevronDown className="w-3.5 h-3.5 text-slate-400" />
+                <ChevronDown className={`w-3.5 h-3.5 text-slate-400 transition-transform ${academicsDropdown ? 'rotate-180' : ''}`} />
               </button>
               {academicsDropdown && (
-                <div className="absolute left-0 mt-0 w-64 bg-white rounded-xl shadow-xl border border-slate-200 py-2 z-50 animate-in fade-in">
-                  <a href="#structure" onClick={() => onNavigate('home')} className="block px-4 py-2 hover:bg-slate-50 text-slate-700 hover:text-kgp-crimson">
-                    <div className="font-semibold text-xs">Course Structure</div>
-                    <div className="text-[11px] text-slate-500">Foundation, Diploma, BSc & BS</div>
-                  </a>
-                  <a href="#structure" onClick={() => onNavigate('home')} className="block px-4 py-2 hover:bg-slate-50 text-slate-700 hover:text-kgp-crimson">
-                    <div className="font-semibold text-xs">DS & AI Syllabus Roadmap</div>
-                    <div className="text-[11px] text-slate-500">142 Credits curriculum roadmap</div>
-                  </a>
-                  <button 
-                    onClick={onOpenCertificate} 
-                    className="w-full text-left px-4 py-2 hover:bg-slate-50 text-kgp-crimson font-medium text-xs flex items-center justify-between border-t border-slate-100"
-                  >
-                    <span>Sample Degree Certificate</span>
-                    <ExternalLink className="w-3 h-3" />
-                  </button>
+                <div 
+                  className="absolute left-0 top-full pt-1.5 w-76 z-50 animate-in fade-in slide-in-from-top-1"
+                  onMouseEnter={() => openDropdown('academics')}
+                  onMouseLeave={() => closeDropdownWithDelay('academics', 350)}
+                >
+                  <div className="bg-white rounded-2xl shadow-xl border border-slate-200 py-2.5">
+                    <a href="#structure" onClick={() => { onNavigate('home'); setAcademicsDropdown(false); }} className="block px-4 py-2 hover:bg-slate-50 text-slate-800 hover:text-kgp-crimson transition">
+                      <div className="font-bold text-xs">Course Structure</div>
+                      <div className="text-[11px] text-slate-500">Foundation, Diploma, BSc &amp; BS (4 Levels)</div>
+                    </a>
+                    <a href="#structure" onClick={() => { onNavigate('home'); setAcademicsDropdown(false); }} className="block px-4 py-2 hover:bg-slate-50 text-slate-800 hover:text-kgp-crimson transition">
+                      <div className="font-bold text-xs">DS &amp; AI Syllabus Roadmap</div>
+                      <div className="text-[11px] text-slate-500">142 Credits modular curriculum</div>
+                    </a>
+                    <a href="#structure" onClick={() => { onNavigate('home'); setAcademicsDropdown(false); }} className="block px-4 py-2 hover:bg-slate-50 text-slate-800 hover:text-kgp-crimson transition">
+                      <div className="font-bold text-xs">Academic Aspects</div>
+                      <div className="text-[11px] text-slate-500">Online video lectures &amp; offline proctored exams</div>
+                    </a>
+                    <a href="#campus" onClick={() => { onNavigate('home'); setAcademicsDropdown(false); }} className="block px-4 py-2 hover:bg-slate-50 text-slate-800 hover:text-kgp-crimson transition">
+                      <div className="font-bold text-xs">Central Library Access</div>
+                      <div className="text-[11px] text-slate-500">Physical campus library &amp; digital IEEE/ACM access</div>
+                    </a>
+                    <a href="#campus" onClick={() => { onNavigate('home'); setAcademicsDropdown(false); }} className="block px-4 py-2 hover:bg-slate-50 text-slate-800 hover:text-kgp-crimson transition">
+                      <div className="flex items-center justify-between">
+                        <span className="font-bold text-xs">Alumni Status</span>
+                        <span className="text-[9px] font-bold px-1.5 py-0.5 rounded bg-amber-100 text-amber-900 border border-amber-200">Only Degree Level</span>
+                      </div>
+                      <div className="text-[11px] text-slate-500">Official IIT KGP Alumni Association membership</div>
+                    </a>
+                    <button 
+                      onClick={() => { onOpenCertificate(); setAcademicsDropdown(false); }} 
+                      className="w-full text-left px-4 py-2 hover:bg-slate-50 text-kgp-crimson font-bold text-xs flex items-center justify-between border-t border-slate-100 mt-1"
+                    >
+                      <span>Sample Degree Certificate</span>
+                      <ExternalLink className="w-3.5 h-3.5" />
+                    </button>
+                  </div>
                 </div>
               )}
             </div>
 
-            {/* Admissions Dropdown */}
+            {/* 2. Admissions Dropdown */}
             <div 
               className="relative"
-              onMouseEnter={() => setAdmissionsDropdown(true)}
-              onMouseLeave={() => setAdmissionsDropdown(false)}
+              onMouseEnter={() => openDropdown('admissions')}
+              onMouseLeave={() => closeDropdownWithDelay('admissions', 350)}
             >
-              <button className="flex items-center space-x-1 hover:text-kgp-crimson transition py-2">
+              <button 
+                type="button"
+                onClick={(e) => toggleDropdown('admissions', e)}
+                className="flex items-center space-x-1 hover:text-kgp-crimson transition py-2"
+              >
                 <span>Admissions</span>
-                <ChevronDown className="w-3.5 h-3.5 text-slate-400" />
+                <ChevronDown className={`w-3.5 h-3.5 text-slate-400 transition-transform ${admissionsDropdown ? 'rotate-180' : ''}`} />
               </button>
               {admissionsDropdown && (
-                <div className="absolute left-0 mt-0 w-72 bg-white rounded-xl shadow-xl border border-slate-200 py-2 z-50 animate-in fade-in">
-                  <button 
-                    onClick={() => onNavigate('qualifier')} 
-                    className="w-full text-left px-4 py-2 hover:bg-emerald-50 text-emerald-800"
-                  >
-                    <div className="font-semibold text-xs flex items-center gap-1.5">
-                      <Sparkles className="w-3.5 h-3.5 text-emerald-600" /> Qualifier Round Examination
-                    </div>
-                    <div className="text-[11px] text-slate-500">Register, Pay & take CBT Exam</div>
-                  </button>
-                  <a href="#eligibility" onClick={() => onNavigate('home')} className="block px-4 py-2 hover:bg-slate-50 text-slate-700 hover:text-kgp-crimson">
-                    <div className="font-semibold text-xs text-amber-700">Direct Admission Pathways</div>
-                    <div className="text-[11px] text-slate-500">WBJEE / JEE Advanced / Tripura JEE</div>
-                  </a>
-                  <a href="#fees" onClick={() => onNavigate('home')} className="block px-4 py-2 hover:bg-slate-50 text-slate-700 hover:text-kgp-crimson border-t border-slate-100">
-                    <div className="font-semibold text-xs">Fee & Scholarship Calculator</div>
-                    <div className="text-[11px] text-slate-500">Up to 75% fee waiver for income &lt; 1 LPA</div>
-                  </a>
+                <div 
+                  className="absolute left-0 top-full pt-1.5 w-80 z-50 animate-in fade-in slide-in-from-top-1"
+                  onMouseEnter={() => openDropdown('admissions')}
+                  onMouseLeave={() => closeDropdownWithDelay('admissions', 350)}
+                >
+                  <div className="bg-white rounded-2xl shadow-xl border border-slate-200 py-2.5">
+                    <button 
+                      onClick={() => { if (onOpenHowToApply) onOpenHowToApply(); setAdmissionsDropdown(false); }} 
+                      className="w-full text-left px-4 py-2.5 hover:bg-red-50 text-kgp-crimson transition"
+                    >
+                      <div className="font-bold text-xs flex items-center justify-between">
+                        <span className="flex items-center gap-1.5">
+                          <FileText className="w-3.5 h-3.5" />
+                          <span>How to Apply</span>
+                        </span>
+                        <span className="text-[9px] font-bold bg-red-100 text-red-800 px-1.5 py-0.5 rounded">Instructions</span>
+                      </div>
+                      <div className="text-[11px] text-slate-500 mt-0.5">Complete application guide, documents &amp; age criteria</div>
+                    </button>
+
+                    <button 
+                      onClick={() => { onNavigate('qualifier'); setAdmissionsDropdown(false); }} 
+                      className="w-full text-left px-4 py-2 hover:bg-emerald-50 text-emerald-900 transition"
+                    >
+                      <div className="font-bold text-xs flex items-center gap-1.5">
+                        <Sparkles className="w-3.5 h-3.5 text-emerald-600" /> Qualifier Round Examination
+                      </div>
+                      <div className="text-[11px] text-slate-500">Register, Pay &amp; Take Computer-Based Exam</div>
+                    </button>
+
+                    <a href="#eligibility" onClick={() => { onNavigate('home'); setAdmissionsDropdown(false); }} className="block px-4 py-2 hover:bg-slate-50 text-slate-800 hover:text-amber-800 transition">
+                      <div className="font-bold text-xs">Direct Admission Pathways</div>
+                      <div className="text-[11px] text-slate-500">WBJEE / JEE Advanced / Tripura JEE Ranks</div>
+                    </a>
+
+                    <a href="#fees" onClick={() => { onNavigate('home'); setAdmissionsDropdown(false); }} className="block px-4 py-2 hover:bg-slate-50 text-slate-800 hover:text-kgp-crimson transition border-t border-slate-100 mt-1">
+                      <div className="font-bold text-xs">Fee &amp; Scholarship Calculator</div>
+                      <div className="text-[11px] text-slate-500">Modular pay-per-credit with up to 75% fee waivers</div>
+                    </a>
+                  </div>
                 </div>
               )}
             </div>
 
-            <a href="#campus" onClick={() => onNavigate('home')} className="hover:text-kgp-crimson transition py-2">Campus Life &amp; Placement</a>
-            <a href="#faqs" onClick={() => onNavigate('home')} className="hover:text-kgp-crimson transition py-2">FAQs</a>
+            {/* 3. Campus & Institute Dropdown */}
+            <div 
+              className="relative"
+              onMouseEnter={() => openDropdown('campus')}
+              onMouseLeave={() => closeDropdownWithDelay('campus', 350)}
+            >
+              <button 
+                type="button"
+                onClick={(e) => toggleDropdown('campus', e)}
+                className="flex items-center space-x-1 hover:text-kgp-crimson transition py-2"
+              >
+                <span>Campus &amp; Institute</span>
+                <ChevronDown className={`w-3.5 h-3.5 text-slate-400 transition-transform ${campusDropdown ? 'rotate-180' : ''}`} />
+              </button>
+              {campusDropdown && (
+                <div 
+                  className="absolute left-0 top-full pt-1.5 w-76 z-50 animate-in fade-in slide-in-from-top-1"
+                  onMouseEnter={() => openDropdown('campus')}
+                  onMouseLeave={() => closeDropdownWithDelay('campus', 350)}
+                >
+                  <div className="bg-white rounded-2xl shadow-xl border border-slate-200 py-2.5">
+                    <a href="#campus" onClick={() => { onNavigate('home'); setCampusDropdown(false); }} className="block px-4 py-2 hover:bg-slate-50 text-slate-800 hover:text-kgp-crimson transition">
+                      <div className="font-bold text-xs">About IIT Kharagpur</div>
+                      <div className="text-[11px] text-slate-500">Estd. 1951 • India's First &amp; Premier IIT</div>
+                    </a>
+                    <a href="#director-message" onClick={() => { onNavigate('home'); setCampusDropdown(false); }} className="block px-4 py-2 hover:bg-amber-50 text-amber-900 transition">
+                      <div className="font-bold text-xs flex items-center justify-between">
+                        <span>Director's Message</span>
+                        <span className="text-[9px] font-bold bg-amber-100 text-amber-900 px-1.5 py-0.5 rounded">TOI Feature</span>
+                      </div>
+                      <div className="text-[11px] text-slate-500">Vision of Prof. Suman Chakraborty, Director</div>
+                    </a>
+                    <a href="#campus" onClick={() => { onNavigate('home'); setCampusDropdown(false); }} className="block px-4 py-2 hover:bg-slate-50 text-slate-800 hover:text-kgp-crimson transition">
+                      <div className="font-bold text-xs">Campus Immersion</div>
+                      <div className="text-[11px] text-slate-500">Annual Fest &amp; on-campus immersion at Kharagpur</div>
+                    </a>
+                    <a href="#campus" onClick={() => { onNavigate('home'); setCampusDropdown(false); }} className="block px-4 py-2 hover:bg-slate-50 text-slate-800 hover:text-kgp-crimson transition border-t border-slate-100 mt-1">
+                      <div className="font-bold text-xs">Internship &amp; Placement</div>
+                      <div className="text-[11px] text-slate-500">Dedicated career placement cell &amp; industry ecosystem</div>
+                    </a>
+                  </div>
+                </div>
+              )}
+            </div>
+
+            {/* 4. Support & Info Dropdown */}
+            <div 
+              className="relative"
+              onMouseEnter={() => openDropdown('support')}
+              onMouseLeave={() => closeDropdownWithDelay('support', 350)}
+            >
+              <button 
+                type="button"
+                onClick={(e) => toggleDropdown('support', e)}
+                className="flex items-center space-x-1 hover:text-kgp-crimson transition py-2"
+              >
+                <span>Support &amp; Info</span>
+                <ChevronDown className={`w-3.5 h-3.5 text-slate-400 transition-transform ${supportDropdown ? 'rotate-180' : ''}`} />
+              </button>
+              {supportDropdown && (
+                <div 
+                  className="absolute left-0 top-full pt-1.5 w-76 z-50 animate-in fade-in slide-in-from-top-1"
+                  onMouseEnter={() => openDropdown('support')}
+                  onMouseLeave={() => closeDropdownWithDelay('support', 350)}
+                >
+                  <div className="bg-white rounded-2xl shadow-xl border border-slate-200 py-2.5">
+                    <a href="#faqs" onClick={() => { onNavigate('home'); setSupportDropdown(false); }} className="block px-4 py-2 hover:bg-slate-50 text-slate-800 hover:text-kgp-crimson transition">
+                      <div className="font-bold text-xs">Frequently Asked Questions</div>
+                      <div className="text-[11px] text-slate-500">Bilingual Support (English &amp; বাংলা)</div>
+                    </a>
+                    <a href="#contact" onClick={() => { onNavigate('home'); setSupportDropdown(false); }} className="block px-4 py-2 hover:bg-slate-50 text-slate-800 hover:text-kgp-crimson transition">
+                      <div className="font-bold text-xs">Contact Details</div>
+                      <div className="text-[11px] text-slate-500">Admissions email, helpline &amp; campus address</div>
+                    </a>
+                    <button 
+                      onClick={() => { onOpenDiagram(); setSupportDropdown(false); }} 
+                      className="w-full text-left px-4 py-2 hover:bg-slate-50 text-kgp-crimson font-bold text-xs flex items-center justify-between border-t border-slate-100 mt-1"
+                    >
+                      <div className="flex items-center gap-1.5">
+                        <Layers className="w-3.5 h-3.5 text-kgp-crimson" />
+                        <span>Portal Architecture (Block Diagram)</span>
+                      </div>
+                      <ExternalLink className="w-3.5 h-3.5" />
+                    </button>
+                  </div>
+                </div>
+              )}
+            </div>
+
           </nav>
 
           {/* Action CTAs */}
@@ -338,15 +524,12 @@ export default function Navbar({
             <div 
               ref={loginDropdownRef}
               className="relative"
-              onMouseEnter={() => setLoginDropdown(true)}
-              onMouseLeave={() => setLoginDropdown(false)}
+              onMouseEnter={() => openDropdown('login')}
+              onMouseLeave={() => closeDropdownWithDelay('login', 400)}
             >
               <button
                 type="button"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  setLoginDropdown(prev => !prev);
-                }}
+                onClick={(e) => toggleDropdown('login', e)}
                 className={`flex items-center space-x-1.5 px-4 py-2.5 text-xs sm:text-sm font-bold rounded-xl shadow-xs transition cursor-pointer select-none ${
                   loginDropdown 
                     ? 'bg-slate-900 text-white border-2 border-slate-900' 
@@ -361,7 +544,9 @@ export default function Navbar({
 
               {loginDropdown && (
                 <div 
-                  className="absolute right-0 top-full pt-1 w-84 z-50 animate-in fade-in slide-in-from-top-1"
+                  className="absolute right-0 top-full pt-1.5 w-84 z-50 animate-in fade-in slide-in-from-top-1"
+                  onMouseEnter={() => openDropdown('login')}
+                  onMouseLeave={() => closeDropdownWithDelay('login', 400)}
                   onClick={(e) => e.stopPropagation()}
                 >
                   <div className="bg-white rounded-2xl shadow-2xl border border-slate-200 py-3">
@@ -572,25 +757,35 @@ export default function Navbar({
 
           <div className="space-y-1 text-sm font-medium text-slate-700 divide-y divide-slate-100">
             <button 
+              onClick={() => { if (onOpenHowToApply) onOpenHowToApply(); setMobileMenuOpen(false); }} 
+              className="w-full text-left py-2.5 text-kgp-crimson font-bold flex items-center justify-between"
+            >
+              <div className="flex items-center gap-1.5">
+                <FileText className="w-4 h-4 text-kgp-crimson" />
+                <span>How to Apply (Instructions &amp; Eligibility)</span>
+              </div>
+              <ChevronDown className="w-3.5 h-3.5 text-slate-400" />
+            </button>
+            <button 
               onClick={() => { onNavigate('qualifier'); setMobileMenuOpen(false); }}
               className="w-full text-left py-2.5 text-emerald-700 font-bold flex items-center gap-1.5"
             >
               <Sparkles className="w-4 h-4 text-emerald-600" />
-              <span>Qualifier Round Exam Portal (Register, Pay & Test)</span>
+              <span>Qualifier Round Exam Portal (Register, Pay &amp; Test)</span>
             </button>
             <a 
               href="#structure" 
               onClick={() => { onNavigate('home'); setMobileMenuOpen(false); }}
               className="block py-2 hover:text-kgp-crimson"
             >
-              Course Structure & Syllabus (Data Science & AI)
+              Course Structure &amp; Syllabus (Data Science &amp; AI)
             </a>
             <a 
               href="#eligibility" 
               onClick={() => { onNavigate('home'); setMobileMenuOpen(false); }}
               className="block py-2 hover:text-kgp-crimson font-semibold text-amber-700"
             >
-              Direct Admission (WBJEE / JEE Advanced)
+              Direct Admission (WBJEE / JEE Advanced / Tripura JEE)
             </a>
             <a 
               href="#fees" 
@@ -599,6 +794,34 @@ export default function Navbar({
             >
               Fee Structure &amp; Scholarship Calculator
             </a>
+            <a 
+              href="#director-message" 
+              onClick={() => { onNavigate('home'); setMobileMenuOpen(false); }}
+              className="block py-2 hover:text-kgp-crimson"
+            >
+              Director's Message (Times of India Exclusive)
+            </a>
+            <a 
+              href="#campus" 
+              onClick={() => { onNavigate('home'); setMobileMenuOpen(false); }}
+              className="block py-2 hover:text-kgp-crimson"
+            >
+              Campus Immersion &amp; Placement Cell
+            </a>
+            <a 
+              href="#faqs" 
+              onClick={() => { onNavigate('home'); setMobileMenuOpen(false); }}
+              className="block py-2 hover:text-kgp-crimson"
+            >
+              Frequently Asked Questions (FAQs)
+            </a>
+            <button 
+              onClick={() => { onOpenDiagram(); setMobileMenuOpen(false); }}
+              className="w-full text-left py-2 hover:text-kgp-crimson flex items-center justify-between"
+            >
+              <span>Portal Architecture (Block Diagram)</span>
+              <ExternalLink className="w-3.5 h-3.5 text-slate-400" />
+            </button>
           </div>
         </div>
       )}

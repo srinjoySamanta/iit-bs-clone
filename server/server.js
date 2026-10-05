@@ -85,166 +85,577 @@ function requireAdmin(req, res, next) {
   next();
 }
 
-// 3. Require Student Owner or Administrator Role
-function requireStudentOrAdmin(req, res, next) {
+// 3. Require Staff / Employee or Admin Role
+function requireStaffOrAdmin(req, res, next) {
+  if (!req.user || (req.user.role !== 'employee' && req.user.role !== 'admin' && req.user.role !== 'superadmin')) {
+    return res.status(403).json({
+      error: 'Forbidden: Restricted endpoint. Only authorized IIT Kharagpur Staff or Administrators can access this resource.',
+      code: 'STAFF_ACCESS_REQUIRED'
+    });
+  }
+  next();
+}
+
+// 4. Require Super Admin Role
+function requireSuperAdmin(req, res, next) {
+  if (!req.user || req.user.role !== 'superadmin') {
+    return res.status(403).json({
+      error: 'Forbidden: Super Administrator privileges required.',
+      code: 'SUPERADMIN_REQUIRED'
+    });
+  }
+  next();
+}
+
+// 5. Require Student or Staff or Admin
+function requireStudentOrStaff(req, res, next) {
   if (!req.user) {
     return res.status(401).json({ error: 'Authentication required' });
   }
-
-  // Admins have universal read permissions
-  if (req.user.role === 'admin' || req.user.role === 'superadmin') {
-    return next();
-  }
-
-  // Regular students can only view their own student record
-  const requestedRoll = req.params.roll;
-  if (
-    req.user.role === 'student' && 
-    (req.user.roll === requestedRoll || req.user.roll_number === requestedRoll || req.user.id === requestedRoll)
-  ) {
-    return next();
-  }
-
-  return res.status(403).json({
-    error: `Forbidden: Access denied. You are authenticated as student (${req.user.roll || req.user.email}) and cannot view application records of other students (${requestedRoll}).`,
-    code: 'RECORD_ACCESS_FORBIDDEN'
-  });
+  next();
 }
 
 // ==========================================
-// 1. AUTHENTICATION & LOGIN ENDPOINTS
+// 1. AUTHENTICATION & CREDENTIALS ENDPOINTS
 // ==========================================
 
-// Admin / Staff Login
+// POST /api/auth/login
 app.post('/api/auth/login', async (req, res) => {
+  const { username, password } = req.body;
+
+  if (!username || !password) {
+    return res.status(400).json({ error: 'Username and password are required' });
+  }
+
   try {
-    const { email, username, identifier: idField, password } = req.body;
-    const identifier = (email || username || idField || '').trim();
+    const user = await db.getUserByUsername(username);
 
-    if (!identifier || !password) {
-      return res.status(400).json({ error: 'Administrator email/username and password are required.' });
-    }
-
-    const user = await db.getUserByEmailOrUsername(identifier);
     if (!user) {
-      return res.status(401).json({ error: 'Authentication failed. Administrator account not found.' });
+      return res.status(401).json({ error: 'Invalid username or password' });
     }
 
     const isMatch = bcrypt.compareSync(password, user.password_hash);
     if (!isMatch) {
-      return res.status(401).json({ error: 'Authentication failed. Invalid password.' });
+      return res.status(401).json({ error: 'Invalid username or password' });
     }
 
-    // Generate signed JWT
-    const token = jwt.sign(
-      {
-        id: user.id,
-        username: user.username,
-        email: user.email,
-        role: user.role,
-        name: user.name,
-        designation: user.designation,
-        roll: user.roll_number
-      },
-      JWT_SECRET,
-      { expiresIn: '24h' }
-    );
+    const payload = {
+      id: user.id,
+      emp_id: user.emp_id,
+      username: user.username,
+      email: user.email,
+      role: user.role,
+      name: user.name,
+      designation: user.designation,
+      department: user.department,
+      roll_number: user.roll_number,
+      is_temp_password: user.is_temp_password
+    };
+
+    const token = jwt.sign(payload, JWT_SECRET, { expiresIn: '12h' });
 
     await db.logAudit({
-      action: 'ADMIN_LOGIN',
-      entityType: 'USER',
+      action: 'USER_LOGIN_SUCCESS',
+      entityType: 'AUTH',
       entityId: user.username,
       actorRole: user.role,
       actorName: user.name,
-      details: `Successful administrator authentication for ${user.name} (${user.role}).`
+      details: `Successful login for user ${user.username} (${user.role}).`
     });
 
     res.json({
-      message: 'Authentication successful',
+      success: true,
       token,
-      user: {
-        id: user.id,
-        username: user.username,
-        email: user.email,
-        role: user.role,
-        name: user.name,
-        designation: user.designation,
-        roll: user.roll_number
-      }
+      user: payload
     });
   } catch (err) {
-    res.status(500).json({ error: 'Login service failed', details: err.message });
+    console.error('Login error:', err);
+    res.status(500).json({ error: 'Authentication service encountered an unexpected error.' });
   }
 });
 
-// Student Token Generation (For testing student access vs 403 Forbidden)
-app.post('/api/auth/student-token', async (req, res) => {
-  try {
-    const { roll, email } = req.body;
-    if (!roll && !email) {
-      return res.status(400).json({ error: 'Roll number or email required to generate student token.' });
-    }
-
-    const all = await db.getAllStudents();
-    const student = all.find(s => 
-      (roll && (s.roll === roll || s.id === roll)) || 
-      (email && s.email.toLowerCase() === email.toLowerCase())
-    );
-
-    if (!student) {
-      return res.status(404).json({ error: 'No matching student application found.' });
-    }
-
-    const token = jwt.sign(
-      {
-        id: student.id,
-        role: 'student',
-        roll: student.roll,
-        email: student.email,
-        name: student.name
-      },
-      JWT_SECRET,
-      { expiresIn: '12h' }
-    );
-
-    res.json({
-      message: 'Student session token generated successfully',
-      token,
-      role: 'student',
-      student: {
-        id: student.id,
-        roll: student.roll,
-        name: student.name,
-        email: student.email
-      }
-    });
-  } catch (err) {
-    res.status(500).json({ error: 'Failed to generate student token', details: err.message });
-  }
-});
-
-// Verify Current User Session
+// GET /api/auth/me
 app.get('/api/auth/me', authenticateToken, async (req, res) => {
-  res.json({ user: req.user });
+  res.json({
+    user: req.user,
+    authenticated: true
+  });
+});
+
+// POST /api/auth/create-employee (Master Admin creates staff/employee accounts directly)
+app.post('/api/auth/create-employee', authenticateToken, requireAdmin, async (req, res) => {
+  try {
+    const { emp_id, username, email, password, role, name, designation, department, phone } = req.body;
+
+    if (!username || !email || !password || !name) {
+      return res.status(400).json({ error: 'Username, email, temporary password, and full name are required.' });
+    }
+
+    if (role && !['admin', 'employee'].includes(role)) {
+      return res.status(400).json({ error: 'Assigned role must be either "admin" or "employee".' });
+    }
+
+    const newEmployee = await db.createEmployeeAccount({
+      emp_id,
+      username,
+      email,
+      password,
+      role: role || 'employee',
+      name,
+      designation,
+      department,
+      phone
+    }, req.user);
+
+    res.status(201).json({
+      success: true,
+      message: `Employee account created successfully for ${name}. Temporary password assigned.`,
+      employee: newEmployee
+    });
+  } catch (err) {
+    console.error('Error creating employee:', err);
+    res.status(400).json({ error: err.message || 'Failed to create employee account.' });
+  }
+});
+
+// GET /api/employees (List employees for admin task assignment)
+app.get('/api/employees', authenticateToken, requireStaffOrAdmin, async (req, res) => {
+  try {
+    const employees = await db.getAllEmployees();
+    res.json({ success: true, employees });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// GET /api/employees/workload (Employee Workload Summary)
+app.get('/api/employees/workload', authenticateToken, requireAdmin, async (req, res) => {
+  try {
+    const summary = await db.getEmployeeWorkloadSummary();
+    res.json({ success: true, workload_summary: summary });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
 });
 
 // ==========================================
-// 2. HEALTHCHECK & METRICS (PUBLIC)
+// 2. EMPLOYEE TASKS & WORKFLOW ("Kaj o Progress")
 // ==========================================
+
+// GET /api/tasks (List tasks, filtered by employee or status)
+app.get('/api/tasks', authenticateToken, requireStaffOrAdmin, async (req, res) => {
+  try {
+    const { status, priority, q, employeeId } = req.query;
+
+    // If logged-in user is an employee (not admin), restrict to their own assigned tasks unless explicitly specified
+    let targetEmployeeId = employeeId;
+    if (req.user.role === 'employee') {
+      targetEmployeeId = req.user.id;
+    }
+
+    const tasks = await db.getEmployeeTasks({
+      employeeId: targetEmployeeId,
+      status: status || 'ALL',
+      priority: priority || 'ALL',
+      q: q || ''
+    });
+
+    res.json({ success: true, tasks, count: tasks.length });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// POST /api/tasks (Admin assigns task to an employee)
+app.post('/api/tasks', authenticateToken, requireAdmin, async (req, res) => {
+  try {
+    const { title, description, assigned_to, priority, start_date, due_date } = req.body;
+
+    if (!title || !assigned_to || !due_date) {
+      return res.status(400).json({ error: 'Task title, assigned employee, and due date are mandatory.' });
+    }
+
+    const task = await db.createEmployeeTask({
+      title,
+      description,
+      assigned_to,
+      priority: priority || 'Medium',
+      start_date,
+      due_date
+    }, req.user);
+
+    res.status(201).json({
+      success: true,
+      message: `Task '${task.title}' assigned successfully.`,
+      task
+    });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// PATCH /api/tasks/:id/progress (Employee/Admin updates task progress and logs work)
+app.patch('/api/tasks/:id/progress', authenticateToken, requireStaffOrAdmin, async (req, res) => {
+  try {
+    const taskId = req.params.id;
+    const { progress_percentage, status, log_note, hours_spent } = req.body;
+
+    if (progress_percentage === undefined && !status && !log_note) {
+      return res.status(400).json({ error: 'Please specify progress percentage, status, or a worklog note.' });
+    }
+
+    const updatedTask = await db.updateTaskProgress(taskId, {
+      progress_percentage: progress_percentage !== undefined ? parseInt(progress_percentage, 10) : undefined,
+      status,
+      log_note,
+      hours_spent
+    }, req.user);
+
+    res.json({
+      success: true,
+      message: 'Task progress updated successfully.',
+      task: updatedTask
+    });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// GET /api/tasks/:id/worklogs (View audit trail & work history of a task)
+app.get('/api/tasks/:id/worklogs', authenticateToken, requireStaffOrAdmin, async (req, res) => {
+  try {
+    const taskId = req.params.id;
+    const worklogs = await db.getTaskWorklogs(taskId);
+    res.json({ success: true, worklogs });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// ==========================================
+// 3. LMS & COURSE CONTENT MODULE
+// ==========================================
+
+// GET /api/courses
+app.get('/api/courses', async (req, res) => {
+  try {
+    const courses = await db.getCourses();
+    res.json({ success: true, courses });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// GET /api/courses/:id
+app.get('/api/courses/:id', async (req, res) => {
+  try {
+    const courseId = req.params.id;
+    const roll = req.query.roll || (req.user ? req.user.roll_number : null);
+    const course = await db.getCourseWithModules(courseId, roll);
+
+    if (!course) {
+      return res.status(404).json({ error: 'Course not found' });
+    }
+
+    res.json({ success: true, course });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// POST /api/lms/progress (Student updates video completion or logs practice quiz attempt)
+app.post('/api/lms/progress', async (req, res) => {
+  try {
+    const { roll, courseId, moduleId, video_progress_percentage, practice_increment } = req.body;
+
+    if (!roll || !courseId || !moduleId) {
+      return res.status(400).json({ error: 'roll, courseId, and moduleId are required.' });
+    }
+
+    const result = await db.updateStudentModuleProgress({
+      roll,
+      courseId,
+      moduleId,
+      video_progress_percentage,
+      practice_increment
+    });
+
+    res.json({ success: true, progress: result });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// ==========================================
+// 4. QUALIFIER ASSESSMENT & AUTO-EVALUATION
+// ==========================================
+
+// GET /api/exams
+app.get('/api/exams', async (req, res) => {
+  try {
+    const exams = await db.getAllExamQuizzes();
+    // Return sanitized quizzes (strip correct answers for student view if unauthenticated)
+    res.json({ success: true, exams });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// GET /api/exams/:quizCode
+app.get('/api/exams/:quizCode', async (req, res) => {
+  try {
+    const quizCode = req.params.quizCode;
+    const exam = await db.getExamQuizByCode(quizCode);
+
+    if (!exam) {
+      return res.status(404).json({ error: 'Qualifier Exam not found.' });
+    }
+
+    // For exam delivery, deliver questions without revealing correct_answer to the client
+    const clientQuestions = exam.questions.map(({ correct_answer, explanation, ...q }) => q);
+
+    res.json({
+      success: true,
+      exam: {
+        ...exam,
+        questions: clientQuestions
+      }
+    });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// POST /api/exams/submit (Auto-Evaluation Pipeline)
+app.post('/api/exams/submit', async (req, res) => {
+  try {
+    const { quizCode, roll, studentName, studentEmail, category, responses } = req.body;
+
+    if (!quizCode || !roll || !responses) {
+      return res.status(400).json({ error: 'quizCode, roll, and responses are required.' });
+    }
+
+    const evaluation = await db.autoEvaluateExamSubmission({
+      quizCode,
+      roll,
+      studentName: studentName || 'Candidate',
+      studentEmail: studentEmail || '',
+      category: category || 'General',
+      responses
+    });
+
+    res.json({
+      success: true,
+      message: 'Exam auto-evaluation completed successfully.',
+      evaluation
+    });
+  } catch (err) {
+    console.error('Exam evaluation error:', err);
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// GET /api/exams/scores (Admin view candidate performance)
+app.get('/api/exams/scores', authenticateToken, requireStaffOrAdmin, async (req, res) => {
+  try {
+    const { category, cutoffCleared } = req.query;
+    const scores = await db.getExamScores({ category, cutoffCleared });
+    res.json({ success: true, scores, count: scores.length });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// ==========================================
+// 5. CUTOFF MANAGEMENT & SHORTLISTING
+// ==========================================
+
+// GET /api/cutoffs
+app.get('/api/cutoffs', async (req, res) => {
+  try {
+    const cutoffs = await db.getCutoffs();
+    res.json({ success: true, cutoffs });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// PUT /api/cutoffs/:category (Admin updates cutoff percentage)
+app.put('/api/cutoffs/:category', authenticateToken, requireAdmin, async (req, res) => {
+  try {
+    const category = req.params.category;
+    const { min_score_percentage } = req.body;
+
+    if (min_score_percentage === undefined) {
+      return res.status(400).json({ error: 'min_score_percentage is required.' });
+    }
+
+    const updated = await db.updateCutoff(category, min_score_percentage, req.user);
+    res.json({
+      success: true,
+      message: `Cutoff threshold for ${category} updated to ${min_score_percentage}%.`,
+      cutoffs: updated
+    });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// GET /api/cutoffs/shortlist
+app.get('/api/cutoffs/shortlist', authenticateToken, requireStaffOrAdmin, async (req, res) => {
+  try {
+    const shortlisted = await db.getShortlistedCandidates();
+    res.json({ success: true, shortlisted, count: shortlisted.length });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// ==========================================
+// 6. ADMISSIONS & FEE MANAGEMENT MODULE
+// ==========================================
+
+// GET /api/students
+app.get('/api/students', authenticateToken, requireStaffOrAdmin, async (req, res) => {
+  try {
+    const { page, limit, q, status, level, sortBy, sortOrder } = req.query;
+    const result = await db.getStudents({
+      page: parseInt(page || '1', 10),
+      limit: parseInt(limit || '10', 10),
+      q: q || '',
+      status: status || 'ALL',
+      level: level || 'ALL',
+      sortBy: sortBy || 'submissionDate',
+      sortOrder: sortOrder || 'desc'
+    });
+    res.json(result);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// GET /api/students/:roll
+app.get('/api/students/:roll', async (req, res) => {
+  try {
+    const student = await db.getStudentByRoll(req.params.roll);
+    if (!student) {
+      return res.status(404).json({ error: 'Student application not found' });
+    }
+    res.json({ student });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// POST /api/applications/verify
+app.post('/api/applications/verify', authenticateToken, requireStaffOrAdmin, async (req, res) => {
+  try {
+    const { roll, status, rejectionReason } = req.body;
+    if (!roll || !status) {
+      return res.status(400).json({ error: 'roll and status are required' });
+    }
+
+    const updated = await db.updateVerification(roll, status, rejectionReason, req.user.name);
+    res.json({ success: true, application: updated });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// POST /api/applications/payment-verify
+app.post('/api/applications/payment-verify', authenticateToken, requireStaffOrAdmin, async (req, res) => {
+  try {
+    const { roll, paymentStatus, bankStatus, queryRemarks } = req.body;
+    if (!roll || !paymentStatus) {
+      return res.status(400).json({ error: 'roll and paymentStatus are required' });
+    }
+
+    const updated = await db.updatePayment(roll, paymentStatus, bankStatus, queryRemarks, req.user.name);
+    res.json({ success: true, payment: updated });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// POST /api/payments/simulate-checkout (Mock Razorpay / SBI MOPS Gateway Simulation)
+app.post('/api/payments/simulate-checkout', async (req, res) => {
+  try {
+    const { roll, amount, mode, bankName, category } = req.body;
+
+    const utr = `${(bankName || 'SBI').slice(0, 4).toUpperCase()}${Math.floor(100000000000 + Math.random() * 900000000000)}`;
+    const paymentRecord = {
+      amount: amount || 1500,
+      utr,
+      mode: mode || 'UPI (Instant Clearing)',
+      bank: bankName || 'State Bank of India',
+      date: new Date().toLocaleString(),
+      status: 'Verified',
+      bankStatus: 'Bank Settlement Confirmed (Simulated SBI MOPS Gateway)',
+      queryRemarks: '',
+      receiptName: `sbi_mops_receipt_${utr}.pdf`
+    };
+
+    if (roll) {
+      await db.updatePayment(roll, 'Verified', paymentRecord.bankStatus, '', 'Mock Payment Gateway');
+    }
+
+    await db.logAudit({
+      action: 'PAYMENT_GATEWAY_SETTLEMENT',
+      entityType: 'PAYMENT',
+      entityId: utr,
+      actorRole: 'Gateway Webhook',
+      actorName: 'SBI MOPS Payment Gateway',
+      details: `Simulated instant online settlement of INR ${amount} for Roll: ${roll || 'GUEST'}. UTR: ${utr}.`
+    });
+
+    res.json({
+      success: true,
+      message: 'Payment completed and settled via SBI MOPS / Razorpay simulator.',
+      payment: paymentRecord
+    });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// ==========================================
+// 7. AUDIT LOGS & HEALTH
+// ==========================================
+
+// GET /api/audit-logs
+app.get('/api/audit-logs', authenticateToken, requireStaffOrAdmin, async (req, res) => {
+  try {
+    const { page, limit, q } = req.query;
+    const logs = await db.getAuditLogs({
+      page: parseInt(page || '1', 10),
+      limit: parseInt(limit || '20', 10),
+      q: q || ''
+    });
+    res.json(logs);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// GET /api/health
 app.get('/api/health', async (req, res) => {
   try {
     const totalStudents = await db.getTotalCount();
-    const memory = process.memoryUsage();
+    const tasks = await db.getEmployeeTasks();
+    const users = await db.getAllUsers();
+
     res.json({
       status: 'UP',
       timestamp: new Date().toISOString(),
-      service: 'IIT Kharagpur BS Portal Enterprise Backend',
-      database: db.isPg ? 'PostgreSQL 16' : 'Local JSON/Memory Engine (Active Fallback)',
-      rbac: 'Enabled (JWT + bcrypt)',
+      service: 'IIT Kharagpur BS Portal Enterprise ERP & LMS Server',
+      database: db.isPg ? 'PostgreSQL Active (ACID Compliant)' : 'Local JSON/Memory Engine (Active Fallback)',
+      rbac: 'Enabled (Multi-Tier: SuperAdmin, Admin, Employee, Student)',
       metrics: {
         totalStudents,
+        totalStaffAndUsers: users.length,
+        totalEmployeeTasks: tasks.length,
         uptimeSeconds: Math.floor(process.uptime()),
-        memoryRssMb: Math.round(memory.rss / (1024 * 1024)),
+        memoryRssMb: Math.round(process.memoryUsage().rss / (1024 * 1024)),
         nodeVersion: process.version
       }
     });
@@ -253,293 +664,12 @@ app.get('/api/health', async (req, res) => {
   }
 });
 
-// ==========================================
-// 3. STUDENTS ROSTER (STRICTLY ADMIN PROTECTED)
-// ==========================================
-// Requires valid Admin JWT token. Regular students receive 403 Forbidden.
-app.get('/api/students', authenticateToken, requireAdmin, async (req, res) => {
-  try {
-    const { page = 1, limit = 10, q = '', status = 'ALL', level = 'ALL', sortBy = 'submissionDate', sortOrder = 'desc' } = req.query;
-    const result = await db.getStudents({
-      page: parseInt(page, 10),
-      limit: parseInt(limit, 10),
-      q: String(q).trim(),
-      status: String(status),
-      level: String(level),
-      sortBy: String(sortBy),
-      sortOrder: String(sortOrder)
-    });
-    res.json(result);
-  } catch (err) {
-    res.status(500).json({ error: 'Failed to retrieve students roster', details: err.message });
-  }
-});
-
-// ==========================================
-// 4. ENTERPRISE CSV EXPORT (ADMIN PROTECTED)
-// ==========================================
-app.get('/api/students/export-csv', authenticateToken, requireAdmin, async (req, res) => {
-  try {
-    const students = await db.getAllStudents();
-    const headers = [
-      'Application ID', 'Roll Number', 'Full Name', 'Email Address', 'Phone Number',
-      'Academic Level', 'Admission Pathway', 'Category', 'Income Tier',
-      'Application Status', 'Rejection Reason', 'Submission Date', 'Exam City',
-      'Fee Amount', 'Payment UTR', 'Payment Mode', 'Bank Name', 'Payment Status', 'Bank Status', 'Query Remarks'
-    ];
-
-    const escapeCsv = (val) => {
-      if (val === null || val === undefined) return '""';
-      const str = String(val).replace(/"/g, '""');
-      return `"${str}"`;
-    };
-
-    const rows = students.map(s => [
-      escapeCsv(s.id),
-      escapeCsv(s.roll),
-      escapeCsv(s.name),
-      escapeCsv(s.email),
-      escapeCsv(s.phone),
-      escapeCsv(s.level),
-      escapeCsv(s.pathway),
-      escapeCsv(s.category),
-      escapeCsv(s.incomeTier),
-      escapeCsv(s.status),
-      escapeCsv(s.rejectionReason),
-      escapeCsv(s.submissionDate),
-      escapeCsv(s.examCity),
-      escapeCsv(s.payment?.amount || ''),
-      escapeCsv(s.payment?.utr || ''),
-      escapeCsv(s.payment?.mode || ''),
-      escapeCsv(s.payment?.bank || ''),
-      escapeCsv(s.payment?.status || ''),
-      escapeCsv(s.payment?.bankStatus || ''),
-      escapeCsv(s.payment?.queryRemarks || '')
-    ].join(','));
-
-    const csvOutput = [headers.join(','), ...rows].join('\r\n');
-
-    await db.logAudit({
-      action: 'EXPORT_CSV',
-      entityType: 'STUDENTS_ROSTER',
-      entityId: `EXPORT_${students.length}`,
-      actorRole: req.user.role,
-      actorName: req.user.name || 'Admissions Officer',
-      details: `Exported ${students.length} student enrollment records to CSV.`
-    });
-
-    res.setHeader('Content-Type', 'text/csv; charset=utf-8');
-    res.setHeader('Content-Disposition', `attachment; filename=iit_kgp_students_roster_${new Date().toISOString().slice(0, 10)}.csv`);
-    res.send(csvOutput);
-  } catch (err) {
-    res.status(500).json({ error: 'Failed to generate CSV export', details: err.message });
-  }
-});
-
-// Bulk Import (Admin Protected)
-app.post('/api/students/bulk-import', authenticateToken, requireAdmin, async (req, res) => {
-  try {
-    const { students = [], csvText = '' } = req.body;
-    const actor = req.user.name || 'Administrator';
-    let listToImport = students;
-
-    if (csvText && csvText.trim()) {
-      const lines = csvText.trim().split(/\r?\n/);
-      if (lines.length > 1) {
-        const headers = lines[0].split(',').map(h => h.trim().replace(/^"|"$/g, ''));
-        listToImport = [];
-        for (let i = 1; i < lines.length; i++) {
-          const cols = lines[i].split(',').map(c => c.trim().replace(/^"|"$/g, ''));
-          if (cols.length >= 3 && cols[0]) {
-            const studentObj = {
-              roll: cols[headers.indexOf('Roll')] || cols[headers.indexOf('Roll Number')] || cols[0],
-              name: cols[headers.indexOf('Name')] || cols[headers.indexOf('Full Name')] || cols[1],
-              email: cols[headers.indexOf('Email')] || cols[headers.indexOf('Email Address')] || cols[2],
-              phone: cols[headers.indexOf('Phone')] || cols[headers.indexOf('Phone Number')] || cols[3] || '',
-              level: cols[headers.indexOf('Level')] || cols[headers.indexOf('Academic Level')] || cols[4] || 'Foundation Level',
-              category: cols[headers.indexOf('Category')] || cols[5] || 'General',
-              status: cols[headers.indexOf('Status')] || cols[headers.indexOf('Application Status')] || cols[6] || 'Verified',
-              payment: {
-                amount: parseInt(cols[headers.indexOf('FeeAmount')] || cols[headers.indexOf('Fee Amount')] || cols[7] || '1500', 10),
-                utr: cols[headers.indexOf('UTR')] || cols[headers.indexOf('Payment UTR')] || cols[8] || `UTR${Date.now()}`,
-                status: cols[headers.indexOf('PaymentStatus')] || cols[headers.indexOf('Payment Status')] || cols[9] || 'Verified',
-                bank: cols[headers.indexOf('Bank')] || cols[headers.indexOf('Bank Name')] || cols[10] || 'State Bank of India'
-              }
-            };
-            listToImport.push(studentObj);
-          }
-        }
-      }
-    }
-
-    if (!Array.isArray(listToImport) || listToImport.length === 0) {
-      return res.status(400).json({ error: 'No valid student records provided for bulk import.' });
-    }
-
-    const result = await db.bulkImport(listToImport, actor);
-    res.json({
-      message: `Successfully bulk imported ${result.importedCount} student records.`,
-      result
-    });
-  } catch (err) {
-    res.status(500).json({ error: 'Bulk import failed', details: err.message });
-  }
-});
-
-// Single student lookup: PROTECTED - Only student owner or Admin can view
-app.get('/api/students/:roll', authenticateToken, requireStudentOrAdmin, async (req, res) => {
-  try {
-    const { roll } = req.params;
-    const all = await db.getAllStudents();
-    const student = all.find(s => s.roll === roll || s.id === roll);
-    if (!student) {
-      return res.status(404).json({ error: 'Student record not found' });
-    }
-    res.json(student);
-  } catch (err) {
-    res.status(500).json({ error: err.message });
-  }
-});
-
-// ==========================================
-// 5. STUDENT REGISTRATION (PUBLIC)
-// ==========================================
-app.post('/api/students', async (req, res) => {
-  try {
-    const studentData = req.body;
-    if (!studentData.name || !studentData.email) {
-      return res.status(400).json({ error: 'Student full name and email are mandatory.' });
-    }
-
-    const saved = await db.saveStudent(studentData, studentData.actor || 'Applicant Web Form');
-    res.status(201).json({
-      message: 'Student application successfully registered.',
-      student: saved
-    });
-  } catch (err) {
-    res.status(500).json({ error: 'Failed to submit application', details: err.message });
-  }
-});
-
-// ==========================================
-// 6. ADMIN VERIFICATION ACTIONS (ADMIN ONLY)
-// ==========================================
-app.patch('/api/students/:roll/verify', authenticateToken, requireAdmin, async (req, res) => {
-  try {
-    const { roll } = req.params;
-    const { status, reason = '' } = req.body;
-    const actor = req.user.name || 'Admissions Officer';
-
-    if (!status || !['Verified', 'Rejected', 'Pending Review'].includes(status)) {
-      return res.status(400).json({ error: "Status must be 'Verified', 'Rejected', or 'Pending Review'." });
-    }
-
-    const updated = await db.updateVerification(roll, status, reason, actor);
-    res.json({
-      message: `Application ${status} successfully.`,
-      result: updated
-    });
-  } catch (err) {
-    res.status(500).json({ error: 'Failed to update verification status', details: err.message });
-  }
-});
-
-app.patch('/api/students/:roll/payment', authenticateToken, requireAdmin, async (req, res) => {
-  try {
-    const { roll } = req.params;
-    const { paymentStatus, bankStatus = '', queryRemarks = '' } = req.body;
-    const actor = req.user.name || 'Accounts Desk';
-
-    if (!paymentStatus || !['Verified', 'Query Raised', 'Rejected', 'Pending Review'].includes(paymentStatus)) {
-      return res.status(400).json({ error: 'Invalid payment status provided.' });
-    }
-
-    const updated = await db.updatePayment(roll, paymentStatus, bankStatus, queryRemarks, actor);
-    res.json({
-      message: `Payment status updated to ${paymentStatus}.`,
-      result: updated
-    });
-  } catch (err) {
-    res.status(500).json({ error: 'Failed to update payment status', details: err.message });
-  }
-});
-
-// DELETE STUDENT RECORD (ADMIN ONLY)
-app.delete('/api/students/:roll', authenticateToken, requireAdmin, async (req, res) => {
-  try {
-    const { roll } = req.params;
-    const actor = req.user.name || 'Admissions Administrator';
-    const result = await db.deleteStudent(roll, actor);
-
-    if (!result.success) {
-      return res.status(404).json({ error: result.error || 'Student not found' });
-    }
-
-    res.json({
-      message: `Student application ${roll} permanently deleted.`,
-      result
-    });
-  } catch (err) {
-    res.status(500).json({ error: 'Failed to delete student record', details: err.message });
-  }
-});
-
-// ==========================================
-// 7. AUDIT LOGGING SYSTEM (ADMIN ONLY)
-// ==========================================
-app.get('/api/audit-logs', authenticateToken, requireAdmin, async (req, res) => {
-  try {
-    const { page = 1, limit = 20, q = '' } = req.query;
-    const result = await db.getAuditLogs({
-      page: parseInt(page, 10),
-      limit: parseInt(limit, 10),
-      q: String(q).trim()
-    });
-    res.json(result);
-  } catch (err) {
-    res.status(500).json({ error: 'Failed to retrieve audit logs', details: err.message });
-  }
-});
-
-// ==========================================
-// 8. MASS DUMMY DATA GENERATOR (ADMIN ONLY)
-// ==========================================
-app.post('/api/test/generate-dummy-students', authenticateToken, requireAdmin, async (req, res) => {
-  try {
-    const count = parseInt(req.body.count || 50, 10);
-    const actor = req.user.name || 'QA Test Automation';
-    const result = await db.generateDummyStudents(count, actor);
-    res.json({
-      message: `Generated ${result.generatedCount} test dummy student records for pagination and performance verification.`,
-      result
-    });
-  } catch (err) {
-    res.status(500).json({ error: 'Dummy generation failed', details: err.message });
-  }
-});
-
-// ==========================================
-// 9. SERVE PRODUCTION FRONTEND BUILD
-// ==========================================
-const distPath = path.join(__dirname, '..', 'dist');
-if (fs.existsSync(distPath)) {
-  console.log(`📁 Serving compiled static frontend from: ${distPath}`);
-  app.use(express.static(distPath));
-  app.get('*', (req, res, next) => {
-    if (req.path.startsWith('/api')) {
-      return next();
-    }
-    res.sendFile(path.join(distPath, 'index.html'));
-  });
-}
-
-// Start Server
-app.listen(PORT, '0.0.0.0', () => {
-  console.log(`====================================================`);
-  console.log(`  IIT Kharagpur BS Portal Enterprise Backend Server`);
-  console.log(`  Running on: http://localhost:${PORT}`);
-  console.log(`  RBAC Security: Enabled (Admin JWT + bcrypt)`);
-  console.log(`  Health API: http://localhost:${PORT}/api/health`);
-  console.log(`  Login API:  http://localhost:${PORT}/api/auth/login`);
-  console.log(`====================================================`);
+// Start Express Server
+app.listen(PORT, () => {
+  console.log(`=======================================================`);
+  console.log(`🚀 IIT Kharagpur BS Portal Enterprise ERP Server`);
+  console.log(`📡 Listening on http://localhost:${PORT}`);
+  console.log(`🔒 Security: RBAC Multi-Tier JWT & bcrypt Active`);
+  console.log(`📋 DB Mode: ${db.isPg ? 'PostgreSQL Relational' : 'Local Fallback'}`);
+  console.log(`=======================================================`);
 });

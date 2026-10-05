@@ -14,6 +14,7 @@ import StudentPortalModal from './components/student/StudentPortalModal';
 import AdminPortalModal from './components/admin/AdminPortalModal';
 import SignUpWizardModal from './components/student/SignUpWizardModal';
 import SampleCertificateModal from './components/SampleCertificateModal';
+import HowToApplyModal from './components/HowToApplyModal';
 import StudentLoginPage from './pages/StudentLoginPage';
 import AdminLoginPage from './pages/AdminLoginPage';
 import QualifierRoundPortal from './components/qualifier/QualifierRoundPortal';
@@ -35,6 +36,7 @@ export default function App() {
   const [showAdminModal, setShowAdminModal] = useState(false);
   const [showSignUp, setShowSignUp] = useState(false);
   const [showCertificate, setShowCertificate] = useState(false);
+  const [showHowToApply, setShowHowToApply] = useState(false);
 
   // Sync with browser hash
   useEffect(() => {
@@ -54,6 +56,8 @@ export default function App() {
         setShowStudentModal(true);
       } else if (hash === 'diagram') {
         setShowDiagram(true);
+      } else if (hash === 'how-to-apply' || hash === 'howapply') {
+        setShowHowToApply(true);
       } else {
         setCurrentView('home');
       }
@@ -154,6 +158,7 @@ export default function App() {
             onOpenDiagram={() => setShowDiagram(true)}
             onOpenSignUp={() => navigateTo('student-login')}
             onOpenCertificate={() => setShowCertificate(true)}
+            onOpenHowToApply={() => setShowHowToApply(true)}
             currentView={currentView}
           />
 
@@ -237,6 +242,13 @@ export default function App() {
       <SampleCertificateModal
         isOpen={showCertificate}
         onClose={() => setShowCertificate(false)}
+      />
+
+      {/* 5. How to Apply Official Guide Modal */}
+      <HowToApplyModal
+        isOpen={showHowToApply}
+        onClose={() => setShowHowToApply(false)}
+        onStartApplication={() => navigateTo('student-login')}
       />
 
       {/* 5. Bottom-Right Floating AI Admissions Chatbot */}
