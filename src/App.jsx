@@ -22,11 +22,12 @@ import QualifierRoundPortal from './components/qualifier/QualifierRoundPortal';
 import QualifierExamEngine from './components/exam/QualifierExamEngine';
 import AdmissionsChatbot from './components/chat/AdmissionsChatbot';
 import AdminPortalPage from './pages/AdminPortalPage';
+import StudentErpPortal from './pages/StudentErpPortal';
 import { clearAdminSession, getCurrentAdminUser, getAdminToken } from './services/apiService';
 import { ArrowLeft, Layers, ShieldCheck, UserCheck, Award, Home, Sparkles, BookOpen } from 'lucide-react';
 
 export default function App() {
-  // Navigation View: 'home' | 'structure' | 'eligibility' | 'fees' | 'campus' | 'faqs' | 'contact' | 'director' | 'qualifier' | 'exam' | 'student-login' | 'admin-login' | 'admin-portal'
+  // Navigation View: 'home' | 'structure' | 'eligibility' | 'fees' | 'campus' | 'faqs' | 'contact' | 'director' | 'qualifier' | 'exam' | 'student-login' | 'admin-login' | 'admin-portal' | 'student-erp'
   const [currentView, setCurrentView] = useState('home');
   const [examCandidate, setExamCandidate] = useState({ name: 'Candidate', roll: 'KGP-QUAL-2026-0842' });
   const [loggedInStudent, setLoggedInStudent] = useState(null);
@@ -45,7 +46,9 @@ export default function App() {
       const rawHash = window.location.hash.replace(/^#\/?/, '');
       const hash = rawHash.toLowerCase();
 
-      if (hash.startsWith('student-login') || hash.startsWith('auth') || hash.startsWith('login') || hash.startsWith('apply') || hash.startsWith('signup')) {
+      if (hash.startsWith('student-erp') || hash === 'erp' || hash === 'student-portal' || hash === 'lms') {
+        setCurrentView('student-erp');
+      } else if (hash.startsWith('student-login') || hash.startsWith('auth') || hash.startsWith('login') || hash.startsWith('apply') || hash.startsWith('signup')) {
         setCurrentView('student-login');
       } else if (hash === 'admin' || hash === 'admin-login') {
         setCurrentView('admin-login');
@@ -71,8 +74,6 @@ export default function App() {
         setCurrentView('director');
       } else if (hash === 'how-to-apply' || hash === 'howapply') {
         setShowHowToApply(true);
-      } else if (hash === 'student-portal') {
-        setShowStudentModal(true);
       } else if (hash === 'diagram') {
         setShowDiagram(true);
       } else {
@@ -103,7 +104,12 @@ export default function App() {
       name: studentData.name || prev.name,
       email: studentData.email || ''
     }));
-    navigateTo('qualifier');
+    navigateTo('student-erp');
+  };
+
+  const handleStudentLogout = () => {
+    setLoggedInStudent(null);
+    navigateTo('home');
   };
 
   const handleAdminLoginSuccess = () => {
@@ -141,11 +147,21 @@ export default function App() {
       {/* VIEW 3: DEDICATED STUDENT LOGIN & QUALIFIER APPLY PAGE */}
       {currentView === 'student-login' && (
         <StudentLoginPage
-          onLoginSuccess={() => setShowStudentModal(true)}
+          onLoginSuccess={() => navigateTo('student-erp')}
           onBackToHome={() => navigateTo('home')}
           onOpenSignUp={() => navigateTo('student-login')}
           onOpenQualifier={() => navigateTo('qualifier')}
+          onOpenErp={() => navigateTo('student-erp')}
           onGoogleLogin={handleGoogleLogin}
+        />
+      )}
+
+      {/* VIEW 3.5: INTEGRATED STUDENT ERP & LMS PORTAL (Admission Journey, Fees, LMS 4-Courses, Qualifier CBT Exam) */}
+      {currentView === 'student-erp' && (
+        <StudentErpPortal
+          candidate={loggedInStudent}
+          onBackToHome={() => navigateTo('home')}
+          onLogout={handleStudentLogout}
         />
       )}
 
@@ -212,8 +228,9 @@ export default function App() {
           </div>
           <CourseStructure onOpenCertificate={() => setShowCertificate(true)} />
           <Footer
+            onNavigate={navigateTo}
             onOpenDiagram={() => setShowDiagram(true)}
-            onOpenStudentLogin={() => setShowStudentModal(true)}
+            onOpenStudentLogin={() => navigateTo('student-erp')}
             onOpenAdminLogin={() => navigateTo('admin-login')}
             onOpenCertificate={() => setShowCertificate(true)}
           />
@@ -258,8 +275,9 @@ export default function App() {
           </div>
           <EligibilityPathways onOpenSignUp={() => navigateTo('student-login')} />
           <Footer
+            onNavigate={navigateTo}
             onOpenDiagram={() => setShowDiagram(true)}
-            onOpenStudentLogin={() => setShowStudentModal(true)}
+            onOpenStudentLogin={() => navigateTo('student-erp')}
             onOpenAdminLogin={() => navigateTo('admin-login')}
             onOpenCertificate={() => setShowCertificate(true)}
           />
@@ -304,8 +322,9 @@ export default function App() {
           </div>
           <FeesStructure />
           <Footer
+            onNavigate={navigateTo}
             onOpenDiagram={() => setShowDiagram(true)}
-            onOpenStudentLogin={() => setShowStudentModal(true)}
+            onOpenStudentLogin={() => navigateTo('student-erp')}
             onOpenAdminLogin={() => navigateTo('admin-login')}
             onOpenCertificate={() => setShowCertificate(true)}
           />
@@ -350,8 +369,9 @@ export default function App() {
           </div>
           <CampusLifePlacement />
           <Footer
+            onNavigate={navigateTo}
             onOpenDiagram={() => setShowDiagram(true)}
-            onOpenStudentLogin={() => setShowStudentModal(true)}
+            onOpenStudentLogin={() => navigateTo('student-erp')}
             onOpenAdminLogin={() => navigateTo('admin-login')}
             onOpenCertificate={() => setShowCertificate(true)}
           />
@@ -396,8 +416,9 @@ export default function App() {
           </div>
           <FaqSection />
           <Footer
+            onNavigate={navigateTo}
             onOpenDiagram={() => setShowDiagram(true)}
-            onOpenStudentLogin={() => setShowStudentModal(true)}
+            onOpenStudentLogin={() => navigateTo('student-erp')}
             onOpenAdminLogin={() => navigateTo('admin-login')}
             onOpenCertificate={() => setShowCertificate(true)}
           />
@@ -442,8 +463,9 @@ export default function App() {
           </div>
           <ContactSection />
           <Footer
+            onNavigate={navigateTo}
             onOpenDiagram={() => setShowDiagram(true)}
-            onOpenStudentLogin={() => setShowStudentModal(true)}
+            onOpenStudentLogin={() => navigateTo('student-erp')}
             onOpenAdminLogin={() => navigateTo('admin-login')}
             onOpenCertificate={() => setShowCertificate(true)}
           />
@@ -491,8 +513,9 @@ export default function App() {
             onOpenSignUp={() => navigateTo('student-login')}
           />
           <Footer
+            onNavigate={navigateTo}
             onOpenDiagram={() => setShowDiagram(true)}
-            onOpenStudentLogin={() => setShowStudentModal(true)}
+            onOpenStudentLogin={() => navigateTo('student-erp')}
             onOpenAdminLogin={() => navigateTo('admin-login')}
             onOpenCertificate={() => setShowCertificate(true)}
           />
@@ -552,8 +575,9 @@ export default function App() {
 
           {/* Clean Institutional Footer */}
           <Footer
+            onNavigate={navigateTo}
             onOpenDiagram={() => setShowDiagram(true)}
-            onOpenStudentLogin={() => setShowStudentModal(true)}
+            onOpenStudentLogin={() => navigateTo('student-erp')}
             onOpenAdminLogin={() => navigateTo('admin-login')}
             onOpenCertificate={() => setShowCertificate(true)}
           />

@@ -4,7 +4,7 @@ import { IIT_KGP_INFO } from '../data/portalData';
 import iitKgpLogo from '../assets/logo';
 import { getErpLoginUrl } from '../config/portalConfig';
 
-export default function Footer({ onOpenDiagram, onOpenStudentLogin, onOpenAdminLogin, onOpenCertificate }) {
+export default function Footer({ onOpenDiagram, onOpenStudentLogin, onOpenAdminLogin, onOpenCertificate, onNavigate }) {
   return (
     <footer className="bg-kgp-darknavy text-white pt-14 pb-8 border-t-4 border-kgp-crimson">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -98,32 +98,36 @@ export default function Footer({ onOpenDiagram, onOpenStudentLogin, onOpenAdminL
             <span className="text-slate-400">UGC / MoE Approved BS Degree</span>
             <span>•</span>
             <div className="inline-flex items-center gap-2">
-              <a
-                href={getErpLoginUrl('student')}
-                className="text-slate-400 hover:text-emerald-400 transition flex items-center gap-1 font-semibold"
-                title="Student LMS Portal Login"
+              <button
+                type="button"
+                onClick={() => onNavigate ? onNavigate('student-erp') : (onOpenStudentLogin ? onOpenStudentLogin() : null)}
+                className="text-slate-400 hover:text-emerald-400 transition flex items-center gap-1 font-semibold cursor-pointer"
+                title="Student LMS & ERP Portal"
               >
                 <GraduationCap className="w-3 h-3 text-emerald-400" />
                 <span>Student LMS</span>
-              </a>
+              </button>
               <span>•</span>
               <a
                 href={getErpLoginUrl('employee')}
+                target="_blank"
+                rel="noreferrer"
                 className="text-slate-400 hover:text-sky-400 transition flex items-center gap-1 font-semibold"
-                title="Staff Operations Portal Login"
+                title="Staff Operations Portal"
               >
                 <Lock className="w-3 h-3 text-sky-400" />
                 <span>Staff Portal</span>
               </a>
               <span>•</span>
-              <a
-                href={getErpLoginUrl('admin')}
-                className="text-slate-400 hover:text-amber-400 transition flex items-center gap-1 font-semibold"
+              <button
+                type="button"
+                onClick={() => onNavigate ? onNavigate('admin-login') : (onOpenAdminLogin ? onOpenAdminLogin() : null)}
+                className="text-slate-400 hover:text-amber-400 transition flex items-center gap-1 font-semibold cursor-pointer"
                 title="Super Admin Directorate Login"
               >
                 <ShieldCheck className="w-3 h-3 text-amber-400" />
                 <span>Admin</span>
-              </a>
+              </button>
             </div>
           </div>
         </div>

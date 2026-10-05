@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { 
   ArrowLeft, Lock, Mail, User, ShieldCheck, Key, 
   HelpCircle, Eye, EyeOff, CheckCircle2, Award, ExternalLink,
-  Sparkles, Phone, ChevronRight, Check, X, AlertTriangle
+  Sparkles, Phone, ChevronRight, Check, X, AlertTriangle, GraduationCap
 } from 'lucide-react';
 import { IIT_KGP_INFO } from '../data/portalData';
 import iitKgpLogo from '../assets/logo';
@@ -13,6 +13,7 @@ export default function StudentLoginPage({
   onBackToHome, 
   onOpenSignUp, 
   onOpenQualifier,
+  onOpenErp,
   onGoogleLogin 
 }) {
   // Tracker Modal state
@@ -93,7 +94,21 @@ export default function StudentLoginPage({
 
   const handleRollLoginSubmit = (e) => {
     e.preventDefault();
-    onLoginSuccess();
+    if (identifier.trim()) {
+      try {
+        const existing = localStorage.getItem('iitkgp_erp_student');
+        const parsed = existing ? JSON.parse(existing) : {};
+        localStorage.setItem('iitkgp_erp_student', JSON.stringify({
+          ...parsed,
+          rollNo: identifier.trim()
+        }));
+      } catch (err) {}
+    }
+    if (onOpenErp) {
+      onOpenErp();
+    } else {
+      onLoginSuccess();
+    }
   };
 
   return (
@@ -181,10 +196,25 @@ export default function StudentLoginPage({
                 <button
                   type="button"
                   onClick={() => setShowTrackerModal(true)}
-                  className="w-full py-3 px-4 bg-emerald-50 hover:bg-emerald-100 border border-emerald-300 rounded-xl transition flex items-center justify-center gap-2 text-xs font-bold text-emerald-900 shadow-2xs"
+                  className="w-full py-3 px-4 bg-emerald-50 hover:bg-emerald-100 border border-emerald-300 rounded-xl transition flex items-center justify-center gap-2 text-xs font-bold text-emerald-900 shadow-2xs cursor-pointer"
                 >
                   <ShieldCheck className="w-4 h-4 text-emerald-700" />
                   <span>Already Applied? Track Application &amp; Payment Status</span>
+                </button>
+              </div>
+
+              {/* Direct Access to Student ERP & LMS Portal */}
+              <div className="pt-1">
+                <button
+                  type="button"
+                  onClick={() => {
+                    if (onOpenErp) onOpenErp();
+                    else onLoginSuccess();
+                  }}
+                  className="w-full py-3 px-4 bg-gradient-to-r from-emerald-600 to-teal-700 hover:from-emerald-700 hover:to-teal-800 text-white rounded-xl transition flex items-center justify-center gap-2 text-xs font-bold shadow-md cursor-pointer"
+                >
+                  <GraduationCap className="w-4 h-4 text-emerald-200" />
+                  <span>Enrolled Student? Enter Student ERP &amp; LMS Portal</span>
                 </button>
               </div>
 
