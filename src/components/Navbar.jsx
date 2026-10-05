@@ -287,23 +287,23 @@ export default function Navbar({
                   onMouseLeave={() => closeDropdownWithDelay('academics', 350)}
                 >
                   <div className="bg-white rounded-2xl shadow-xl border border-slate-200 py-2.5">
-                    <a href="#structure" onClick={() => { onNavigate('home'); setAcademicsDropdown(false); }} className="block px-4 py-2 hover:bg-slate-50 text-slate-800 hover:text-kgp-crimson transition">
+                    <a href="#structure" onClick={() => { onNavigate('structure'); setAcademicsDropdown(false); }} className="block px-4 py-2 hover:bg-slate-50 text-slate-800 hover:text-kgp-crimson transition">
                       <div className="font-bold text-xs">Course Structure</div>
                       <div className="text-[11px] text-slate-500">Foundation, Diploma, BSc &amp; BS (4 Levels)</div>
                     </a>
-                    <a href="#structure" onClick={() => { onNavigate('home'); setAcademicsDropdown(false); }} className="block px-4 py-2 hover:bg-slate-50 text-slate-800 hover:text-kgp-crimson transition">
+                    <a href="#structure" onClick={() => { onNavigate('structure'); setAcademicsDropdown(false); }} className="block px-4 py-2 hover:bg-slate-50 text-slate-800 hover:text-kgp-crimson transition">
                       <div className="font-bold text-xs">DS &amp; AI Syllabus Roadmap</div>
                       <div className="text-[11px] text-slate-500">142 Credits modular curriculum</div>
                     </a>
-                    <a href="#structure" onClick={() => { onNavigate('home'); setAcademicsDropdown(false); }} className="block px-4 py-2 hover:bg-slate-50 text-slate-800 hover:text-kgp-crimson transition">
+                    <a href="#structure" onClick={() => { onNavigate('structure'); setAcademicsDropdown(false); }} className="block px-4 py-2 hover:bg-slate-50 text-slate-800 hover:text-kgp-crimson transition">
                       <div className="font-bold text-xs">Academic Aspects</div>
                       <div className="text-[11px] text-slate-500">Online video lectures &amp; offline proctored exams</div>
                     </a>
-                    <a href="#campus" onClick={() => { onNavigate('home'); setAcademicsDropdown(false); }} className="block px-4 py-2 hover:bg-slate-50 text-slate-800 hover:text-kgp-crimson transition">
+                    <a href="#campus" onClick={() => { onNavigate('campus'); setAcademicsDropdown(false); }} className="block px-4 py-2 hover:bg-slate-50 text-slate-800 hover:text-kgp-crimson transition">
                       <div className="font-bold text-xs">Central Library Access</div>
                       <div className="text-[11px] text-slate-500">Physical campus library &amp; digital IEEE/ACM access</div>
                     </a>
-                    <a href="#campus" onClick={() => { onNavigate('home'); setAcademicsDropdown(false); }} className="block px-4 py-2 hover:bg-slate-50 text-slate-800 hover:text-kgp-crimson transition">
+                    <a href="#campus" onClick={() => { onNavigate('campus'); setAcademicsDropdown(false); }} className="block px-4 py-2 hover:bg-slate-50 text-slate-800 hover:text-kgp-crimson transition">
                       <div className="flex items-center justify-between">
                         <span className="font-bold text-xs">Alumni Status</span>
                         <span className="text-[9px] font-bold px-1.5 py-0.5 rounded bg-amber-100 text-amber-900 border border-amber-200">Only Degree Level</span>
@@ -367,12 +367,12 @@ export default function Navbar({
                       <div className="text-[11px] text-slate-500">Register, Pay &amp; Take Computer-Based Exam</div>
                     </button>
 
-                    <a href="#eligibility" onClick={() => { onNavigate('home'); setAdmissionsDropdown(false); }} className="block px-4 py-2 hover:bg-slate-50 text-slate-800 hover:text-amber-800 transition">
+                    <a href="#eligibility" onClick={() => { onNavigate('eligibility'); setAdmissionsDropdown(false); }} className="block px-4 py-2 hover:bg-slate-50 text-slate-800 hover:text-amber-800 transition">
                       <div className="font-bold text-xs">Direct Admission Pathways</div>
                       <div className="text-[11px] text-slate-500">WBJEE / JEE Advanced / Tripura JEE Ranks</div>
                     </a>
 
-                    <a href="#fees" onClick={() => { onNavigate('home'); setAdmissionsDropdown(false); }} className="block px-4 py-2 hover:bg-slate-50 text-slate-800 hover:text-kgp-crimson transition border-t border-slate-100 mt-1">
+                    <a href="#fees" onClick={() => { onNavigate('fees'); setAdmissionsDropdown(false); }} className="block px-4 py-2 hover:bg-slate-50 text-slate-800 hover:text-kgp-crimson transition border-t border-slate-100 mt-1">
                       <div className="font-bold text-xs">Fee &amp; Scholarship Calculator</div>
                       <div className="text-[11px] text-slate-500">Modular pay-per-credit with up to 75% fee waivers</div>
                     </a>
@@ -402,22 +402,22 @@ export default function Navbar({
                   onMouseLeave={() => closeDropdownWithDelay('campus', 350)}
                 >
                   <div className="bg-white rounded-2xl shadow-xl border border-slate-200 py-2.5">
-                    <a href="#campus" onClick={() => { onNavigate('home'); setCampusDropdown(false); }} className="block px-4 py-2 hover:bg-slate-50 text-slate-800 hover:text-kgp-crimson transition">
+                    <a href="#campus" onClick={() => { onNavigate('campus'); setCampusDropdown(false); }} className="block px-4 py-2 hover:bg-slate-50 text-slate-800 hover:text-kgp-crimson transition">
                       <div className="font-bold text-xs">About IIT Kharagpur</div>
                       <div className="text-[11px] text-slate-500">Estd. 1951 • India's First &amp; Premier IIT</div>
                     </a>
-                    <a href="#director-message" onClick={() => { onNavigate('home'); setCampusDropdown(false); }} className="block px-4 py-2 hover:bg-amber-50 text-amber-900 transition">
+                    <a href="#director-message" onClick={() => { onNavigate('director'); setCampusDropdown(false); }} className="block px-4 py-2 hover:bg-amber-50 text-amber-900 transition">
                       <div className="font-bold text-xs flex items-center justify-between">
                         <span>Director's Message</span>
                         <span className="text-[9px] font-bold bg-amber-100 text-amber-900 px-1.5 py-0.5 rounded">TOI Feature</span>
                       </div>
                       <div className="text-[11px] text-slate-500">Vision of Prof. Suman Chakraborty, Director</div>
                     </a>
-                    <a href="#campus" onClick={() => { onNavigate('home'); setCampusDropdown(false); }} className="block px-4 py-2 hover:bg-slate-50 text-slate-800 hover:text-kgp-crimson transition">
+                    <a href="#campus" onClick={() => { onNavigate('campus'); setCampusDropdown(false); }} className="block px-4 py-2 hover:bg-slate-50 text-slate-800 hover:text-kgp-crimson transition">
                       <div className="font-bold text-xs">Campus Immersion</div>
                       <div className="text-[11px] text-slate-500">Annual Fest &amp; on-campus immersion at Kharagpur</div>
                     </a>
-                    <a href="#campus" onClick={() => { onNavigate('home'); setCampusDropdown(false); }} className="block px-4 py-2 hover:bg-slate-50 text-slate-800 hover:text-kgp-crimson transition border-t border-slate-100 mt-1">
+                    <a href="#campus" onClick={() => { onNavigate('campus'); setCampusDropdown(false); }} className="block px-4 py-2 hover:bg-slate-50 text-slate-800 hover:text-kgp-crimson transition border-t border-slate-100 mt-1">
                       <div className="font-bold text-xs">Internship &amp; Placement</div>
                       <div className="text-[11px] text-slate-500">Dedicated career placement cell &amp; industry ecosystem</div>
                     </a>
@@ -447,11 +447,11 @@ export default function Navbar({
                   onMouseLeave={() => closeDropdownWithDelay('support', 350)}
                 >
                   <div className="bg-white rounded-2xl shadow-xl border border-slate-200 py-2.5">
-                    <a href="#faqs" onClick={() => { onNavigate('home'); setSupportDropdown(false); }} className="block px-4 py-2 hover:bg-slate-50 text-slate-800 hover:text-kgp-crimson transition">
+                    <a href="#faqs" onClick={() => { onNavigate('faqs'); setSupportDropdown(false); }} className="block px-4 py-2 hover:bg-slate-50 text-slate-800 hover:text-kgp-crimson transition">
                       <div className="font-bold text-xs">Frequently Asked Questions</div>
                       <div className="text-[11px] text-slate-500">Bilingual Support (English &amp; বাংলা)</div>
                     </a>
-                    <a href="#contact" onClick={() => { onNavigate('home'); setSupportDropdown(false); }} className="block px-4 py-2 hover:bg-slate-50 text-slate-800 hover:text-kgp-crimson transition">
+                    <a href="#contact" onClick={() => { onNavigate('contact'); setSupportDropdown(false); }} className="block px-4 py-2 hover:bg-slate-50 text-slate-800 hover:text-kgp-crimson transition">
                       <div className="font-bold text-xs">Contact Details</div>
                       <div className="text-[11px] text-slate-500">Admissions email, helpline &amp; campus address</div>
                     </a>
@@ -775,42 +775,42 @@ export default function Navbar({
             </button>
             <a 
               href="#structure" 
-              onClick={() => { onNavigate('home'); setMobileMenuOpen(false); }}
+              onClick={() => { onNavigate('structure'); setMobileMenuOpen(false); }}
               className="block py-2 hover:text-kgp-crimson"
             >
               Course Structure &amp; Syllabus (Data Science &amp; AI)
             </a>
             <a 
               href="#eligibility" 
-              onClick={() => { onNavigate('home'); setMobileMenuOpen(false); }}
+              onClick={() => { onNavigate('eligibility'); setMobileMenuOpen(false); }}
               className="block py-2 hover:text-kgp-crimson font-semibold text-amber-700"
             >
               Direct Admission (WBJEE / JEE Advanced / Tripura JEE)
             </a>
             <a 
               href="#fees" 
-              onClick={() => { onNavigate('home'); setMobileMenuOpen(false); }}
+              onClick={() => { onNavigate('fees'); setMobileMenuOpen(false); }}
               className="block py-2 hover:text-kgp-crimson"
             >
               Fee Structure &amp; Scholarship Calculator
             </a>
             <a 
               href="#director-message" 
-              onClick={() => { onNavigate('home'); setMobileMenuOpen(false); }}
+              onClick={() => { onNavigate('director'); setMobileMenuOpen(false); }}
               className="block py-2 hover:text-kgp-crimson"
             >
               Director's Message (Times of India Exclusive)
             </a>
             <a 
               href="#campus" 
-              onClick={() => { onNavigate('home'); setMobileMenuOpen(false); }}
+              onClick={() => { onNavigate('campus'); setMobileMenuOpen(false); }}
               className="block py-2 hover:text-kgp-crimson"
             >
               Campus Immersion &amp; Placement Cell
             </a>
             <a 
               href="#faqs" 
-              onClick={() => { onNavigate('home'); setMobileMenuOpen(false); }}
+              onClick={() => { onNavigate('faqs'); setMobileMenuOpen(false); }}
               className="block py-2 hover:text-kgp-crimson"
             >
               Frequently Asked Questions (FAQs)

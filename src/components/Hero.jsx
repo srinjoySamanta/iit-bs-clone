@@ -273,6 +273,35 @@ export default function Hero({ onOpenSignUp, onOpenDiagram, onOpenCertificate, o
 
         </div>
 
+        {/* Quick Facts Strip (Identical to IIT Jodhpur BS reference PDF Page 1) */}
+        <div className="mt-10 sm:mt-12 max-w-4xl mx-auto">
+          <div className="bg-white rounded-2xl shadow-md border border-slate-200 grid grid-cols-2 md:grid-cols-5 divide-y md:divide-y-0 md:divide-x divide-slate-200 text-center overflow-hidden">
+            <div className="p-3.5 sm:p-4">
+              <div className="text-[10px] font-bold text-slate-500 uppercase tracking-wider">Entrance Test</div>
+              <div className="text-xs sm:text-sm font-extrabold text-slate-900 mt-0.5">Qualifier 2026</div>
+            </div>
+            <div className="p-3.5 sm:p-4">
+              <div className="text-[10px] font-bold text-slate-500 uppercase tracking-wider">Batch Starts</div>
+              <div className="text-xs sm:text-sm font-extrabold text-slate-900 mt-0.5">Session 2026–27</div>
+            </div>
+            <div className="p-3.5 sm:p-4">
+              <div className="text-[10px] font-bold text-slate-500 uppercase tracking-wider">Duration</div>
+              <div className="text-xs sm:text-sm font-extrabold text-slate-900 mt-0.5">4 Years (Modular)</div>
+            </div>
+            <div className="p-3.5 sm:p-4">
+              <div className="text-[10px] font-bold text-slate-500 uppercase tracking-wider">Mode</div>
+              <div className="text-xs sm:text-sm font-extrabold text-slate-900 mt-0.5">Online + In-Person</div>
+            </div>
+            <div className="p-3.5 sm:p-4 col-span-2 md:col-span-1 bg-amber-50/70">
+              <div className="text-[10px] font-bold text-amber-900 uppercase tracking-wider">Alumni Status*</div>
+              <div className="text-xs sm:text-sm font-black text-kgp-crimson mt-0.5">IIT Kharagpur</div>
+            </div>
+          </div>
+          <p className="text-[11px] text-center text-slate-500 mt-2 italic">
+            *Alumni Status is provided on completion of the full 4-year degree programme as per IIT Kharagpur statutes.
+          </p>
+        </div>
+
       </div>
 
     </section>
