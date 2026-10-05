@@ -18,7 +18,7 @@ import {
 import iitKgpLogo from '../../assets/logo';
 
 export const LoginPage = ({ onNavigate, onBackToHome, initialRole = 'admin' }) => {
-  const { login, logout } = useAuth();
+  const { login, logout, authFetch } = useAuth();
   const [authMode, setAuthMode] = useState('login');
   
   // Login State
@@ -28,6 +28,7 @@ export const LoginPage = ({ onNavigate, onBackToHome, initialRole = 'admin' }) =
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
   const [isPendingNotice, setIsPendingNotice] = useState(false);
+  const [isRejectedNotice, setIsRejectedNotice] = useState(false);
 
   useEffect(() => {
     if (initialRole) {
@@ -64,6 +65,7 @@ export const LoginPage = ({ onNavigate, onBackToHome, initialRole = 'admin' }) =
     setSelectedRoleTab(role);
     setErrorMessage('');
     setIsPendingNotice(false);
+    setIsRejectedNotice(false);
     if (role === 'admin') {
       setUsername('admin');
       setPassword('Admin@123');
@@ -83,6 +85,7 @@ export const LoginPage = ({ onNavigate, onBackToHome, initialRole = 'admin' }) =
     }
     setErrorMessage('');
     setIsPendingNotice(false);
+    setIsRejectedNotice(false);
 
     let loginUser = username.trim();
     let loginPass = password.trim();
@@ -145,8 +148,15 @@ export const LoginPage = ({ onNavigate, onBackToHome, initialRole = 'admin' }) =
     } catch (err) {
       const msg = err.message || 'Authentication failed: Invalid credentials or account unauthorized.';
       setErrorMessage(msg);
-      if (msg.toLowerCase().includes('pending') || msg.toLowerCase().includes('awaiting')) {
+      if (msg.toLowerCase().includes('pending') || msg.toLowerCase().includes('awaiting') || msg.toLowerCase().includes('approval required')) {
         setIsPendingNotice(true);
+        setIsRejectedNotice(false);
+      } else if (msg.toLowerCase().includes('rejected') || msg.toLowerCase().includes('denied')) {
+        setIsRejectedNotice(true);
+        setIsPendingNotice(false);
+      } else {
+        setIsPendingNotice(false);
+        setIsRejectedNotice(false);
       }
     } finally {
       setIsSubmitting(false);
@@ -159,7 +169,7 @@ export const LoginPage = ({ onNavigate, onBackToHome, initialRole = 'admin' }) =
     setRegSubmitting(true);
 
     try {
-      const res = await fetch('/api/auth/register-request', {
+      const res = await authFetch('/api/auth/register-request', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -168,8 +178,14 @@ export const LoginPage = ({ onNavigate, onBackToHome, initialRole = 'admin' }) =
         })
       });
 
-      const data = await res.json();
-      if (!res.ok && !data.request_id) {
+      let data = {};
+      try {
+        data = await res.json();
+      } catch {
+        throw new Error('Authentication gateway returned an unexpected response format. Please try again.');
+      }
+
+      if (!res.ok || data.error) {
         throw new Error(data.error || 'Failed to submit registration request');
       }
 
@@ -354,17 +370,23 @@ export const LoginPage = ({ onNavigate, onBackToHome, initialRole = 'admin' }) =
             {errorMessage && (
               <div className={`p-3.5 rounded-xl text-xs font-semibold flex items-start gap-2.5 ${
                 isPendingNotice
-                  ? 'bg-amber-50 border border-amber-300 text-amber-900'
+                  ? 'bg-amber-50 border-2 border-amber-400 text-amber-950'
+                  : isRejectedNotice
+                  ? 'bg-red-50 border-2 border-red-500 text-red-950'
                   : 'bg-red-50 border border-red-300 text-red-900'
               }`}>
                 {isPendingNotice ? (
                   <Clock className="w-5 h-5 text-amber-600 shrink-0 mt-0.5" />
-                ) : (
+                ) : isRejectedNotice ? (
                   <ShieldAlert className="w-5 h-5 text-red-600 shrink-0 mt-0.5" />
+                ) : (
+                  <AlertCircle className="w-5 h-5 text-red-600 shrink-0 mt-0.5" />
                 )}
                 <div className="space-y-1">
                   <div className="font-bold font-serif">
-                    {isPendingNotice ? 'Registration Pending Admin Verification' : 'Authentication Warning'}
+                    {isPendingNotice && 'Registration Pending Super Admin Verification'}
+                    {isRejectedNotice && 'Registration Request Strictly Rejected'}
+                    {!isPendingNotice && !isRejectedNotice && 'Authentication Warning'}
                   </div>
                   <p className="text-[11px] leading-relaxed font-normal">{errorMessage}</p>
                 </div>
