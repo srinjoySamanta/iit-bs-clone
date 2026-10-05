@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { 
   Menu, X, ExternalLink, ChevronDown, GraduationCap, ShieldCheck, 
-  LogIn, UserPlus, BookOpen, Phone, HelpCircle, User, Home, Sparkles, Globe 
+  LogIn, UserPlus, BookOpen, Phone, HelpCircle, User, Home, Sparkles, Globe,
+  UserCheck, ArrowRight
 } from 'lucide-react';
 import { IIT_KGP_INFO, ANNOUNCEMENT_TICKER } from '../data/portalData';
 import iitKgpLogo from '../assets/logo';
+import { getErpLoginUrl, redirectToErpPortal } from '../config/portalConfig';
 
 export default function Navbar({ 
   onNavigate,
@@ -16,6 +18,7 @@ export default function Navbar({
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [academicsDropdown, setAcademicsDropdown] = useState(false);
   const [admissionsDropdown, setAdmissionsDropdown] = useState(false);
+  const [loginDropdown, setLoginDropdown] = useState(false);
   const [lang, setLang] = useState('en');
 
   useEffect(() => {
@@ -310,6 +313,100 @@ export default function Navbar({
               </div>
             </div>
 
+            {/* Institutional Portal Login Dropdown (Student LMS / Staff Operations / Super Admin) */}
+            <div 
+              className="relative"
+              onMouseEnter={() => setLoginDropdown(true)}
+              onMouseLeave={() => setLoginDropdown(false)}
+            >
+              <button
+                type="button"
+                onClick={() => setLoginDropdown(!loginDropdown)}
+                className="flex items-center space-x-1.5 px-4 py-2.5 text-xs sm:text-sm font-bold text-slate-800 bg-white hover:bg-slate-50 border border-slate-300 hover:border-kgp-crimson rounded-xl shadow-xs transition cursor-pointer"
+                title="IIT KGP Portal Login (Student LMS / Staff Operations / Super Admin)"
+              >
+                <LogIn className="w-4 h-4 text-kgp-crimson" />
+                <span>Portal Login</span>
+                <ChevronDown className={`w-3.5 h-3.5 text-slate-400 transition-transform ${loginDropdown ? 'rotate-180' : ''}`} />
+              </button>
+
+              {loginDropdown && (
+                <div className="absolute right-0 mt-1 w-80 bg-white rounded-2xl shadow-2xl border border-slate-200 py-3 z-50 animate-in fade-in slide-in-from-top-2">
+                  <div className="px-4 pb-2.5 border-b border-slate-100 flex items-center justify-between">
+                    <div>
+                      <div className="text-[10px] font-bold uppercase tracking-wider text-slate-400">Institutional Access Gates</div>
+                      <div className="text-xs font-bold text-slate-900 font-serif">IIT Kharagpur BS ERP &amp; LMS</div>
+                    </div>
+                    <span className="text-[9px] font-mono bg-amber-50 text-amber-800 border border-amber-200 px-1.5 py-0.5 rounded font-bold">ERP Hub</span>
+                  </div>
+
+                  <div className="p-2 space-y-1">
+                    {/* Student Section */}
+                    <a
+                      href={getErpLoginUrl('student')}
+                      className="group flex items-start gap-3 p-2.5 rounded-xl hover:bg-emerald-50 transition border border-transparent hover:border-emerald-200"
+                    >
+                      <div className="w-8 h-8 rounded-lg bg-emerald-100 text-emerald-700 flex items-center justify-center flex-shrink-0 mt-0.5 group-hover:scale-105 transition shadow-2xs">
+                        <GraduationCap className="w-4 h-4" />
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-center justify-between">
+                          <span className="text-xs font-bold text-slate-900 group-hover:text-emerald-800">Student LMS Gate</span>
+                          <span className="text-[9px] font-bold px-1.5 py-0.5 rounded bg-emerald-100 text-emerald-800">Student</span>
+                        </div>
+                        <p className="text-[11px] text-slate-500 line-clamp-1">Learning Hub, video lectures, exams</p>
+                      </div>
+                    </a>
+
+                    {/* Staff Section */}
+                    <a
+                      href={getErpLoginUrl('employee')}
+                      className="group flex items-start gap-3 p-2.5 rounded-xl hover:bg-sky-50 transition border border-transparent hover:border-sky-200"
+                    >
+                      <div className="w-8 h-8 rounded-lg bg-sky-100 text-sky-700 flex items-center justify-center flex-shrink-0 mt-0.5 group-hover:scale-105 transition shadow-2xs">
+                        <UserCheck className="w-4 h-4" />
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-center justify-between">
+                          <span className="text-xs font-bold text-slate-900 group-hover:text-sky-800">Staff Operations Gate</span>
+                          <span className="text-[9px] font-bold px-1.5 py-0.5 rounded bg-sky-100 text-sky-800">Staff</span>
+                        </div>
+                        <p className="text-[11px] text-slate-500 line-clamp-1">Verification queue, tasks, progress</p>
+                      </div>
+                    </a>
+
+                    {/* Admin Section */}
+                    <a
+                      href={getErpLoginUrl('admin')}
+                      className="group flex items-start gap-3 p-2.5 rounded-xl hover:bg-amber-50 transition border border-transparent hover:border-amber-200"
+                    >
+                      <div className="w-8 h-8 rounded-lg bg-amber-100 text-amber-800 flex items-center justify-center flex-shrink-0 mt-0.5 group-hover:scale-105 transition shadow-2xs">
+                        <ShieldCheck className="w-4 h-4" />
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-center justify-between">
+                          <span className="text-xs font-bold text-slate-900 group-hover:text-amber-800">Super Admin Directorate</span>
+                          <span className="text-[9px] font-bold px-1.5 py-0.5 rounded bg-amber-100 text-amber-900">Admin</span>
+                        </div>
+                        <p className="text-[11px] text-slate-500 line-clamp-1">Master console, admissions, cutoffs</p>
+                      </div>
+                    </a>
+                  </div>
+
+                  <div className="px-3 pt-2 border-t border-slate-100 flex items-center justify-between text-[11px]">
+                    <a
+                      href={getErpLoginUrl()}
+                      className="text-kgp-crimson hover:underline font-bold flex items-center gap-1"
+                    >
+                      <span>Unified Login Screen</span>
+                      <ArrowRight className="w-3 h-3" />
+                    </a>
+                    <span className="text-[10px] text-slate-400 font-mono">ERP &amp; LMS</span>
+                  </div>
+                </div>
+              )}
+            </div>
+
             {/* Apply Now */}
             <button
               onClick={() => onNavigate('student-login')}
@@ -322,6 +419,14 @@ export default function Navbar({
 
           {/* Mobile Navigation Controls */}
           <div className="lg:hidden flex items-center space-x-2">
+            <a
+              href={getErpLoginUrl()}
+              className="px-2.5 py-1.5 text-xs font-bold text-slate-800 bg-white border border-slate-300 rounded-lg shadow-2xs flex items-center gap-1"
+              title="Institutional Login"
+            >
+              <LogIn className="w-3.5 h-3.5 text-kgp-crimson" />
+              <span>Login</span>
+            </a>
             <button
               onClick={() => onNavigate('student-login')}
               className="px-3 py-1.5 text-xs font-bold text-white bg-gradient-to-r from-kgp-crimson to-red-800 rounded-lg shadow flex items-center gap-1"
@@ -381,19 +486,51 @@ export default function Navbar({
             </div>
           </div>
 
-          <div className="grid grid-cols-2 gap-2 pt-1 pb-2">
+          {/* Institutional Role Gates (ERP / LMS / Admin) */}
+          <div className="p-3 bg-slate-50 rounded-xl border border-slate-200 space-y-2">
+            <div className="text-[10px] font-bold uppercase tracking-wider text-slate-500 flex items-center justify-between">
+              <span>Institutional Access Gates (ERP)</span>
+              <span className="text-[9px] font-mono text-amber-700 font-bold bg-amber-100/60 px-1.5 py-0.5 rounded">ERP Hub</span>
+            </div>
+            <div className="grid grid-cols-3 gap-1.5 text-center text-xs">
+              <a
+                href={getErpLoginUrl('student')}
+                className="p-2 rounded-lg bg-emerald-50 border border-emerald-200 text-emerald-900 font-bold flex flex-col items-center gap-1 hover:bg-emerald-100 transition shadow-2xs"
+              >
+                <GraduationCap className="w-4 h-4 text-emerald-600" />
+                <span className="text-[11px]">Student</span>
+              </a>
+              <a
+                href={getErpLoginUrl('employee')}
+                className="p-2 rounded-lg bg-sky-50 border border-sky-200 text-sky-900 font-bold flex flex-col items-center gap-1 hover:bg-sky-100 transition shadow-2xs"
+              >
+                <UserCheck className="w-4 h-4 text-sky-600" />
+                <span className="text-[11px]">Staff</span>
+              </a>
+              <a
+                href={getErpLoginUrl('admin')}
+                className="p-2 rounded-lg bg-amber-50 border border-amber-200 text-amber-900 font-bold flex flex-col items-center gap-1 hover:bg-amber-100 transition shadow-2xs"
+              >
+                <ShieldCheck className="w-4 h-4 text-amber-700" />
+                <span className="text-[11px]">Admin</span>
+              </a>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-2 gap-2 pt-1 pb-1">
             <button
               onClick={() => { onNavigate('home'); setMobileMenuOpen(false); }}
               className="w-full py-2 text-xs font-bold text-slate-800 border border-slate-300 rounded-lg bg-slate-50 text-center"
             >
               Home Page
             </button>
-            <button
-              onClick={() => { onNavigate('student-login'); setMobileMenuOpen(false); }}
-              className="w-full py-2 text-xs font-bold text-kgp-crimson border border-kgp-crimson/40 rounded-lg bg-red-50/50 text-center"
+            <a
+              href={getErpLoginUrl()}
+              className="w-full py-2 text-xs font-bold text-kgp-crimson border border-kgp-crimson/40 rounded-lg bg-red-50/50 text-center flex items-center justify-center gap-1"
             >
-              Student Login
-            </button>
+              <LogIn className="w-3.5 h-3.5" />
+              <span>ERP Login Gate</span>
+            </a>
           </div>
 
           <button

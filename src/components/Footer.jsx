@@ -1,7 +1,8 @@
 import React from 'react';
-import { Mail, Phone, MapPin, ExternalLink, ShieldCheck, Award, Lock } from 'lucide-react';
+import { Mail, Phone, MapPin, ExternalLink, ShieldCheck, Award, Lock, GraduationCap } from 'lucide-react';
 import { IIT_KGP_INFO } from '../data/portalData';
 import iitKgpLogo from '../assets/logo';
+import { getErpLoginUrl } from '../config/portalConfig';
 
 export default function Footer({ onOpenDiagram, onOpenStudentLogin, onOpenAdminLogin, onOpenCertificate }) {
   return (
@@ -96,14 +97,34 @@ export default function Footer({ onOpenDiagram, onOpenStudentLogin, onOpenAdminL
             <span>•</span>
             <span className="text-slate-400">UGC / MoE Approved BS Degree</span>
             <span>•</span>
-            <button
-              onClick={onOpenAdminLogin}
-              className="text-slate-400 hover:text-amber-400 transition flex items-center gap-1 font-semibold group cursor-pointer"
-              title="Restricted Staff & Admin Login"
-            >
-              <Lock className="w-3 h-3 text-amber-500/80 group-hover:text-amber-400" />
-              <span>Staff Login</span>
-            </button>
+            <div className="inline-flex items-center gap-2">
+              <a
+                href={getErpLoginUrl('student')}
+                className="text-slate-400 hover:text-emerald-400 transition flex items-center gap-1 font-semibold"
+                title="Student LMS Portal Login"
+              >
+                <GraduationCap className="w-3 h-3 text-emerald-400" />
+                <span>Student LMS</span>
+              </a>
+              <span>•</span>
+              <a
+                href={getErpLoginUrl('employee')}
+                className="text-slate-400 hover:text-sky-400 transition flex items-center gap-1 font-semibold"
+                title="Staff Operations Portal Login"
+              >
+                <Lock className="w-3 h-3 text-sky-400" />
+                <span>Staff Portal</span>
+              </a>
+              <span>•</span>
+              <a
+                href={getErpLoginUrl('admin')}
+                className="text-slate-400 hover:text-amber-400 transition flex items-center gap-1 font-semibold"
+                title="Super Admin Directorate Login"
+              >
+                <ShieldCheck className="w-3 h-3 text-amber-400" />
+                <span>Admin</span>
+              </a>
+            </div>
           </div>
         </div>
 
