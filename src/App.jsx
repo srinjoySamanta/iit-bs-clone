@@ -16,19 +16,23 @@ import AdminPortalModal from './components/admin/AdminPortalModal';
 import SignUpWizardModal from './components/student/SignUpWizardModal';
 import SampleCertificateModal from './components/SampleCertificateModal';
 import HowToApplyModal from './components/HowToApplyModal';
+import { AuthProvider, ThemeProvider } from './context/ErpAuthContext';
+import LoginPage from './pages/auth/LoginPage';
+import AdminPortal from './pages/admin/AdminPortal';
+import EmployeePortal from './pages/employee/EmployeePortal';
+import ErpNavbar from './components/ErpNavbar';
 import StudentLoginPage from './pages/StudentLoginPage';
-import AdminLoginPage from './pages/AdminLoginPage';
 import QualifierRoundPortal from './components/qualifier/QualifierRoundPortal';
 import QualifierExamEngine from './components/exam/QualifierExamEngine';
 import AdmissionsChatbot from './components/chat/AdmissionsChatbot';
-import AdminPortalPage from './pages/AdminPortalPage';
 import StudentErpPortal from './pages/StudentErpPortal';
 import { clearAdminSession, getCurrentAdminUser, getAdminToken } from './services/apiService';
 import { ArrowLeft, Layers, ShieldCheck, UserCheck, Award, Home, Sparkles, BookOpen } from 'lucide-react';
 
 export default function App() {
-  // Navigation View: 'home' | 'structure' | 'eligibility' | 'fees' | 'campus' | 'faqs' | 'contact' | 'director' | 'qualifier' | 'exam' | 'student-login' | 'admin-login' | 'admin-portal' | 'student-erp'
+  // Navigation View: 'home' | 'structure' | 'eligibility' | 'fees' | 'campus' | 'faqs' | 'contact' | 'director' | 'qualifier' | 'exam' | 'student-login' | 'admin-login' | 'admin-portal' | 'staff-portal' | 'student-erp'
   const [currentView, setCurrentView] = useState('home');
+  const [loginRole, setLoginRole] = useState('admin');
   const [examCandidate, setExamCandidate] = useState({ name: 'Candidate', roll: 'KGP-QUAL-2026-0842' });
   const [loggedInStudent, setLoggedInStudent] = useState(null);
   const [isAdminAuthenticated, setIsAdminAuthenticated] = useState(() => Boolean(getAdminToken()));
@@ -46,14 +50,20 @@ export default function App() {
       const rawHash = window.location.hash.replace(/^#\/?/, '');
       const hash = rawHash.toLowerCase();
 
-      if (hash.startsWith('student-erp') || hash === 'erp' || hash === 'student-portal' || hash === 'lms') {
+      if (hash.startsWith('student-erp') || hash === 'erp' || hash === 'student-portal' || hash === 'lms' || hash === 'student/dashboard') {
         setCurrentView('student-erp');
-      } else if (hash.startsWith('student-login') || hash.startsWith('auth') || hash.startsWith('login') || hash.startsWith('apply') || hash.startsWith('signup')) {
-        setCurrentView('student-login');
-      } else if (hash === 'admin' || hash === 'admin-login') {
-        setCurrentView('admin-login');
-      } else if (hash === 'admin-portal' || hash === 'admin-dashboard' || hash === 'admin-students') {
+      } else if (hash === 'admin' || hash === 'admin-portal' || hash === 'admin-dashboard' || hash === 'admin/dashboard' || hash === 'admin-students') {
         setCurrentView('admin-portal');
+      } else if (hash === 'staff' || hash === 'staff-portal' || hash === 'staff/dashboard' || hash === 'employee' || hash === 'employee/dashboard') {
+        setCurrentView('staff-portal');
+      } else if (hash === 'staff-login') {
+        setLoginRole('employee');
+        setCurrentView('admin-login');
+      } else if (hash === 'admin-login' || hash === 'login' || hash === 'erp-login') {
+        setLoginRole('admin');
+        setCurrentView('admin-login');
+      } else if (hash.startsWith('student-login') || hash.startsWith('auth') || hash.startsWith('apply') || hash.startsWith('signup')) {
+        setCurrentView('student-login');
       } else if (hash === 'qualifier') {
         setCurrentView('qualifier');
       } else if (hash === 'exam') {
@@ -124,7 +134,9 @@ export default function App() {
   };
 
   return (
-    <div className="min-h-screen flex flex-col bg-slate-50 text-slate-900 font-sans selection:bg-amber-500 selection:text-white">
+    <AuthProvider>
+      <ThemeProvider>
+        <div className="min-h-screen flex flex-col bg-slate-50 text-slate-900 font-sans selection:bg-amber-500 selection:text-white">
       
       {/* VIEW 1: DEDICATED QUALIFIER ROUND EXAMINATION PORTAL */}
       {currentView === 'qualifier' && (
@@ -165,21 +177,29 @@ export default function App() {
         />
       )}
 
-      {/* VIEW 4: DEDICATED ADMIN LOGIN PAGE */}
+      {/* VIEW 4: ENTERPRISE ISOLATED PORTAL GATEWAY LOGIN (Exact match to Image 2) */}
       {currentView === 'admin-login' && (
-        <AdminLoginPage
-          onLoginSuccess={handleAdminLoginSuccess}
+        <LoginPage
+          initialRole={loginRole}
+          onNavigate={navigateTo}
           onBackToHome={() => navigateTo('home')}
         />
       )}
 
-      {/* VIEW 5: DEDICATED ADMIN PORTAL PAGE */}
+      {/* VIEW 5: MASTER SUPER ADMIN DIRECTORATE CONSOLE (Exact match to Image 3) */}
       {currentView === 'admin-portal' && (
-        <AdminPortalPage
-          onBackToHome={() => navigateTo('home')}
-          onLogout={handleAdminLogout}
-          onOpenAdminModal={() => setShowAdminModal(true)}
-        />
+        <div className="min-h-screen flex flex-col bg-[#f0f7ff] text-slate-800">
+          <ErpNavbar onBackToHome={() => navigateTo('home')} />
+          <AdminPortal />
+        </div>
+      )}
+
+      {/* VIEW 5.5: STAFF OPERATIONS & DOCUMENT VERIFICATION CENTER */}
+      {currentView === 'staff-portal' && (
+        <div className="min-h-screen flex flex-col bg-[#f0f7ff] text-slate-800">
+          <ErpNavbar onBackToHome={() => navigateTo('home')} />
+          <EmployeePortal />
+        </div>
       )}
 
       {/* VIEW 6: DEDICATED COURSE STRUCTURE & SYLLABUS PAGE (Accessed via Hyperlink) */}
@@ -623,6 +643,8 @@ export default function App() {
         />
       )}
 
-    </div>
+        </div>
+      </ThemeProvider>
+    </AuthProvider>
   );
 }

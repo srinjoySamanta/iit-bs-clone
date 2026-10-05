@@ -581,12 +581,13 @@ export default function Navbar({
                       </button>
 
                       {/* Staff Section */}
-                      <a
-                        href={getErpLoginUrl('employee')}
-                        target="_blank"
-                        rel="noreferrer"
-                        onClick={() => setLoginDropdown(false)}
-                        className="group flex items-start gap-3 p-2.5 rounded-xl hover:bg-sky-50 transition border border-transparent hover:border-sky-200"
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setLoginDropdown(false);
+                          onNavigate('staff-login');
+                        }}
+                        className="w-full text-left group flex items-start gap-3 p-2.5 rounded-xl hover:bg-sky-50 transition border border-transparent hover:border-sky-200 cursor-pointer"
                       >
                         <div className="w-8 h-8 rounded-lg bg-sky-100 text-sky-700 flex items-center justify-center flex-shrink-0 mt-0.5 group-hover:scale-105 transition shadow-2xs">
                           <UserCheck className="w-4 h-4" />
@@ -598,7 +599,7 @@ export default function Navbar({
                           </div>
                           <p className="text-[11px] text-slate-500 line-clamp-1">Verification queue, tasks &amp; progress</p>
                         </div>
-                      </a>
+                      </button>
 
                       {/* Admin Section */}
                       <button
@@ -627,7 +628,7 @@ export default function Navbar({
                         type="button"
                         onClick={() => {
                           setLoginDropdown(false);
-                          onNavigate('student-login');
+                          onNavigate('admin-login');
                         }}
                         className="text-kgp-crimson hover:underline font-bold flex items-center gap-1 cursor-pointer"
                       >
@@ -645,7 +646,7 @@ export default function Navbar({
           {/* Mobile Navigation Controls */}
           <div className="lg:hidden flex items-center space-x-2">
             <button
-              onClick={() => onNavigate('student-login')}
+              onClick={() => onNavigate('admin-login')}
               className="px-2.5 py-1.5 text-xs font-bold text-slate-800 bg-white border border-slate-300 rounded-lg shadow-2xs flex items-center gap-1 cursor-pointer"
               title="Institutional Login"
             >
@@ -729,15 +730,17 @@ export default function Navbar({
                 <GraduationCap className="w-4 h-4 text-emerald-600" />
                 <span className="text-[11px]">Student ERP</span>
               </button>
-              <a
-                href={getErpLoginUrl('employee')}
-                target="_blank"
-                rel="noreferrer"
-                className="p-2 rounded-lg bg-sky-50 border border-sky-200 text-sky-900 font-bold flex flex-col items-center gap-1 hover:bg-sky-100 transition shadow-2xs"
+              <button
+                type="button"
+                onClick={() => {
+                  setMobileMenuOpen(false);
+                  onNavigate('staff-login');
+                }}
+                className="p-2 rounded-lg bg-sky-50 border border-sky-200 text-sky-900 font-bold flex flex-col items-center gap-1 hover:bg-sky-100 transition shadow-2xs cursor-pointer"
               >
                 <UserCheck className="w-4 h-4 text-sky-600" />
                 <span className="text-[11px]">Staff</span>
-              </a>
+              </button>
               <button
                 type="button"
                 onClick={() => {
@@ -761,11 +764,11 @@ export default function Navbar({
             </button>
             <button
               type="button"
-              onClick={() => { onNavigate('student-login'); setMobileMenuOpen(false); }}
+              onClick={() => { onNavigate('admin-login'); setMobileMenuOpen(false); }}
               className="w-full py-2 text-xs font-bold text-kgp-crimson border border-kgp-crimson/40 rounded-lg bg-red-50/50 text-center flex items-center justify-center gap-1 cursor-pointer"
             >
               <LogIn className="w-3.5 h-3.5" />
-              <span>Sign In Screen</span>
+              <span>Portal Sign In</span>
             </button>
           </div>
 
