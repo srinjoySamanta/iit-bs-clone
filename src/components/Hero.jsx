@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { 
   ArrowRight, ShieldCheck, CheckCircle2, Award, Calendar, 
   Sparkles, Download, Users, BookOpen, ChevronRight, ChevronLeft,
-  MapPin, Eye, GraduationCap, Clock
+  MapPin, Eye, GraduationCap, Clock, FileText
 } from 'lucide-react';
 import { IIT_KGP_INFO } from '../data/portalData';
 import iitKgpLogo from '../assets/logo';
@@ -15,7 +15,6 @@ import imgLakeside from '../assets/images/iit-kgp-lakeside-gymkhana.jpg';
 import imgAvenue from '../assets/images/iit-kgp-campus-avenue.jpg';
 
 export default function Hero({ onOpenSignUp, onOpenDiagram, onOpenCertificate, onOpenQualifier }) {
-  // Option 1 is the Historic Main Building as requested
   const slides = [
     {
       id: 'main-building',
@@ -76,7 +75,6 @@ export default function Hero({ onOpenSignUp, onOpenDiagram, onOpenCertificate, o
   const [currentSlide, setCurrentSlide] = useState(0);
   const [isPaused, setIsPaused] = useState(false);
 
-  // Auto-slide every 5.5 seconds, pauses on hover
   useEffect(() => {
     if (isPaused) return;
     const timer = setInterval(() => {
@@ -94,15 +92,72 @@ export default function Hero({ onOpenSignUp, onOpenDiagram, onOpenCertificate, o
   };
 
   return (
-    <section className="w-full bg-gradient-to-b from-stone-50 via-white to-stone-50 text-slate-900 border-b-4 border-kgp-crimson">
+    <section id="topsection" className="w-full bg-[#EEEEEE] text-slate-900 border-b border-slate-200">
       
-      {/* 1. TOP AREA: UNBLURRED, HIGH-DEFINITION CAMPUS IMAGE SLIDER BANNER */}
+      {/* 1. TOP AREA: HEADLINE, SUBTITLE & ACTION PILLS (Exact match to IIT Jodhpur reference #topsection) */}
+      <div className="pt-8 sm:pt-14 pb-8 sm:pb-10 px-4 sm:px-6 lg:px-8 text-center max-w-5xl mx-auto">
+        
+        {/* Subtle Badge */}
+        <div className="flex flex-wrap items-center justify-center gap-2 mb-4">
+          <span className="inline-flex items-center gap-1.5 px-3.5 py-1 rounded-full text-xs font-bold uppercase tracking-wider bg-white text-kgp-crimson border border-red-200 shadow-2xs">
+            <span className="w-2 h-2 rounded-full bg-kgp-crimson animate-ping" />
+            <span>India's First IIT • Estd. 1951</span>
+          </span>
+          <span className="inline-flex items-center gap-1.5 px-3.5 py-1 rounded-full text-xs font-semibold bg-white text-emerald-800 border border-emerald-200 shadow-2xs">
+            <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" />
+            <span>Direct Entry: WBJEE, JEE Advanced &amp; Tripura JEE</span>
+          </span>
+        </div>
+
+        {/* Master Heading */}
+        <h1 className="text-3xl sm:text-5xl lg:text-6xl font-bold font-serif-title leading-[1.15] text-[#09090B]">
+          IIT Kharagpur's B.S. in <br />
+          <span className="text-kgp-crimson">
+            Data Science &amp; Artificial Intelligence
+          </span>
+        </h1>
+
+        {/* Subtitle */}
+        <p className="mt-4 text-sm sm:text-base md:text-lg text-slate-700 font-normal max-w-2xl mx-auto leading-relaxed">
+          A future-ready online undergraduate degree combining data science, artificial intelligence, and cutting-edge engineering from the Indian Institute of Technology Kharagpur.
+        </p>
+
+        {/* Action Buttons (High-radius Pill Buttons matching Reference) */}
+        <div className="mt-7 flex flex-wrap items-center justify-center gap-3 sm:gap-4">
+          <button
+            type="button"
+            onClick={onOpenSignUp}
+            className="px-8 sm:px-10 py-3.5 sm:py-4 rounded-full bg-kgp-crimson hover:bg-kgp-darkred text-white font-bold text-sm sm:text-base tracking-wide shadow-md hover:shadow-lg transition transform hover:-translate-y-0.5 cursor-pointer uppercase font-sans"
+          >
+            Apply Now
+          </button>
+
+          <a
+            href="#curriculum-overview"
+            className="px-8 sm:px-10 py-3.5 sm:py-4 rounded-full bg-black hover:bg-slate-800 text-white font-bold text-sm sm:text-base tracking-wide shadow-md hover:shadow-lg transition transform hover:-translate-y-0.5 cursor-pointer uppercase font-sans flex items-center gap-2"
+          >
+            <Download className="w-4 h-4" />
+            <span>Download Syllabus</span>
+          </a>
+
+          <button
+            type="button"
+            onClick={onOpenQualifier}
+            className="px-6 py-3.5 sm:py-4 rounded-full bg-white hover:bg-slate-50 text-slate-800 hover:text-emerald-700 font-bold text-xs sm:text-sm border border-slate-300 shadow-xs transition flex items-center gap-1.5 cursor-pointer"
+          >
+            <Sparkles className="w-4 h-4 text-emerald-600" />
+            <span>Qualifier Exam Portal</span>
+          </button>
+        </div>
+
+      </div>
+
+      {/* 2. CAMPUS IMAGE SLIDER BANNER (Full width, sharp, natural color) */}
       <div 
-        className="relative w-full h-[280px] sm:h-[360px] md:h-[440px] lg:h-[500px] xl:h-[540px] 2xl:h-[580px] overflow-hidden bg-slate-950 group"
+        className="relative w-full h-[280px] sm:h-[380px] md:h-[460px] lg:h-[520px] xl:h-[580px] overflow-hidden bg-slate-950 group"
         onMouseEnter={() => setIsPaused(true)}
         onMouseLeave={() => setIsPaused(false)}
       >
-        {/* Slides Container - 100% Unblurred, Sharp, Natural Color */}
         {slides.map((slide, idx) => (
           <div
             key={slide.id}
@@ -118,11 +173,11 @@ export default function Hero({ onOpenSignUp, onOpenDiagram, onOpenCertificate, o
           </div>
         ))}
 
-        {/* Previous / Next Arrow Navigation Controls */}
+        {/* Previous / Next Controls */}
         <button
           type="button"
           onClick={prevSlide}
-          className="absolute left-3 top-1/2 -translate-y-1/2 z-30 w-10 h-10 rounded-full bg-black/60 hover:bg-black/90 text-white flex items-center justify-center transition shadow-lg opacity-80 hover:opacity-100"
+          className="absolute left-3 top-1/2 -translate-y-1/2 z-30 w-10 h-10 rounded-full bg-black/60 hover:bg-black/90 text-white flex items-center justify-center transition shadow-lg opacity-80 hover:opacity-100 cursor-pointer"
           aria-label="Previous Photo"
           title="Previous Photo"
         >
@@ -132,176 +187,102 @@ export default function Hero({ onOpenSignUp, onOpenDiagram, onOpenCertificate, o
         <button
           type="button"
           onClick={nextSlide}
-          className="absolute right-3 top-1/2 -translate-y-1/2 z-30 w-10 h-10 rounded-full bg-black/60 hover:bg-black/90 text-white flex items-center justify-center transition shadow-lg opacity-80 hover:opacity-100"
+          className="absolute right-3 top-1/2 -translate-y-1/2 z-30 w-10 h-10 rounded-full bg-black/60 hover:bg-black/90 text-white flex items-center justify-center transition shadow-lg opacity-80 hover:opacity-100 cursor-pointer"
           aria-label="Next Photo"
           title="Next Photo"
         >
           <ChevronRight className="w-6 h-6" />
         </button>
 
-        {/* Slide Selector Indicators (Clean Numbers 1 to 6 - No Text Names Over Image) */}
+        {/* Slide Counter Indicator */}
         <div className="absolute bottom-4 right-4 sm:right-8 z-30 flex items-center gap-1.5 bg-slate-950/80 backdrop-blur-xs px-3 py-1.5 rounded-2xl border border-white/20 shadow-lg">
           {slides.map((s, idx) => (
             <button
               key={s.id}
               type="button"
               onClick={() => setCurrentSlide(idx)}
-              className={`w-7 h-7 rounded-xl text-xs font-bold transition flex items-center justify-center ${
+              className={`w-7 h-7 rounded-xl text-xs font-bold transition flex items-center justify-center cursor-pointer ${
                 currentSlide === idx
                   ? 'bg-amber-400 text-slate-950 font-black shadow-md scale-105'
                   : 'text-slate-300 hover:text-white hover:bg-white/10'
               }`}
               aria-label={`Slide ${idx + 1}`}
-              title={`Slide ${idx + 1}`}
             >
               <span>{idx + 1}</span>
             </button>
           ))}
         </div>
-
       </div>
 
-      {/* 2. BOTTOM AREA: WORDS, TITLES, CREDENTIALS & ADMISSIONS ACTION BUTTONS */}
-      <div className="w-full max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-10 sm:py-14 text-center">
-        
-        {/* Top Badges */}
-        <div className="flex flex-wrap items-center justify-center gap-2 mb-4">
-          <span className="inline-flex items-center gap-1.5 px-3.5 py-1 rounded-full text-xs font-black uppercase tracking-wider bg-red-50 text-kgp-crimson border border-red-200 shadow-2xs">
-            <span className="w-2 h-2 rounded-full bg-kgp-crimson animate-ping" />
-            <span>First IIT of India • Estd. 1951</span>
-          </span>
-
-          <span className="inline-flex items-center gap-1.5 px-3.5 py-1 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-800 border border-emerald-200 shadow-2xs">
-            <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" />
-            <span>Direct Entry: WBJEE, JEE Advanced &amp; Tripura JEE</span>
-          </span>
-
-          <span className="hidden sm:inline-flex items-center gap-1.5 px-3.5 py-1 rounded-full text-xs font-semibold bg-blue-50 text-blue-900 border border-blue-200 shadow-2xs">
-            <Sparkles className="w-3.5 h-3.5 text-blue-600" />
-            <span>Universal Qualifier (No Age Limit)</span>
-          </span>
-        </div>
-
-        {/* IIT Kharagpur Official Crest & Names */}
-        <div className="flex items-center justify-center gap-3.5 mb-3">
-          <div className="w-13 h-13 sm:w-15 sm:h-15 rounded-2xl bg-white p-1 shadow-md border-2 border-amber-400 flex items-center justify-center flex-shrink-0">
-            <img 
-              src={iitKgpLogo} 
-              alt="Indian Institute of Technology Kharagpur" 
-              className="w-10 h-10 sm:w-12 sm:h-12 object-contain"
-            />
-          </div>
-          <div className="text-left">
-            <div className="text-base sm:text-xl font-bold font-serif-title text-slate-950 leading-tight">
-              Indian Institute of Technology Kharagpur
-            </div>
-            <div className="text-xs sm:text-sm text-amber-800 font-semibold leading-tight mt-0.5 font-serif">
-              भारतीय प्रौद्योगिकी संस्थान खड़गपुर
-            </div>
-          </div>
-        </div>
-
-        {/* Program Eyebrow */}
-        <div className="mb-2">
-          <span className="px-3.5 py-1 rounded-md bg-stone-100 text-amber-900 border border-amber-300 font-bold text-xs uppercase tracking-widest shadow-2xs">
-            4-Year Undergraduate Degree Programme
-          </span>
-        </div>
-
-        {/* Master Heading — NO UNDERLINE as requested */}
-        <h1 className="text-3xl sm:text-5xl lg:text-6xl font-black tracking-tight font-serif-title leading-[1.15] text-slate-950">
-          Bachelor of Science <span className="text-kgp-crimson">(BS)</span> in <br />
-          <span className="text-kgp-crimson">
-            Data Science &amp; Artificial Intelligence
-          </span>
-        </h1>
-
-        {/* Program Narrative Description */}
-        <p className="mt-4 text-sm sm:text-base md:text-lg text-slate-700 font-normal max-w-3xl mx-auto leading-relaxed">
-          Earn an authentic undergraduate degree from the <strong className="text-slate-950 font-bold">Indian Institute of Technology Kharagpur</strong>. 
-          Enjoy flexible online learning with in-person proctored exams, campus immersion, modular exit awards (<span className="text-kgp-crimson font-semibold">Certificate, Diploma, B.Sc., BS</span>), and lifelong <strong className="text-slate-950 font-bold">IIT Kharagpur Alumni Status</strong>.
-        </p>
-
-        {/* Primary Action Buttons */}
-        <div className="mt-8 flex flex-wrap items-center justify-center gap-3 sm:gap-4">
+      {/* 3. OVERLAPPING 5-STAT QUICK FACTS STRIP (Overlaps the bottom of the hero photo) */}
+      <div className="relative z-20 w-full max-w-6xl mx-auto px-4 -mt-8 sm:-mt-12 pb-6">
+        <div className="bg-white rounded-xl shadow-xl border border-slate-200/90 grid grid-cols-2 md:grid-cols-5 divide-y md:divide-y-0 md:divide-x divide-slate-200 text-center overflow-hidden">
           
-          {/* Pathway 1: Qualifier Round Exam */}
-          <button
-            onClick={onOpenQualifier}
-            className="group px-6 sm:px-8 py-3.5 sm:py-4 bg-gradient-to-r from-emerald-700 via-teal-700 to-emerald-800 hover:from-emerald-800 hover:to-teal-800 text-white font-extrabold text-sm sm:text-base rounded-2xl shadow-md hover:shadow-lg flex items-center justify-center gap-2.5 transition transform hover:-translate-y-0.5 border border-emerald-600/40 ring-2 ring-emerald-500/20"
-          >
-            <div className="w-7 h-7 rounded-xl bg-white/20 flex items-center justify-center">
-              <Sparkles className="w-4 h-4 text-amber-300 animate-pulse" />
+          <div className="p-3.5 sm:p-5 hover:bg-slate-50 transition">
+            <div className="text-[10px] sm:text-[11px] font-bold text-slate-500 uppercase tracking-wider font-sans">
+              Entrance Test
             </div>
-            <div className="text-left">
-              <div className="text-xs text-emerald-100 font-semibold uppercase tracking-wider leading-none">
-                Admission Pathway 1
-              </div>
-              <div className="font-bold leading-tight">
-                Qualifier Exam Portal
-              </div>
+            <div className="text-xs sm:text-sm md:text-base font-extrabold text-slate-900 mt-1">
+              Qualifier 2026 / Direct
             </div>
-            <ArrowRight className="w-4 h-4 text-white group-hover:translate-x-1 transition-transform ml-1" />
-          </button>
-
-          {/* Pathway 2: Direct Admission (WBJEE / JEE) */}
-          <button
-            onClick={onOpenSignUp}
-            className="group px-6 sm:px-8 py-3.5 sm:py-4 bg-gradient-to-r from-kgp-crimson to-red-800 hover:from-kgp-darkred hover:to-kgp-crimson text-white font-bold text-sm sm:text-base rounded-2xl shadow-md hover:shadow-lg flex items-center justify-center gap-2.5 transition transform hover:-translate-y-0.5 border border-red-700/30 ring-2 ring-red-500/20"
-          >
-            <div className="w-7 h-7 rounded-xl bg-white/20 flex items-center justify-center">
-              <Award className="w-4 h-4 text-amber-300" />
-            </div>
-            <div className="text-left">
-              <div className="text-xs text-red-100 font-semibold uppercase tracking-wider leading-none">
-                Admission Pathway 2
-              </div>
-              <div className="font-bold leading-tight">
-                Direct Entry (WBJEE/JEE)
-              </div>
-            </div>
-          </button>
-
-          {/* Fees & Waiver Calculator Shortcut */}
-          <a
-            href="#fees"
-            className="px-5 py-3.5 sm:py-4 bg-white hover:bg-slate-50 text-slate-800 hover:text-kgp-crimson font-semibold text-xs sm:text-sm rounded-2xl border border-stone-300 flex items-center justify-center gap-2 transition shadow-xs"
-          >
-            <span>Fees &amp; Waivers (Up to 75% Off)</span>
-            <ChevronRight className="w-4 h-4 text-amber-600" />
-          </a>
-
-        </div>
-
-        {/* Quick Facts Strip (Identical to IIT Jodhpur BS reference) */}
-        <div className="mt-10 sm:mt-12 max-w-5xl mx-auto">
-          <div className="bg-white rounded-2xl shadow-xl border border-slate-200 grid grid-cols-2 md:grid-cols-5 divide-y md:divide-y-0 md:divide-x divide-slate-200 text-center overflow-hidden">
-            <div className="p-3.5 sm:p-4">
-              <div className="text-[10px] font-bold text-slate-500 uppercase tracking-wider">Entrance Test</div>
-              <div className="text-xs sm:text-sm font-extrabold text-slate-900 mt-0.5">Qualifier 2026</div>
-            </div>
-            <div className="p-3.5 sm:p-4">
-              <div className="text-[10px] font-bold text-slate-500 uppercase tracking-wider">Batch Starts</div>
-              <div className="text-xs sm:text-sm font-extrabold text-slate-900 mt-0.5">Session 2026–27</div>
-            </div>
-            <div className="p-3.5 sm:p-4">
-              <div className="text-[10px] font-bold text-slate-500 uppercase tracking-wider">Duration</div>
-              <div className="text-xs sm:text-sm font-extrabold text-slate-900 mt-0.5">4 Years (Modular)</div>
-            </div>
-            <div className="p-3.5 sm:p-4">
-              <div className="text-[10px] font-bold text-slate-500 uppercase tracking-wider">Mode</div>
-              <div className="text-xs sm:text-sm font-extrabold text-slate-900 mt-0.5">Online + In-Person</div>
-            </div>
-            <div className="p-3.5 sm:p-4 col-span-2 md:col-span-1 bg-amber-50/70">
-              <div className="text-[10px] font-bold text-amber-900 uppercase tracking-wider">Alumni Status*</div>
-              <div className="text-xs sm:text-sm font-black text-kgp-crimson mt-0.5">IIT Kharagpur</div>
+            <div className="text-[11px] text-emerald-700 font-semibold mt-0.5">
+              WBJEE / JEE Adv
             </div>
           </div>
-          <p className="text-[11px] text-center text-slate-500 mt-2 italic">
-            *Alumni Status is provided on completion of the full 4-year degree programme as per IIT Kharagpur statutes.
-          </p>
+
+          <div className="p-3.5 sm:p-5 hover:bg-slate-50 transition">
+            <div className="text-[10px] sm:text-[11px] font-bold text-slate-500 uppercase tracking-wider font-sans">
+              Batch Starts
+            </div>
+            <div className="text-xs sm:text-sm md:text-base font-extrabold text-slate-900 mt-1">
+              Session 2026–27
+            </div>
+            <div className="text-[11px] text-amber-700 font-semibold mt-0.5">
+              Admissions Open
+            </div>
+          </div>
+
+          <div className="p-3.5 sm:p-5 hover:bg-slate-50 transition">
+            <div className="text-[10px] sm:text-[11px] font-bold text-slate-500 uppercase tracking-wider font-sans">
+              Duration
+            </div>
+            <div className="text-xs sm:text-sm md:text-base font-extrabold text-slate-900 mt-1">
+              4 Years
+            </div>
+            <div className="text-[11px] text-slate-500 font-semibold mt-0.5">
+              Modular Exit System
+            </div>
+          </div>
+
+          <div className="p-3.5 sm:p-5 hover:bg-slate-50 transition">
+            <div className="text-[10px] sm:text-[11px] font-bold text-slate-500 uppercase tracking-wider font-sans">
+              Mode
+            </div>
+            <div className="text-xs sm:text-sm md:text-base font-extrabold text-slate-900 mt-1">
+              Online Degree
+            </div>
+            <div className="text-[11px] text-slate-500 font-semibold mt-0.5">
+              In-Person Exams
+            </div>
+          </div>
+
+          <div className="p-3.5 sm:p-5 col-span-2 md:col-span-1 bg-amber-50/70 hover:bg-amber-100/60 transition">
+            <div className="text-[10px] sm:text-[11px] font-bold text-amber-900 uppercase tracking-wider font-sans">
+              Alumni Status*
+            </div>
+            <div className="text-xs sm:text-sm md:text-base font-black text-kgp-crimson mt-1">
+              IIT Kharagpur
+            </div>
+            <div className="text-[11px] text-amber-800 font-semibold mt-0.5">
+              Official Alumni Network
+            </div>
+          </div>
+
         </div>
 
+        <p className="text-center text-[11px] md:text-xs text-slate-500 mt-2.5 italic">
+          *Alumni Status is provided on completion of the full 4-year degree programme as per Institute statutes.
+        </p>
       </div>
 
     </section>

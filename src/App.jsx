@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import Navbar from './components/Navbar';
 import Hero from './components/Hero';
 import DirectorMessage from './components/DirectorMessage';
+import SubnavTabs from './components/SubnavTabs';
 import HomeOverview from './components/HomeOverview';
 import CourseStructure from './components/CourseStructure';
 import EligibilityPathways from './components/EligibilityPathways';
@@ -562,6 +563,9 @@ export default function App() {
             onOpenCertificate={() => setShowCertificate(true)}
             onOpenQualifier={() => navigateTo('qualifier')}
           />
+
+          {/* Floating Sticky Sub-Nav Pill Bar matching IIT Jodhpur Reference */}
+          <SubnavTabs />
 
           {/* Note from our Director (Executive Summary + Expandable TOI Address) */}
           <DirectorMessage

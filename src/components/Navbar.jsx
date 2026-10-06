@@ -394,7 +394,7 @@ export default function Navbar({
             {/* Apply Now */}
             <button
               onClick={() => onNavigate('student-login')}
-              className="flex items-center space-x-1.5 px-5 py-2.5 text-xs sm:text-sm font-bold text-white bg-gradient-to-r from-kgp-crimson to-red-800 hover:from-kgp-darkred hover:to-kgp-crimson rounded-xl shadow-md hover:shadow-lg transition transform hover:-translate-y-0.5 cursor-pointer"
+              className="flex items-center space-x-1.5 px-6 py-2.5 text-xs sm:text-sm font-bold text-white bg-kgp-crimson hover:bg-kgp-darkred rounded-full shadow-md hover:shadow-lg transition transform hover:-translate-y-0.5 cursor-pointer uppercase font-sans tracking-wide"
             >
               <UserPlus className="w-4 h-4" />
               <span>Apply Now</span>
