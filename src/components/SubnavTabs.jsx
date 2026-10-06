@@ -1,8 +1,10 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 
-export default function SubnavTabs() {
+export default function SubnavTabs({ onNavigate }) {
   const [activeTab, setActiveTab] = useState('director-note');
+  const scrollContainerRef = useRef(null);
+  const isClickingRef = useRef(false);
 
   const tabs = [
     { id: 'director-note', label: "Director's Note" },
@@ -22,91 +24,130 @@ export default function SubnavTabs() {
 
   useEffect(() => {
     const handleScroll = () => {
-      const scrollPosition = window.scrollY + 200;
-      for (const tab of tabs) {
+      if (isClickingRef.current) return;
+      const scrollPosition = window.scrollY + 220;
+
+      for (let i = tabs.length - 1; i >= 0; i--) {
+        const tab = tabs[i];
         const el = document.getElementById(tab.id);
         if (el) {
           const top = el.offsetTop;
-          const height = el.offsetHeight;
-          if (scrollPosition >= top && scrollPosition < top + height) {
+          if (scrollPosition >= top) {
             setActiveTab(tab.id);
             break;
           }
         }
       }
     };
+
     window.addEventListener('scroll', handleScroll, { passive: true });
     return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
+  }, [tabs]);
 
-  const scrollContainer = (direction) => {
-    const container = document.getElementById('subnav-scroll-container');
-    if (container) {
-      container.scrollBy({ left: direction === 'left' ? -200 : 200, behavior: 'smooth' });
+  useEffect(() => {
+    if (scrollContainerRef.current) {
+      const activeBtn = scrollContainerRef.current.querySelector(`[data-tab-id="${activeTab}"]`);
+      if (activeBtn) {
+        activeBtn.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'nearest' });
+      }
     }
-  };
+  }, [activeTab]);
 
-  const scrollToSection = (id) => {
-    setActiveTab(id);
-    const element = document.getElementById(id);
-    if (element) {
-      const offset = 90;
-      const bodyRect = document.body.getBoundingClientRect().top;
-      const elementRect = element.getBoundingClientRect().top;
-      const elementPosition = elementRect - bodyRect;
-      const offsetPosition = elementPosition - offset;
-
-      window.scrollTo({
-        top: offsetPosition,
+  const scrollHorizontally = (direction) => {
+    if (scrollContainerRef.current) {
+      scrollContainerRef.current.scrollBy({
+        left: direction === 'left' ? -220 : 220,
         behavior: 'smooth'
       });
     }
   };
 
-  return (
-    <div className="sticky top-[72px] z-40 w-full bg-white/95 backdrop-blur-md border-b border-slate-200 py-2.5 shadow-xs transition-all">
-      <div className="max-w-7xl mx-auto px-2 sm:px-4 flex items-center gap-1 sm:gap-2">
-        <button
-          type="button"
-          onClick={() => scrollContainer('left')}
-          className="flex-shrink-0 w-8 h-8 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-600 flex items-center justify-center transition cursor-pointer"
-          aria-label="Scroll tabs left"
-        >
-          <ChevronLeft className="w-4 h-4" />
-        </button>
+  const scrollToSection = (id) => {
+    setActiveTab(id);
+    isClickingRef.current = true;
 
-        <div
-          id="subnav-scroll-container"
-          className="flex-1 flex items-center gap-1.5 overflow-x-auto scrollbar-none scroll-smooth py-1 px-1"
-          style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
-        >
-          {tabs.map((tab) => {
-            const isActive = activeTab === tab.id;
-            return (
-              <button
-                key={tab.id}
-                type="button"
-                onClick={() => scrollToSection(tab.id)}
-                className={`px-3.5 sm:px-4 py-1.5 rounded-full text-xs sm:text-[13px] font-semibold whitespace-nowrap transition-all duration-200 cursor-pointer ${
-                  isActive
-                    ? 'bg-slate-900 text-white shadow-xs'
-                    : 'text-slate-600 hover:text-slate-950 hover:bg-slate-100'
-                }`}
-              >
-                {tab.label}
-              </button>
-            );
-          })}
+    const element = document.getElementById(id);
+    if (element) {
+      const headerHeight = document.querySelector('header')?.offsetHeight || 135;
+      const elementPosition = element.getBoundingClientRect().top;
+      const offsetPosition = elementPosition + window.pageYOffset - headerHeight + 5;
+
+      window.scrollTo({
+        top: offsetPosition,
+        behavior: 'smooth'
+      });
+
+      // Silently sync hash without reloading or triggering unmount
+      try {
+        window.history.replaceState(null, '', `#${id}`);
+      } catch (e) {}
+
+      setTimeout(() => {
+        isClickingRef.current = false;
+      }, 800);
+    } else if (onNavigate) {
+      onNavigate(id);
+      setTimeout(() => {
+        isClickingRef.current = false;
+      }, 800);
+    }
+  };
+
+  return (
+    <div className="w-full bg-white/95 backdrop-blur-md py-1.5 sm:py-2 border-t border-slate-100 transition-all">
+      <div className="max-w-[1400px] w-full mx-auto px-2 sm:px-4">
+        
+        {/* Floating Pill Capsule (Identical to IIT Jodhpur reference and user screenshot) */}
+        <div className="flex items-center gap-1 sm:gap-2 bg-white border border-[#E5E7EB] rounded-full px-1.5 sm:px-2.5 py-1 sm:py-1.5 shadow-[0px_4px_20px_0px_rgba(0,0,0,0.06)]">
+          
+          {/* Scroll Left Arrow */}
+          <button
+            type="button"
+            onClick={() => scrollHorizontally('left')}
+            className="flex-shrink-0 w-7 h-7 sm:w-8 sm:h-8 rounded-full flex items-center justify-center text-[#6B7280] hover:text-[#1F2937] hover:bg-slate-100 transition-colors cursor-pointer"
+            aria-label="Scroll tabs left"
+          >
+            <ChevronLeft className="w-4 h-4" />
+          </button>
+
+          {/* Horizontally Scrollable Tabs Track */}
+          <div
+            ref={scrollContainerRef}
+            className="flex-1 flex items-center gap-1 overflow-x-auto scroll-smooth py-0.5 no-scrollbar"
+            style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
+          >
+            {tabs.map((tab) => {
+              const isActive = activeTab === tab.id;
+              return (
+                <button
+                  key={tab.id}
+                  data-tab-id={tab.id}
+                  type="button"
+                  onClick={() => scrollToSection(tab.id)}
+                  className={`px-3.5 sm:px-5 py-1.5 sm:py-2 rounded-full text-xs sm:text-[13px] font-medium whitespace-nowrap transition-all duration-300 ease-out cursor-pointer flex-shrink-0 ${
+                    isActive
+                      ? 'bg-[#050505] text-white shadow-xs font-semibold'
+                      : 'text-[#4B5563] hover:text-[#111827] hover:bg-slate-100'
+                  }`}
+                >
+                  {tab.label}
+                </button>
+              );
+            })}
+          </div>
+
+          {/* Scroll Right Arrow */}
+          <button
+            type="button"
+            onClick={() => scrollHorizontally('right')}
+            className="flex-shrink-0 w-7 h-7 sm:w-8 sm:h-8 rounded-full flex items-center justify-center text-[#6B7280] hover:text-[#1F2937] hover:bg-slate-100 transition-colors cursor-pointer"
+            aria-label="Scroll tabs right"
+          >
+            <ChevronRight className="w-4 h-4" />
+          </button>
+
         </div>
 
-        <button
-          type="button"
-          onClick={() => scrollContainer('right')}
-          className="flex-shrink-0 w-8 h-8 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-600 flex items-center justify-center transition cursor-pointer"
-          aria-label="Scroll tabs right"
-        >
-          <ChevronRight className="w-4 h-4" />
-        </button>
       </div>
     </div>
   );

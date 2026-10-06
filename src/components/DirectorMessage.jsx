@@ -12,7 +12,7 @@ export default function DirectorMessage({ onOpenQualifier, onOpenSignUp }) {
   return (
     <section 
       id="director-note" 
-      className="w-full scroll-mt-[100px] py-14 md:py-20 px-4 md:px-10 text-white border-y border-stone-800 transition-all"
+      className="w-full scroll-mt-[135px] py-14 md:py-20 px-4 md:px-10 text-white border-y border-stone-800 transition-all"
       style={{ background: '#0A0103' }}
     >
       <div className="max-w-[1140px] mx-auto">

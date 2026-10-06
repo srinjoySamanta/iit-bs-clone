@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import Navbar from './components/Navbar';
 import Hero from './components/Hero';
 import DirectorMessage from './components/DirectorMessage';
-import SubnavTabs from './components/SubnavTabs';
 import HomeOverview from './components/HomeOverview';
 import CourseStructure from './components/CourseStructure';
 import EligibilityPathways from './components/EligibilityPathways';
@@ -69,26 +68,59 @@ export default function App() {
         setCurrentView('qualifier');
       } else if (hash === 'exam') {
         setCurrentView('exam');
-      } else if (hash === 'structure' || hash === 'syllabus' || hash === 'academics') {
-        setCurrentView('structure');
-      } else if (hash === 'eligibility' || hash === 'direct') {
-        setCurrentView('eligibility');
-      } else if (hash === 'fees' || hash === 'scholarship') {
-        setCurrentView('fees');
-      } else if (hash === 'campus' || hash === 'library' || hash === 'placement') {
-        setCurrentView('campus');
-      } else if (hash === 'faqs' || hash === 'faq') {
-        setCurrentView('faqs');
-      } else if (hash === 'contact' || hash === 'helpdesk') {
-        setCurrentView('contact');
-      } else if (hash === 'director' || hash === 'director-message') {
-        setCurrentView('director');
       } else if (hash === 'how-to-apply' || hash === 'howapply') {
         setShowHowToApply(true);
       } else if (hash === 'diagram') {
         setShowDiagram(true);
       } else {
+        // In-page sections remain on the comprehensive landing page with standby subnav tabs
         setCurrentView('home');
+
+        const sectionMap = {
+          'director-note': 'director-note',
+          'director': 'director-note',
+          'director-message': 'director-note',
+          'programme-highlights': 'programme-highlights',
+          'highlights': 'programme-highlights',
+          'curriculum-overview': 'curriculum-overview',
+          'structure': 'curriculum-overview',
+          'syllabus': 'curriculum-overview',
+          'academics': 'curriculum-overview',
+          'how-will-you-learn': 'how-will-you-learn',
+          'who-should-apply': 'who-should-apply',
+          'admission-process': 'admission-process',
+          'eligibility': 'eligibility',
+          'direct': 'eligibility',
+          'fees-structure': 'fees-structure',
+          'fees': 'fees-structure',
+          'scholarship': 'fees-structure',
+          'how-is-this-course-different': 'how-is-this-course-different',
+          'why-this-course': 'how-is-this-course-different',
+          'about-institute': 'about-institute',
+          'campus': 'about-institute',
+          'library': 'about-institute',
+          'placement': 'about-institute',
+          'faqs': 'faqs',
+          'faq': 'faqs',
+          'contact-us': 'contact-us',
+          'contact': 'contact-us',
+          'helpdesk': 'contact-us',
+          'institutional-gateways': 'institutional-gateways',
+          'portals': 'institutional-gateways'
+        };
+
+        const targetId = sectionMap[hash];
+        if (targetId) {
+          setTimeout(() => {
+            const el = document.getElementById(targetId);
+            if (el) {
+              const headerHeight = document.querySelector('header')?.offsetHeight || 135;
+              const elementPosition = el.getBoundingClientRect().top;
+              const offsetPosition = elementPosition + window.pageYOffset - headerHeight + 5;
+              window.scrollTo({ top: offsetPosition, behavior: 'smooth' });
+            }
+          }, 60);
+        }
       }
     };
 
@@ -98,6 +130,59 @@ export default function App() {
   }, []);
 
   const navigateTo = (view) => {
+    const sectionMap = {
+      'director-note': 'director-note',
+      'director': 'director-note',
+      'director-message': 'director-note',
+      'programme-highlights': 'programme-highlights',
+      'highlights': 'programme-highlights',
+      'curriculum-overview': 'curriculum-overview',
+      'structure': 'curriculum-overview',
+      'syllabus': 'curriculum-overview',
+      'academics': 'curriculum-overview',
+      'how-will-you-learn': 'how-will-you-learn',
+      'who-should-apply': 'who-should-apply',
+      'admission-process': 'admission-process',
+      'eligibility': 'eligibility',
+      'direct': 'eligibility',
+      'fees-structure': 'fees-structure',
+      'fees': 'fees-structure',
+      'scholarship': 'fees-structure',
+      'how-is-this-course-different': 'how-is-this-course-different',
+      'why-this-course': 'how-is-this-course-different',
+      'about-institute': 'about-institute',
+      'campus': 'about-institute',
+      'library': 'about-institute',
+      'placement': 'about-institute',
+      'faqs': 'faqs',
+      'faq': 'faqs',
+      'contact-us': 'contact-us',
+      'contact': 'contact-us',
+      'helpdesk': 'contact-us',
+      'institutional-gateways': 'institutional-gateways',
+      'portals': 'institutional-gateways'
+    };
+
+    const targetSection = sectionMap[view];
+    if (targetSection) {
+      if (currentView !== 'home') {
+        setCurrentView('home');
+      }
+      try {
+        window.history.replaceState(null, '', `#${targetSection}`);
+      } catch (e) {}
+      setTimeout(() => {
+        const el = document.getElementById(targetSection);
+        if (el) {
+          const headerHeight = document.querySelector('header')?.offsetHeight || 135;
+          const elementPosition = el.getBoundingClientRect().top;
+          const offsetPosition = elementPosition + window.pageYOffset - headerHeight + 5;
+          window.scrollTo({ top: offsetPosition, behavior: 'smooth' });
+        }
+      }, 60);
+      return;
+    }
+
     setCurrentView(view);
     window.location.hash = view;
     window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -563,9 +648,6 @@ export default function App() {
             onOpenCertificate={() => setShowCertificate(true)}
             onOpenQualifier={() => navigateTo('qualifier')}
           />
-
-          {/* Floating Sticky Sub-Nav Pill Bar matching IIT Jodhpur Reference */}
-          <SubnavTabs />
 
           {/* Note from our Director (Executive Summary + Expandable TOI Address) */}
           <DirectorMessage

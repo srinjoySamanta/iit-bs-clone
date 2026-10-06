@@ -7,6 +7,7 @@ import {
 import { IIT_KGP_INFO, ANNOUNCEMENT_TICKER } from '../data/portalData';
 import iitKgpLogo from '../assets/logo';
 import { getErpLoginUrl, redirectToErpPortal } from '../config/portalConfig';
+import SubnavTabs from './SubnavTabs';
 
 export default function Navbar({ 
   onNavigate,
@@ -421,6 +422,9 @@ export default function Navbar({
 
         </div>
       </div>
+
+      {/* Row 2: 13-Tab Standby Subnav Bar (Permanently standby on top, never disappears) */}
+      <SubnavTabs onNavigate={onNavigate} />
 
       {/* Mobile Drawer */}
       {mobileMenuOpen && (

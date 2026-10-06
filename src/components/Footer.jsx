@@ -10,7 +10,7 @@ export default function Footer({ onOpenDiagram, onOpenStudentLogin, onOpenAdminL
       <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         
         {/* Dedicated Institutional Portal Gateways Section (Student, Staff & Admin Login) */}
-        <div id="institutional-gateways" className="mb-14 pb-12 border-b border-slate-800">
+        <div id="institutional-gateways" className="scroll-mt-[135px] mb-14 pb-12 border-b border-slate-800">
           <div className="text-center max-w-2xl mx-auto mb-8">
             <span className="text-[11px] font-bold uppercase tracking-widest text-amber-400 px-3 py-1 rounded-full bg-amber-400/10 border border-amber-400/20">
               Institutional Access &amp; Single Sign-On
