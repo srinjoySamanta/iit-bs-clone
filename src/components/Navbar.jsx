@@ -522,29 +522,10 @@ export default function Navbar({
               <UserPlus className="w-4 h-4" />
               <span>Apply Now</span>
             </button>
-
-            {/* Dedicated Student Login Button (Strictly Student Only Beside Apply Now) */}
-            <button
-              type="button"
-              onClick={() => onNavigate('student-login')}
-              className="flex items-center space-x-1.5 px-4 py-2.5 text-xs sm:text-sm font-bold text-slate-800 bg-white hover:bg-emerald-50 border-2 border-slate-300 hover:border-emerald-600 rounded-xl shadow-xs transition cursor-pointer select-none"
-              title="BS Student Portal & LMS Login"
-            >
-              <GraduationCap className="w-4 h-4 text-emerald-600" />
-              <span>Student Login</span>
-            </button>
           </div>
 
           {/* Mobile Navigation Controls */}
           <div className="lg:hidden flex items-center space-x-2">
-            <button
-              onClick={() => onNavigate('student-login')}
-              className="px-2.5 py-1.5 text-xs font-bold text-slate-800 bg-white border border-slate-300 rounded-lg shadow-2xs flex items-center gap-1 cursor-pointer"
-              title="Student Login"
-            >
-              <GraduationCap className="w-3.5 h-3.5 text-emerald-600" />
-              <span>Student Login</span>
-            </button>
             <button
               onClick={() => onNavigate('student-login')}
               className="px-3 py-1.5 text-xs font-bold text-white bg-gradient-to-r from-kgp-crimson to-red-800 rounded-lg shadow flex items-center gap-1 cursor-pointer"
