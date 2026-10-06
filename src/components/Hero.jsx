@@ -273,9 +273,9 @@ export default function Hero({ onOpenSignUp, onOpenDiagram, onOpenCertificate, o
 
         </div>
 
-        {/* Quick Facts Strip (Identical to IIT Jodhpur BS reference PDF Page 1) */}
-        <div className="mt-10 sm:mt-12 max-w-4xl mx-auto">
-          <div className="bg-white rounded-2xl shadow-md border border-slate-200 grid grid-cols-2 md:grid-cols-5 divide-y md:divide-y-0 md:divide-x divide-slate-200 text-center overflow-hidden">
+        {/* Quick Facts Strip (Identical to IIT Jodhpur BS reference) */}
+        <div className="mt-10 sm:mt-12 max-w-5xl mx-auto">
+          <div className="bg-white rounded-2xl shadow-xl border border-slate-200 grid grid-cols-2 md:grid-cols-5 divide-y md:divide-y-0 md:divide-x divide-slate-200 text-center overflow-hidden">
             <div className="p-3.5 sm:p-4">
               <div className="text-[10px] font-bold text-slate-500 uppercase tracking-wider">Entrance Test</div>
               <div className="text-xs sm:text-sm font-extrabold text-slate-900 mt-0.5">Qualifier 2026</div>

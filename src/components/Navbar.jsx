@@ -95,152 +95,6 @@ export default function Navbar({
   return (
     <header className="sticky top-0 z-50 w-full bg-white/95 backdrop-blur-md shadow-md border-b border-slate-200 transition-all">
 
-      {/* 0. INSTITUTIONAL TOP BAR & FLASH NOTIFICATION (IIT KGP MOTTO: योगः कर्मसु कौशलम्) */}
-      <div className="w-full bg-slate-950 text-slate-300 text-[11px] py-1.5 px-4 sm:px-6 lg:px-8 border-b border-slate-800 shadow-inner">
-        <div className="w-full max-w-7xl mx-auto flex items-center justify-between gap-3 sm:gap-6">
-          
-          {/* Left: IIT KGP & Flash Notification Ticker */}
-          <div className="flex items-center gap-3 min-w-0 flex-1 overflow-hidden">
-            {/* IIT KGP Brand Badge */}
-            <div className="flex items-center gap-1.5 flex-shrink-0">
-              <span className="w-2 h-2 rounded-full bg-amber-400 animate-ping"></span>
-              <span className="font-black tracking-wider text-amber-400 uppercase text-xs">
-                IIT Kharagpur
-              </span>
-            </div>
-
-            <span className="text-slate-700 flex-shrink-0 hidden sm:inline">|</span>
-
-            {/* Flash Notification / Motto Ticker */}
-            <div className="flex items-center gap-2 min-w-0 flex-1 overflow-hidden">
-              <span className="flex-shrink-0 px-2 py-0.5 rounded-md bg-gradient-to-r from-red-600 to-amber-600 text-white font-black text-[9px] uppercase tracking-wider shadow-xs animate-pulse flex items-center gap-1">
-                <Sparkles className="w-2.5 h-2.5" />
-                <span>FLASH</span>
-              </span>
-
-              {/* Animated Scroller with Motto & Pause on Hover */}
-              <div className="overflow-hidden whitespace-nowrap text-[11px] flex-1">
-                <div className="flash-marquee flex items-center gap-5 cursor-default select-none" title="IIT Kharagpur Official Motto • Hover to Pause">
-                  {/* Track 1 */}
-                  <span className="inline-flex items-center gap-1.5 font-bold text-amber-300 tracking-wide font-serif text-xs">
-                    “योगः कर्मसु कौशलम्”
-                  </span>
-                  <span className="text-slate-400 text-[10px] hidden md:inline">
-                    (Excellence in Action is Yoga)
-                  </span>
-                  <span className="text-amber-500/70 font-black">•</span>
-                  <span className="text-slate-200 font-semibold">
-                    Admissions 2026 Live Now
-                  </span>
-                  <span className="text-amber-500/70 font-black">•</span>
-                  <span className="text-emerald-400 font-semibold">
-                    BS &amp; Diploma in Data Science &amp; Artificial Intelligence
-                  </span>
-                  <span className="text-amber-500/70 font-black">•</span>
-
-                  {/* Duplicate Track for Seamless Infinite Marquee */}
-                  <span className="inline-flex items-center gap-1.5 font-bold text-amber-300 tracking-wide font-serif text-xs">
-                    “योगः कर्मसु कौशलम्”
-                  </span>
-                  <span className="text-slate-400 text-[10px] hidden md:inline">
-                    (Excellence in Action is Yoga)
-                  </span>
-                  <span className="text-amber-500/70 font-black">•</span>
-                  <span className="text-slate-200 font-semibold">
-                    Admissions 2026 Live Now
-                  </span>
-                  <span className="text-amber-500/70 font-black">•</span>
-                  <span className="text-emerald-400 font-semibold">
-                    BS &amp; Diploma in Data Science &amp; Artificial Intelligence
-                  </span>
-                  <span className="text-amber-500/70 font-black">•</span>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          {/* Right: Trilingual Language Selector (English, Bengali, Hindi) */}
-          <div className="flex items-center gap-2 flex-shrink-0">
-            <div className="flex items-center gap-1 text-amber-300 font-bold text-[11px] mr-0.5">
-              <Globe className="w-3.5 h-3.5 text-amber-400" />
-              <span className="hidden sm:inline">Translate:</span>
-            </div>
-            <div className="inline-flex rounded-lg p-0.5 bg-slate-900 border border-slate-700">
-              <button
-                type="button"
-                onClick={() => changeLanguage('en')}
-                className={`px-2.5 py-0.5 rounded-md text-[11px] font-bold transition ${
-                  lang === 'en'
-                    ? 'bg-amber-500 text-slate-950 shadow-xs'
-                    : 'text-slate-300 hover:text-white hover:bg-slate-800'
-                }`}
-                title="Switch to English"
-              >
-                English
-              </button>
-              <button
-                type="button"
-                onClick={() => changeLanguage('bn')}
-                className={`px-2.5 py-0.5 rounded-md text-[11px] font-bold transition ${
-                  lang === 'bn'
-                    ? 'bg-amber-500 text-slate-950 shadow-xs'
-                    : 'text-slate-300 hover:text-white hover:bg-slate-800'
-                }`}
-                title="বাংলায় অনুবাদ করুন (Translate to Bengali)"
-              >
-                বাংলা
-              </button>
-              <button
-                type="button"
-                onClick={() => changeLanguage('hi')}
-                className={`px-2.5 py-0.5 rounded-md text-[11px] font-bold transition ${
-                  lang === 'hi'
-                    ? 'bg-amber-500 text-slate-950 shadow-xs'
-                    : 'text-slate-300 hover:text-white hover:bg-slate-800'
-                }`}
-                title="हिन्दी में अनुवाद करें (Translate to Hindi)"
-              >
-                हिन्दी
-              </button>
-            </div>
-          </div>
-
-          {/* Institutional Portal Logins (Student, Staff & Admin) */}
-          <div className="hidden sm:flex items-center gap-2 text-[11px] pl-2 border-l border-slate-700">
-            <button
-              type="button"
-              onClick={() => onNavigate('student-login')}
-              className="text-slate-300 hover:text-emerald-400 transition flex items-center gap-1 font-semibold cursor-pointer"
-              title="Student Portal Login & Application Journey"
-            >
-              <GraduationCap className="w-3 h-3 text-emerald-400" />
-              <span>Student Login</span>
-            </button>
-            <span className="text-slate-600">•</span>
-            <button
-              type="button"
-              onClick={() => onNavigate('staff-login')}
-              className="text-slate-300 hover:text-sky-300 transition flex items-center gap-1 font-semibold cursor-pointer"
-              title="Separate Link: Staff Operations Login"
-            >
-              <UserCheck className="w-3 h-3 text-sky-400" />
-              <span>Staff Login</span>
-            </button>
-            <span className="text-slate-600">•</span>
-            <button
-              type="button"
-              onClick={() => onNavigate('admin-login')}
-              className="text-slate-300 hover:text-amber-300 transition flex items-center gap-1 font-semibold cursor-pointer"
-              title="Separate Link: Super Admin Directorate Login"
-            >
-              <ShieldCheck className="w-3 h-3 text-amber-400" />
-              <span>Admin Login</span>
-            </button>
-          </div>
-
-        </div>
-      </div>
-
       {/* Main Brand & Navigation Header */}
       <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between min-h-[72px] py-2 gap-4">
@@ -608,15 +462,6 @@ export default function Navbar({
             </div>
           </div>
 
-          {/* Student Login Primary Action */}
-          <button
-            onClick={() => { onNavigate('student-login'); setMobileMenuOpen(false); }}
-            className="w-full py-2.5 px-4 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl font-bold text-xs flex items-center justify-center gap-1.5 shadow cursor-pointer"
-          >
-            <GraduationCap className="w-4 h-4" />
-            <span>Student Login</span>
-          </button>
-
           {/* Apply Now */}
           <button
             onClick={() => { onNavigate('student-login'); setMobileMenuOpen(false); }}
@@ -625,29 +470,6 @@ export default function Navbar({
             <UserPlus className="w-4 h-4" />
             <span>Apply Now (IIT Portal)</span>
           </button>
-
-          {/* Separate Direct Links for Staff & Admin Login */}
-          <div className="flex items-center justify-around py-2 px-3 bg-slate-50 rounded-xl border border-slate-200 text-xs">
-            <button
-              type="button"
-              onClick={() => { onNavigate('staff-login'); setMobileMenuOpen(false); }}
-              className="text-slate-700 hover:text-sky-600 font-bold flex items-center gap-1.5 cursor-pointer"
-              title="Staff Operations Login"
-            >
-              <UserCheck className="w-3.5 h-3.5 text-sky-600" />
-              <span>Staff Login</span>
-            </button>
-            <span className="text-slate-300">|</span>
-            <button
-              type="button"
-              onClick={() => { onNavigate('admin-login'); setMobileMenuOpen(false); }}
-              className="text-slate-700 hover:text-amber-600 font-bold flex items-center gap-1.5 cursor-pointer"
-              title="Admin Login"
-            >
-              <ShieldCheck className="w-3.5 h-3.5 text-amber-600" />
-              <span>Admin Login</span>
-            </button>
-          </div>
 
           <div className="pt-1 pb-1">
             <button
@@ -725,6 +547,19 @@ export default function Navbar({
               <span>Portal Architecture (Block Diagram)</span>
               <ExternalLink className="w-3.5 h-3.5 text-slate-400" />
             </button>
+            <a 
+              href="#institutional-gateways" 
+              onClick={() => setMobileMenuOpen(false)}
+              className="w-full text-left py-2.5 text-slate-900 font-bold flex items-center justify-between border-t border-slate-200 mt-2"
+            >
+              <div className="flex items-center gap-1.5">
+                <ShieldCheck className="w-4 h-4 text-amber-600" />
+                <span>Institutional Logins (Student, Staff &amp; Admin)</span>
+              </div>
+              <span className="text-xs text-amber-700">↓ Bottom</span>
+            </a>
+
+
           </div>
         </div>
       )}
