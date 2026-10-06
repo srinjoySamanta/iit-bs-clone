@@ -205,8 +205,18 @@ export default function Navbar({
             </div>
           </div>
 
-          {/* Separate Direct Links for Staff & Admin Login */}
+          {/* Institutional Portal Logins (Student, Staff & Admin) */}
           <div className="hidden sm:flex items-center gap-2 text-[11px] pl-2 border-l border-slate-700">
+            <button
+              type="button"
+              onClick={() => onNavigate('student-login')}
+              className="text-slate-300 hover:text-emerald-400 transition flex items-center gap-1 font-semibold cursor-pointer"
+              title="Student Portal Login & Application Journey"
+            >
+              <GraduationCap className="w-3 h-3 text-emerald-400" />
+              <span>Student Login</span>
+            </button>
+            <span className="text-slate-600">•</span>
             <button
               type="button"
               onClick={() => onNavigate('staff-login')}
@@ -458,6 +468,19 @@ export default function Navbar({
                       <div className="font-bold text-xs">Contact Details</div>
                       <div className="text-[11px] text-slate-500">Admissions email, helpline &amp; campus address</div>
                     </a>
+                    <button 
+                      type="button"
+                      onClick={() => { onNavigate('student-login'); setSupportDropdown(false); }} 
+                      className="w-full text-left px-4 py-2 hover:bg-emerald-50 text-slate-800 hover:text-emerald-800 transition flex items-center justify-between border-t border-slate-100"
+                    >
+                      <div>
+                        <div className="font-bold text-xs flex items-center gap-1.5 text-emerald-800">
+                          <GraduationCap className="w-3.5 h-3.5 text-emerald-600" />
+                          <span>Student Portal Login</span>
+                        </div>
+                        <div className="text-[11px] text-slate-500">Sign in, application tracker &amp; LMS access</div>
+                      </div>
+                    </button>
                     <button 
                       onClick={() => { onOpenDiagram(); setSupportDropdown(false); }} 
                       className="w-full text-left px-4 py-2 hover:bg-slate-50 text-kgp-crimson font-bold text-xs flex items-center justify-between border-t border-slate-100 mt-1"
