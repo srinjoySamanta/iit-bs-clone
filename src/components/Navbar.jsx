@@ -93,11 +93,11 @@ export default function Navbar({
   };
 
   return (
-    <header className="sticky top-0 z-50 bg-white/95 backdrop-blur-md shadow-md border-b border-slate-200 transition-all">
+    <header className="sticky top-0 z-50 w-full bg-white/95 backdrop-blur-md shadow-md border-b border-slate-200 transition-all">
 
       {/* 0. INSTITUTIONAL TOP BAR & FLASH NOTIFICATION (IIT KGP MOTTO: योगः कर्मसु कौशलम्) */}
-      <div className="bg-slate-950 text-slate-300 text-[11px] py-1.5 px-4 sm:px-6 lg:px-8 border-b border-slate-800 shadow-inner">
-        <div className="max-w-7xl mx-auto flex items-center justify-between gap-3 sm:gap-6">
+      <div className="w-full bg-slate-950 text-slate-300 text-[11px] py-1.5 px-4 sm:px-6 lg:px-8 border-b border-slate-800 shadow-inner">
+        <div className="w-full max-w-7xl mx-auto flex items-center justify-between gap-3 sm:gap-6">
           
           {/* Left: IIT KGP & Flash Notification Ticker */}
           <div className="flex items-center gap-3 min-w-0 flex-1 overflow-hidden">
@@ -232,7 +232,7 @@ export default function Navbar({
       </div>
 
       {/* Main Brand & Navigation Header */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between min-h-[72px] py-2 gap-4">
           
           {/* Logo & Institute Identity (Strictly aligned, zero text overlap) */}

@@ -10,8 +10,8 @@ export default function DirectorMessage({ onOpenQualifier, onOpenSignUp }) {
   const [isExpanded, setIsExpanded] = useState(false);
 
   return (
-    <section id="director-message" className="py-12 sm:py-16 bg-gradient-to-b from-stone-50 via-white to-stone-50 border-y border-stone-200">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <section id="director-message" className="w-full py-12 sm:py-16 bg-gradient-to-b from-stone-50 via-white to-stone-50 border-y border-stone-200">
+      <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         
         {/* Top Header Badge */}
         <div className="flex flex-wrap items-center justify-between gap-4 mb-6">

@@ -94,11 +94,11 @@ export default function Hero({ onOpenSignUp, onOpenDiagram, onOpenCertificate, o
   };
 
   return (
-    <section className="bg-gradient-to-b from-stone-50 via-white to-stone-50 text-slate-900 border-b-4 border-kgp-crimson">
+    <section className="w-full bg-gradient-to-b from-stone-50 via-white to-stone-50 text-slate-900 border-b-4 border-kgp-crimson">
       
       {/* 1. TOP AREA: UNBLURRED, HIGH-DEFINITION CAMPUS IMAGE SLIDER BANNER */}
       <div 
-        className="relative w-full aspect-[16/7] sm:aspect-[21/8] md:aspect-[24/8] min-h-[260px] sm:min-h-[350px] md:min-h-[440px] max-h-[560px] overflow-hidden bg-slate-950 group"
+        className="relative w-full h-[280px] sm:h-[360px] md:h-[440px] lg:h-[500px] xl:h-[540px] 2xl:h-[580px] overflow-hidden bg-slate-950 group"
         onMouseEnter={() => setIsPaused(true)}
         onMouseLeave={() => setIsPaused(false)}
       >
@@ -162,7 +162,7 @@ export default function Hero({ onOpenSignUp, onOpenDiagram, onOpenCertificate, o
       </div>
 
       {/* 2. BOTTOM AREA: WORDS, TITLES, CREDENTIALS & ADMISSIONS ACTION BUTTONS */}
-      <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-10 sm:py-14 text-center">
+      <div className="w-full max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-10 sm:py-14 text-center">
         
         {/* Top Badges */}
         <div className="flex flex-wrap items-center justify-center gap-2 mb-4">

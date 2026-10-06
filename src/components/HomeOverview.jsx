@@ -14,10 +14,10 @@ export default function HomeOverview({
   onOpenSignUp 
 }) {
   return (
-    <div className="space-y-16 sm:space-y-24 py-12 bg-white">
+    <div className="w-full space-y-16 sm:space-y-24 py-12 bg-white">
       
       {/* 1. PROGRAMME HIGHLIGHTS (Matched to Reference PDF Page 3) */}
-      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <section className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center max-w-3xl mx-auto mb-12">
           <span className="text-xs font-bold uppercase tracking-wider text-kgp-crimson bg-red-50 px-3.5 py-1 rounded-full border border-red-200">
             Institutional Excellence
@@ -88,8 +88,8 @@ export default function HomeOverview({
       </section>
 
       {/* 2. DEGREE, CREDENTIALS & CAMPUS ACCESS (Matched to Reference PDF Page 4) */}
-      <section className="bg-stone-50 py-16 border-y border-stone-200">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <section className="w-full bg-stone-50 py-16 border-y border-stone-200">
+        <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           
           <div className="text-center max-w-3xl mx-auto mb-12">
             <span className="text-xs font-bold uppercase tracking-wider text-amber-800 bg-amber-100 px-3.5 py-1 rounded-full border border-amber-300">
@@ -203,7 +203,7 @@ export default function HomeOverview({
       </section>
 
       {/* 3. PROGRAMME DIRECTORY (THE HYPERLINK DIRECTORY: Click to view each dedicated sub-page) */}
-      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <section className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center max-w-3xl mx-auto mb-12">
           <span className="text-xs font-bold uppercase tracking-wider text-kgp-crimson bg-red-50 px-3.5 py-1 rounded-full border border-red-200">
             Navigation Directory
@@ -354,8 +354,8 @@ export default function HomeOverview({
       </section>
 
       {/* 4. COMPARISON TABLE: WHY IIT KHARAGPUR BS VS OTHERS (Matched to Reference PDF Page 11-12) */}
-      <section className="bg-stone-50 py-16 border-y border-stone-200">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <section className="w-full bg-stone-50 py-16 border-y border-stone-200">
+        <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           
           <div className="text-center max-w-3xl mx-auto mb-12">
             <span className="text-xs font-bold uppercase tracking-wider text-kgp-crimson bg-red-50 px-3.5 py-1 rounded-full border border-red-200">
@@ -519,7 +519,7 @@ export default function HomeOverview({
       </section>
 
       {/* 5. ADMISSION ACTION CALLOUT STRIP */}
-      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <section className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="bg-gradient-to-r from-slate-950 via-slate-900 to-kgp-darkred rounded-3xl p-8 sm:p-12 text-white shadow-xl flex flex-col md:flex-row items-center justify-between gap-8">
           <div className="max-w-2xl text-center md:text-left">
             <span className="text-amber-400 text-xs font-bold uppercase tracking-widest">

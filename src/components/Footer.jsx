@@ -6,8 +6,8 @@ import { getErpLoginUrl } from '../config/portalConfig';
 
 export default function Footer({ onOpenDiagram, onOpenStudentLogin, onOpenAdminLogin, onOpenCertificate, onNavigate }) {
   return (
-    <footer className="bg-kgp-darknavy text-white pt-14 pb-8 border-t-4 border-kgp-crimson">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <footer className="w-full bg-kgp-darknavy text-white pt-14 pb-8 border-t-4 border-kgp-crimson">
+      <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 pb-12 border-b border-slate-800">
           
