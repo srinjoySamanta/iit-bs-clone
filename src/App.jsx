@@ -27,7 +27,6 @@ import QualifierExamEngine from './components/exam/QualifierExamEngine';
 import AdmissionsChatbot from './components/chat/AdmissionsChatbot';
 import StudentErpPortal from './pages/StudentErpPortal';
 import { clearAdminSession, getCurrentAdminUser, getAdminToken } from './services/apiService';
-import LeftNavigationSidebar from './components/LeftNavigationSidebar';
 import { ArrowLeft, Layers, ShieldCheck, UserCheck, Award, Home, Sparkles, BookOpen } from 'lucide-react';
 
 export default function App() {
@@ -203,8 +202,8 @@ export default function App() {
         </div>
       )}
 
-      {/* PUBLIC ACADEMIC PROGRAMME PORTAL VIEWS (WITH LEFT NAVIGATION SIDEBAR) */}
-      {['home', 'structure', 'eligibility', 'fees', 'campus', 'faqs', 'contact', 'director'].includes(currentView) && (
+      {/* VIEW 6: DEDICATED COURSE STRUCTURE & SYLLABUS PAGE (Accessed via Hyperlink) */}
+      {currentView === 'structure' && (
         <>
           <Navbar
             onNavigate={navigateTo}
@@ -214,296 +213,387 @@ export default function App() {
             onOpenHowToApply={() => setShowHowToApply(true)}
             currentView={currentView}
           />
-
-          <div className="flex-1 flex w-full">
-            {/* 1. Left Navigation Sidebar: Persistent on the left side */}
-            <LeftNavigationSidebar
-              currentView={currentView}
-              onNavigate={navigateTo}
-              onOpenCertificate={() => setShowCertificate(true)}
-              onOpenHowToApply={() => setShowHowToApply(true)}
-              onOpenDiagram={() => setShowDiagram(true)}
-              onOpenQualifier={() => navigateTo('qualifier')}
-            />
-
-            {/* 2. Main Content Display Area */}
-            <main className="flex-1 min-w-0 bg-white">
-              {/* VIEW 6: COURSE STRUCTURE & SYLLABUS */}
-              {currentView === 'structure' && (
-                <>
-                  <div className="bg-slate-950 text-white py-6 px-4 sm:px-6 lg:px-8 border-b border-slate-800">
-                    <div className="max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-4">
-                      <div>
-                        <button
-                          onClick={() => navigateTo('home')}
-                          className="text-amber-400 hover:text-amber-300 text-xs font-bold flex items-center gap-1.5 mb-1 cursor-pointer transition"
-                        >
-                          <ArrowLeft className="w-3.5 h-3.5" />
-                          <span>Back to Home Overview</span>
-                        </button>
-                        <h1 className="text-xl sm:text-2xl font-bold font-serif-title">
-                          Course Structure &amp; Syllabus Roadmap
-                        </h1>
-                        <p className="text-xs text-slate-400">
-                          Bachelor of Science (BS) in Data Science &amp; AI • 142 Credits Modular Curriculum
-                        </p>
-                      </div>
-                      <div className="flex items-center gap-3">
-                        <button
-                          onClick={() => setShowCertificate(true)}
-                          className="px-3.5 py-2 bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-semibold rounded-xl border border-slate-700 transition cursor-pointer"
-                        >
-                          Sample Certificate
-                        </button>
-                        <button
-                          onClick={() => navigateTo('student-login')}
-                          className="px-4 py-2 bg-kgp-crimson hover:bg-kgp-darkred text-white text-xs font-bold rounded-xl shadow-xs transition cursor-pointer"
-                        >
-                          Apply Now
-                        </button>
-                      </div>
-                    </div>
-                  </div>
-                  <CourseStructure onOpenCertificate={() => setShowCertificate(true)} />
-                </>
-              )}
-
-              {/* VIEW 7: ELIGIBILITY & DIRECT ENTRY */}
-              {currentView === 'eligibility' && (
-                <>
-                  <div className="bg-slate-950 text-white py-6 px-4 sm:px-6 lg:px-8 border-b border-slate-800">
-                    <div className="max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-4">
-                      <div>
-                        <button
-                          onClick={() => navigateTo('home')}
-                          className="text-amber-400 hover:text-amber-300 text-xs font-bold flex items-center gap-1.5 mb-1 cursor-pointer transition"
-                        >
-                          <ArrowLeft className="w-3.5 h-3.5" />
-                          <span>Back to Home Overview</span>
-                        </button>
-                        <h1 className="text-xl sm:text-2xl font-bold font-serif-title">
-                          Eligibility Criteria &amp; Direct Admission Pathways
-                        </h1>
-                        <p className="text-xs text-slate-400">
-                          Direct entry for WBJEE, JEE Advanced &amp; Tripura JEE qualifiers, plus Universal Qualifier Round
-                        </p>
-                      </div>
-                      <button
-                        onClick={() => navigateTo('student-login')}
-                        className="px-4 py-2 bg-kgp-crimson hover:bg-kgp-darkred text-white text-xs font-bold rounded-xl shadow-xs transition cursor-pointer"
-                      >
-                        Apply for Admission
-                      </button>
-                    </div>
-                  </div>
-                  <EligibilityPathways onOpenSignUp={() => navigateTo('student-login')} />
-                </>
-              )}
-
-              {/* VIEW 8: FEES STRUCTURE & SCHOLARSHIPS */}
-              {currentView === 'fees' && (
-                <>
-                  <div className="bg-slate-950 text-white py-6 px-4 sm:px-6 lg:px-8 border-b border-slate-800">
-                    <div className="max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-4">
-                      <div>
-                        <button
-                          onClick={() => navigateTo('home')}
-                          className="text-amber-400 hover:text-amber-300 text-xs font-bold flex items-center gap-1.5 mb-1 cursor-pointer transition"
-                        >
-                          <ArrowLeft className="w-3.5 h-3.5" />
-                          <span>Back to Home Overview</span>
-                        </button>
-                        <h1 className="text-xl sm:text-2xl font-bold font-serif-title">
-                          Fee Structure &amp; Real-Time Scholarship Calculator
-                        </h1>
-                        <p className="text-xs text-slate-400">
-                          Affordable modular pay-per-credit model with up to 75% fee waivers for eligible candidates
-                        </p>
-                      </div>
-                      <button
-                        onClick={() => navigateTo('student-login')}
-                        className="px-4 py-2 bg-kgp-crimson hover:bg-kgp-darkred text-white text-xs font-bold rounded-xl shadow-xs transition cursor-pointer"
-                      >
-                        Apply Now
-                      </button>
-                    </div>
-                  </div>
-                  <FeesStructure />
-                </>
-              )}
-
-              {/* VIEW 9: CAMPUS IMMERSION & PLACEMENTS */}
-              {currentView === 'campus' && (
-                <>
-                  <div className="bg-slate-950 text-white py-6 px-4 sm:px-6 lg:px-8 border-b border-slate-800">
-                    <div className="max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-4">
-                      <div>
-                        <button
-                          onClick={() => navigateTo('home')}
-                          className="text-amber-400 hover:text-amber-300 text-xs font-bold flex items-center gap-1.5 mb-1 cursor-pointer transition"
-                        >
-                          <ArrowLeft className="w-3.5 h-3.5" />
-                          <span>Back to Home Overview</span>
-                        </button>
-                        <h1 className="text-xl sm:text-2xl font-bold font-serif-title">
-                          Campus Immersion, Central Library &amp; Placement Ecosystem
-                        </h1>
-                        <p className="text-xs text-slate-400">
-                          Experience the historic 2,100-acre Kharagpur campus, Asia's premier library, and career placements
-                        </p>
-                      </div>
-                      <button
-                        onClick={() => navigateTo('student-login')}
-                        className="px-4 py-2 bg-kgp-crimson hover:bg-kgp-darkred text-white text-xs font-bold rounded-xl shadow-xs transition cursor-pointer"
-                      >
-                        Apply Now
-                      </button>
-                    </div>
-                  </div>
-                  <CampusLifePlacement />
-                </>
-              )}
-
-              {/* VIEW 10: FAQS */}
-              {currentView === 'faqs' && (
-                <>
-                  <div className="bg-slate-950 text-white py-6 px-4 sm:px-6 lg:px-8 border-b border-slate-800">
-                    <div className="max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-4">
-                      <div>
-                        <button
-                          onClick={() => navigateTo('home')}
-                          className="text-amber-400 hover:text-amber-300 text-xs font-bold flex items-center gap-1.5 mb-1 cursor-pointer transition"
-                        >
-                          <ArrowLeft className="w-3.5 h-3.5" />
-                          <span>Back to Home Overview</span>
-                        </button>
-                        <h1 className="text-xl sm:text-2xl font-bold font-serif-title">
-                          Frequently Asked Questions (English &amp; বাংলা)
-                        </h1>
-                        <p className="text-xs text-slate-400">
-                          Comprehensive answers to admissions, exams, fee policies, degree validity, and alumni privileges
-                        </p>
-                      </div>
-                      <button
-                        onClick={() => navigateTo('student-login')}
-                        className="px-4 py-2 bg-kgp-crimson hover:bg-kgp-darkred text-white text-xs font-bold rounded-xl shadow-xs transition cursor-pointer"
-                      >
-                        Apply Now
-                      </button>
-                    </div>
-                  </div>
-                  <FaqSection />
-                </>
-              )}
-
-              {/* VIEW 11: CONTACT */}
-              {currentView === 'contact' && (
-                <>
-                  <div className="bg-slate-950 text-white py-6 px-4 sm:px-6 lg:px-8 border-b border-slate-800">
-                    <div className="max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-4">
-                      <div>
-                        <button
-                          onClick={() => navigateTo('home')}
-                          className="text-amber-400 hover:text-amber-300 text-xs font-bold flex items-center gap-1.5 mb-1 cursor-pointer transition"
-                        >
-                          <ArrowLeft className="w-3.5 h-3.5" />
-                          <span>Back to Home Overview</span>
-                        </button>
-                        <h1 className="text-xl sm:text-2xl font-bold font-serif-title">
-                          Contact Details &amp; Admissions Helpdesk
-                        </h1>
-                        <p className="text-xs text-slate-400">
-                          Reach out to the BS Programme Office at the Center for Educational Technology (CET), IIT Kharagpur
-                        </p>
-                      </div>
-                      <button
-                        onClick={() => navigateTo('student-login')}
-                        className="px-4 py-2 bg-kgp-crimson hover:bg-kgp-darkred text-white text-xs font-bold rounded-xl shadow-xs transition cursor-pointer"
-                      >
-                        Apply Now
-                      </button>
-                    </div>
-                  </div>
-                  <ContactSection />
-                </>
-              )}
-
-              {/* VIEW 12: DIRECTOR'S ADDRESS */}
-              {currentView === 'director' && (
-                <>
-                  <div className="bg-slate-950 text-white py-6 px-4 sm:px-6 lg:px-8 border-b border-slate-800">
-                    <div className="max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-4">
-                      <div>
-                        <button
-                          onClick={() => navigateTo('home')}
-                          className="text-amber-400 hover:text-amber-300 text-xs font-bold flex items-center gap-1.5 mb-1 cursor-pointer transition"
-                        >
-                          <ArrowLeft className="w-3.5 h-3.5" />
-                          <span>Back to Home Overview</span>
-                        </button>
-                        <h1 className="text-xl sm:text-2xl font-bold font-serif-title">
-                          Director's Address to the Nation
-                        </h1>
-                        <p className="text-xs text-slate-400">
-                          Prof. Suman Chakraborty, Director, IIT Kharagpur • The Times of India Feature
-                        </p>
-                      </div>
-                      <button
-                        onClick={() => navigateTo('student-login')}
-                        className="px-4 py-2 bg-kgp-crimson hover:bg-kgp-darkred text-white text-xs font-bold rounded-xl shadow-xs transition cursor-pointer"
-                      >
-                        Apply Now
-                      </button>
-                    </div>
-                  </div>
-                  <DirectorMessage
-                    onOpenQualifier={() => navigateTo('qualifier')}
-                    onOpenSignUp={() => navigateTo('student-login')}
-                  />
-                </>
-              )}
-
-              {/* VIEW 13: THE MAIN HOME PAGE */}
-              {currentView === 'home' && (
-                <>
-                  <Hero
-                    onOpenSignUp={() => navigateTo('student-login')}
-                    onOpenDiagram={() => setShowDiagram(true)}
-                    onOpenCertificate={() => setShowCertificate(true)}
-                    onOpenQualifier={() => navigateTo('qualifier')}
-                  />
-
-                  <DirectorMessage
-                    onOpenQualifier={() => navigateTo('qualifier')}
-                    onOpenSignUp={() => navigateTo('student-login')}
-                  />
-
-                  {showDiagram && (
-                    <section id="diagram-section" className="bg-slate-200/70 py-10 px-4 sm:px-6 lg:px-8 border-b-2 border-slate-300">
-                      <div className="max-w-7xl mx-auto">
-                        <BlockDiagramViewer
-                          onClose={() => setShowDiagram(false)}
-                          onOpenStudentLogin={() => setShowStudentModal(true)}
-                          onOpenAdminLogin={() => setShowAdminModal(true)}
-                          onOpenSignUp={() => navigateTo('student-login')}
-                          onOpenCertificate={() => setShowCertificate(true)}
-                        />
-                      </div>
-                    </section>
-                  )}
-
-                  <HomeOverview
-                    onNavigate={navigateTo}
-                    onOpenCertificate={() => setShowCertificate(true)}
-                    onOpenHowToApply={() => setShowHowToApply(true)}
-                    onOpenQualifier={() => navigateTo('qualifier')}
-                    onOpenSignUp={() => navigateTo('student-login')}
-                  />
-                </>
-              )}
-            </main>
+          <div className="bg-slate-950 text-white py-6 px-4 sm:px-6 lg:px-8 border-b border-slate-800">
+            <div className="max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-4">
+              <div>
+                <button
+                  onClick={() => navigateTo('home')}
+                  className="text-amber-400 hover:text-amber-300 text-xs font-bold flex items-center gap-1.5 mb-1 cursor-pointer transition"
+                >
+                  <ArrowLeft className="w-3.5 h-3.5" />
+                  <span>Back to Main Website</span>
+                </button>
+                <h1 className="text-xl sm:text-2xl font-bold font-serif-title">
+                  Course Structure &amp; Syllabus Roadmap
+                </h1>
+                <p className="text-xs text-slate-400">
+                  Bachelor of Science (BS) in Data Science &amp; AI • 142 Credits Modular Curriculum
+                </p>
+              </div>
+              <div className="flex items-center gap-3">
+                <button
+                  onClick={() => setShowCertificate(true)}
+                  className="px-3.5 py-2 bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-semibold rounded-xl border border-slate-700 transition cursor-pointer"
+                >
+                  Sample Certificate
+                </button>
+                <button
+                  onClick={() => navigateTo('student-login')}
+                  className="px-4 py-2 bg-kgp-crimson hover:bg-kgp-darkred text-white text-xs font-bold rounded-xl shadow-xs transition cursor-pointer"
+                >
+                  Apply Now
+                </button>
+              </div>
+            </div>
           </div>
+          <CourseStructure onOpenCertificate={() => setShowCertificate(true)} />
+          <Footer
+            onNavigate={navigateTo}
+            onOpenDiagram={() => setShowDiagram(true)}
+            onOpenStudentLogin={() => navigateTo('student-erp')}
+            onOpenAdminLogin={() => navigateTo('admin-login')}
+            onOpenCertificate={() => setShowCertificate(true)}
+          />
+        </>
+      )}
 
+      {/* VIEW 7: DEDICATED ELIGIBILITY & DIRECT ADMISSION PATHWAYS (Accessed via Hyperlink) */}
+      {currentView === 'eligibility' && (
+        <>
+          <Navbar
+            onNavigate={navigateTo}
+            onOpenDiagram={() => setShowDiagram(true)}
+            onOpenSignUp={() => navigateTo('student-login')}
+            onOpenCertificate={() => setShowCertificate(true)}
+            onOpenHowToApply={() => setShowHowToApply(true)}
+            currentView={currentView}
+          />
+          <div className="bg-slate-950 text-white py-6 px-4 sm:px-6 lg:px-8 border-b border-slate-800">
+            <div className="max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-4">
+              <div>
+                <button
+                  onClick={() => navigateTo('home')}
+                  className="text-amber-400 hover:text-amber-300 text-xs font-bold flex items-center gap-1.5 mb-1 cursor-pointer transition"
+                >
+                  <ArrowLeft className="w-3.5 h-3.5" />
+                  <span>Back to Main Website</span>
+                </button>
+                <h1 className="text-xl sm:text-2xl font-bold font-serif-title">
+                  Eligibility Criteria &amp; Direct Admission Pathways
+                </h1>
+                <p className="text-xs text-slate-400">
+                  Direct entry for WBJEE, JEE Advanced &amp; Tripura JEE qualifiers, plus Universal Qualifier Round
+                </p>
+              </div>
+              <button
+                onClick={() => navigateTo('student-login')}
+                className="px-4 py-2 bg-kgp-crimson hover:bg-kgp-darkred text-white text-xs font-bold rounded-xl shadow-xs transition cursor-pointer"
+              >
+                Apply for Admission
+              </button>
+            </div>
+          </div>
+          <EligibilityPathways onOpenSignUp={() => navigateTo('student-login')} />
+          <Footer
+            onNavigate={navigateTo}
+            onOpenDiagram={() => setShowDiagram(true)}
+            onOpenStudentLogin={() => navigateTo('student-erp')}
+            onOpenAdminLogin={() => navigateTo('admin-login')}
+            onOpenCertificate={() => setShowCertificate(true)}
+          />
+        </>
+      )}
+
+      {/* VIEW 8: DEDICATED FEE STRUCTURE & SCHOLARSHIP CALCULATOR (Accessed via Hyperlink) */}
+      {currentView === 'fees' && (
+        <>
+          <Navbar
+            onNavigate={navigateTo}
+            onOpenDiagram={() => setShowDiagram(true)}
+            onOpenSignUp={() => navigateTo('student-login')}
+            onOpenCertificate={() => setShowCertificate(true)}
+            onOpenHowToApply={() => setShowHowToApply(true)}
+            currentView={currentView}
+          />
+          <div className="bg-slate-950 text-white py-6 px-4 sm:px-6 lg:px-8 border-b border-slate-800">
+            <div className="max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-4">
+              <div>
+                <button
+                  onClick={() => navigateTo('home')}
+                  className="text-amber-400 hover:text-amber-300 text-xs font-bold flex items-center gap-1.5 mb-1 cursor-pointer transition"
+                >
+                  <ArrowLeft className="w-3.5 h-3.5" />
+                  <span>Back to Main Website</span>
+                </button>
+                <h1 className="text-xl sm:text-2xl font-bold font-serif-title">
+                  Fee Structure &amp; Real-Time Scholarship Calculator
+                </h1>
+                <p className="text-xs text-slate-400">
+                  Affordable modular pay-per-credit model with up to 75% fee waivers for eligible candidates
+                </p>
+              </div>
+              <button
+                onClick={() => navigateTo('student-login')}
+                className="px-4 py-2 bg-kgp-crimson hover:bg-kgp-darkred text-white text-xs font-bold rounded-xl shadow-xs transition cursor-pointer"
+              >
+                Apply Now
+              </button>
+            </div>
+          </div>
+          <FeesStructure />
+          <Footer
+            onNavigate={navigateTo}
+            onOpenDiagram={() => setShowDiagram(true)}
+            onOpenStudentLogin={() => navigateTo('student-erp')}
+            onOpenAdminLogin={() => navigateTo('admin-login')}
+            onOpenCertificate={() => setShowCertificate(true)}
+          />
+        </>
+      )}
+
+      {/* VIEW 9: DEDICATED CAMPUS IMMERSION, LIBRARY & PLACEMENTS (Accessed via Hyperlink) */}
+      {currentView === 'campus' && (
+        <>
+          <Navbar
+            onNavigate={navigateTo}
+            onOpenDiagram={() => setShowDiagram(true)}
+            onOpenSignUp={() => navigateTo('student-login')}
+            onOpenCertificate={() => setShowCertificate(true)}
+            onOpenHowToApply={() => setShowHowToApply(true)}
+            currentView={currentView}
+          />
+          <div className="bg-slate-950 text-white py-6 px-4 sm:px-6 lg:px-8 border-b border-slate-800">
+            <div className="max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-4">
+              <div>
+                <button
+                  onClick={() => navigateTo('home')}
+                  className="text-amber-400 hover:text-amber-300 text-xs font-bold flex items-center gap-1.5 mb-1 cursor-pointer transition"
+                >
+                  <ArrowLeft className="w-3.5 h-3.5" />
+                  <span>Back to Main Website</span>
+                </button>
+                <h1 className="text-xl sm:text-2xl font-bold font-serif-title">
+                  Campus Immersion, Central Library &amp; Placement Ecosystem
+                </h1>
+                <p className="text-xs text-slate-400">
+                  Experience the historic 2,100-acre Kharagpur campus, Asia's premier library, and career placements
+                </p>
+              </div>
+              <button
+                onClick={() => navigateTo('student-login')}
+                className="px-4 py-2 bg-kgp-crimson hover:bg-kgp-darkred text-white text-xs font-bold rounded-xl shadow-xs transition cursor-pointer"
+              >
+                Apply Now
+              </button>
+            </div>
+          </div>
+          <CampusLifePlacement />
+          <Footer
+            onNavigate={navigateTo}
+            onOpenDiagram={() => setShowDiagram(true)}
+            onOpenStudentLogin={() => navigateTo('student-erp')}
+            onOpenAdminLogin={() => navigateTo('admin-login')}
+            onOpenCertificate={() => setShowCertificate(true)}
+          />
+        </>
+      )}
+
+      {/* VIEW 10: DEDICATED BILINGUAL FAQS (Accessed via Hyperlink) */}
+      {currentView === 'faqs' && (
+        <>
+          <Navbar
+            onNavigate={navigateTo}
+            onOpenDiagram={() => setShowDiagram(true)}
+            onOpenSignUp={() => navigateTo('student-login')}
+            onOpenCertificate={() => setShowCertificate(true)}
+            onOpenHowToApply={() => setShowHowToApply(true)}
+            currentView={currentView}
+          />
+          <div className="bg-slate-950 text-white py-6 px-4 sm:px-6 lg:px-8 border-b border-slate-800">
+            <div className="max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-4">
+              <div>
+                <button
+                  onClick={() => navigateTo('home')}
+                  className="text-amber-400 hover:text-amber-300 text-xs font-bold flex items-center gap-1.5 mb-1 cursor-pointer transition"
+                >
+                  <ArrowLeft className="w-3.5 h-3.5" />
+                  <span>Back to Main Website</span>
+                </button>
+                <h1 className="text-xl sm:text-2xl font-bold font-serif-title">
+                  Frequently Asked Questions (English &amp; বাংলা)
+                </h1>
+                <p className="text-xs text-slate-400">
+                  Comprehensive answers to admissions, exams, fee policies, degree validity, and alumni privileges
+                </p>
+              </div>
+              <button
+                onClick={() => navigateTo('student-login')}
+                className="px-4 py-2 bg-kgp-crimson hover:bg-kgp-darkred text-white text-xs font-bold rounded-xl shadow-xs transition cursor-pointer"
+              >
+                Apply Now
+              </button>
+            </div>
+          </div>
+          <FaqSection />
+          <Footer
+            onNavigate={navigateTo}
+            onOpenDiagram={() => setShowDiagram(true)}
+            onOpenStudentLogin={() => navigateTo('student-erp')}
+            onOpenAdminLogin={() => navigateTo('admin-login')}
+            onOpenCertificate={() => setShowCertificate(true)}
+          />
+        </>
+      )}
+
+      {/* VIEW 11: DEDICATED CONTACT DETAILS & HELPDESK (Accessed via Hyperlink) */}
+      {currentView === 'contact' && (
+        <>
+          <Navbar
+            onNavigate={navigateTo}
+            onOpenDiagram={() => setShowDiagram(true)}
+            onOpenSignUp={() => navigateTo('student-login')}
+            onOpenCertificate={() => setShowCertificate(true)}
+            onOpenHowToApply={() => setShowHowToApply(true)}
+            currentView={currentView}
+          />
+          <div className="bg-slate-950 text-white py-6 px-4 sm:px-6 lg:px-8 border-b border-slate-800">
+            <div className="max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-4">
+              <div>
+                <button
+                  onClick={() => navigateTo('home')}
+                  className="text-amber-400 hover:text-amber-300 text-xs font-bold flex items-center gap-1.5 mb-1 cursor-pointer transition"
+                >
+                  <ArrowLeft className="w-3.5 h-3.5" />
+                  <span>Back to Main Website</span>
+                </button>
+                <h1 className="text-xl sm:text-2xl font-bold font-serif-title">
+                  Contact Details &amp; Admissions Helpdesk
+                </h1>
+                <p className="text-xs text-slate-400">
+                  Reach out to the BS Programme Office at the Center for Educational Technology (CET), IIT Kharagpur
+                </p>
+              </div>
+              <button
+                onClick={() => navigateTo('student-login')}
+                className="px-4 py-2 bg-kgp-crimson hover:bg-kgp-darkred text-white text-xs font-bold rounded-xl shadow-xs transition cursor-pointer"
+              >
+                Apply Now
+              </button>
+            </div>
+          </div>
+          <ContactSection />
+          <Footer
+            onNavigate={navigateTo}
+            onOpenDiagram={() => setShowDiagram(true)}
+            onOpenStudentLogin={() => navigateTo('student-erp')}
+            onOpenAdminLogin={() => navigateTo('admin-login')}
+            onOpenCertificate={() => setShowCertificate(true)}
+          />
+        </>
+      )}
+
+      {/* VIEW 12: DEDICATED DIRECTOR'S MESSAGE PAGE (Accessed via Hyperlink) */}
+      {currentView === 'director' && (
+        <>
+          <Navbar
+            onNavigate={navigateTo}
+            onOpenDiagram={() => setShowDiagram(true)}
+            onOpenSignUp={() => navigateTo('student-login')}
+            onOpenCertificate={() => setShowCertificate(true)}
+            onOpenHowToApply={() => setShowHowToApply(true)}
+            currentView={currentView}
+          />
+          <div className="bg-slate-950 text-white py-6 px-4 sm:px-6 lg:px-8 border-b border-slate-800">
+            <div className="max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-4">
+              <div>
+                <button
+                  onClick={() => navigateTo('home')}
+                  className="text-amber-400 hover:text-amber-300 text-xs font-bold flex items-center gap-1.5 mb-1 cursor-pointer transition"
+                >
+                  <ArrowLeft className="w-3.5 h-3.5" />
+                  <span>Back to Main Website</span>
+                </button>
+                <h1 className="text-xl sm:text-2xl font-bold font-serif-title">
+                  Director's Address to the Nation
+                </h1>
+                <p className="text-xs text-slate-400">
+                  Prof. Suman Chakraborty, Director, IIT Kharagpur • The Times of India Feature
+                </p>
+              </div>
+              <button
+                onClick={() => navigateTo('student-login')}
+                className="px-4 py-2 bg-kgp-crimson hover:bg-kgp-darkred text-white text-xs font-bold rounded-xl shadow-xs transition cursor-pointer"
+              >
+                Apply Now
+              </button>
+            </div>
+          </div>
+          <DirectorMessage
+            onOpenQualifier={() => navigateTo('qualifier')}
+            onOpenSignUp={() => navigateTo('student-login')}
+          />
+          <Footer
+            onNavigate={navigateTo}
+            onOpenDiagram={() => setShowDiagram(true)}
+            onOpenStudentLogin={() => navigateTo('student-erp')}
+            onOpenAdminLogin={() => navigateTo('admin-login')}
+            onOpenCertificate={() => setShowCertificate(true)}
+          />
+        </>
+      )}
+
+      {/* VIEW 13: THE MAIN HOME PAGE (Clean, Eye-Smoothing Landing Page matching Reference PDF) */}
+      {currentView === 'home' && (
+        <>
+          {/* Main Sticky Navbar */}
+          <Navbar
+            onNavigate={navigateTo}
+            onOpenDiagram={() => setShowDiagram(true)}
+            onOpenSignUp={() => navigateTo('student-login')}
+            onOpenCertificate={() => setShowCertificate(true)}
+            onOpenHowToApply={() => setShowHowToApply(true)}
+            currentView={currentView}
+          />
+
+          {/* Hero Section with Unblurred Slides, Degree Titles & 5-Pill Facts Strip */}
+          <Hero
+            onOpenSignUp={() => navigateTo('student-login')}
+            onOpenDiagram={() => setShowDiagram(true)}
+            onOpenCertificate={() => setShowCertificate(true)}
+            onOpenQualifier={() => navigateTo('qualifier')}
+          />
+
+          {/* Note from our Director (Executive Summary + Expandable TOI Address) */}
+          <DirectorMessage
+            onOpenQualifier={() => navigateTo('qualifier')}
+            onOpenSignUp={() => navigateTo('student-login')}
+          />
+
+          {/* Block Diagram Section (Toggled on demand) */}
+          {showDiagram && (
+            <section id="diagram-section" className="bg-slate-200/70 py-10 px-4 sm:px-6 lg:px-8 border-b-2 border-slate-300">
+              <div className="max-w-7xl mx-auto">
+                <BlockDiagramViewer
+                  onClose={() => setShowDiagram(false)}
+                  onOpenStudentLogin={() => setShowStudentModal(true)}
+                  onOpenAdminLogin={() => setShowAdminModal(true)}
+                  onOpenSignUp={() => navigateTo('student-login')}
+                  onOpenCertificate={() => setShowCertificate(true)}
+                />
+              </div>
+            </section>
+          )}
+
+          {/* Executive Overview Matching Reference PDF: Highlights, Credentials, Hyperlink Directory, Comparison Table, and Final CTA */}
+          <HomeOverview
+            onNavigate={navigateTo}
+            onOpenCertificate={() => setShowCertificate(true)}
+            onOpenHowToApply={() => setShowHowToApply(true)}
+            onOpenQualifier={() => navigateTo('qualifier')}
+            onOpenSignUp={() => navigateTo('student-login')}
+          />
+
+          {/* Clean Institutional Footer */}
           <Footer
             onNavigate={navigateTo}
             onOpenDiagram={() => setShowDiagram(true)}

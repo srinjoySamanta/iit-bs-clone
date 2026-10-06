@@ -1,5 +1,5 @@
 import React from 'react';
-import { Mail, Phone, MapPin, ExternalLink, ShieldCheck, Award, Lock, GraduationCap } from 'lucide-react';
+import { Mail, Phone, MapPin, ExternalLink, ShieldCheck, Award, Lock, GraduationCap, UserCheck } from 'lucide-react';
 import { IIT_KGP_INFO } from '../data/portalData';
 import iitKgpLogo from '../assets/logo';
 import { getErpLoginUrl } from '../config/portalConfig';
@@ -100,24 +100,23 @@ export default function Footer({ onOpenDiagram, onOpenStudentLogin, onOpenAdminL
             <div className="inline-flex items-center gap-2">
               <button
                 type="button"
-                onClick={() => onNavigate ? onNavigate('student-erp') : (onOpenStudentLogin ? onOpenStudentLogin() : null)}
+                onClick={() => onNavigate ? onNavigate('student-login') : (onOpenStudentLogin ? onOpenStudentLogin() : null)}
                 className="text-slate-400 hover:text-emerald-400 transition flex items-center gap-1 font-semibold cursor-pointer"
-                title="Student LMS & ERP Portal"
+                title="BS Student Portal & LMS Login"
               >
                 <GraduationCap className="w-3 h-3 text-emerald-400" />
-                <span>Student LMS</span>
+                <span>Student Login</span>
               </button>
               <span>•</span>
-              <a
-                href={getErpLoginUrl('employee')}
-                target="_blank"
-                rel="noreferrer"
-                className="text-slate-400 hover:text-sky-400 transition flex items-center gap-1 font-semibold"
+              <button
+                type="button"
+                onClick={() => onNavigate ? onNavigate('staff-login') : null}
+                className="text-slate-400 hover:text-sky-400 transition flex items-center gap-1 font-semibold cursor-pointer"
                 title="Staff Operations Portal"
               >
-                <Lock className="w-3 h-3 text-sky-400" />
-                <span>Staff Portal</span>
-              </a>
+                <UserCheck className="w-3 h-3 text-sky-400" />
+                <span>Staff Login</span>
+              </button>
               <span>•</span>
               <button
                 type="button"
@@ -126,7 +125,7 @@ export default function Footer({ onOpenDiagram, onOpenStudentLogin, onOpenAdminL
                 title="Super Admin Directorate Login"
               >
                 <ShieldCheck className="w-3 h-3 text-amber-400" />
-                <span>Admin</span>
+                <span>Admin Login</span>
               </button>
             </div>
           </div>

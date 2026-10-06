@@ -202,7 +202,156 @@ export default function HomeOverview({
         </div>
       </section>
 
+      {/* 3. PROGRAMME DIRECTORY (THE HYPERLINK DIRECTORY: Click to view each dedicated sub-page) */}
+      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="text-center max-w-3xl mx-auto mb-12">
+          <span className="text-xs font-bold uppercase tracking-wider text-kgp-crimson bg-red-50 px-3.5 py-1 rounded-full border border-red-200">
+            Navigation Directory
+          </span>
+          <h2 className="mt-3 text-3xl sm:text-4xl font-extrabold text-slate-900 font-serif-title">
+            Explore Programme Details
+          </h2>
+          <p className="mt-3 text-slate-600 text-sm">
+            Click on any section below or use the top menu to view the full, dedicated information pages.
+          </p>
+        </div>
 
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          
+          {/* 1. Course Structure & Syllabus */}
+          <div 
+            onClick={() => onNavigate('structure')}
+            className="group p-6 rounded-2xl bg-white border-2 border-stone-200 hover:border-kgp-crimson shadow-2xs hover:shadow-lg transition cursor-pointer flex flex-col justify-between"
+          >
+            <div>
+              <div className="w-10 h-10 rounded-xl bg-red-50 text-kgp-crimson flex items-center justify-center mb-3 group-hover:scale-105 transition">
+                <BookOpen className="w-5 h-5" />
+              </div>
+              <h3 className="text-lg font-bold text-slate-900 group-hover:text-kgp-crimson transition font-serif-title">
+                Course Structure &amp; Syllabus Roadmap
+              </h3>
+              <p className="text-xs text-slate-600 mt-2 leading-relaxed">
+                Full 142 Credits curriculum: Foundation (32 cr), Diplomas in Programming &amp; AI (64 cr), B.Sc. (104 cr), and BS Degree (142 cr).
+              </p>
+            </div>
+            <div className="mt-5 pt-3 border-t border-slate-100 flex items-center justify-between text-xs font-bold text-kgp-crimson">
+              <span>View Full Syllabus &amp; Credits</span>
+              <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+            </div>
+          </div>
+
+          {/* 2. Eligibility & Direct Pathways */}
+          <div 
+            onClick={() => onNavigate('eligibility')}
+            className="group p-6 rounded-2xl bg-white border-2 border-stone-200 hover:border-kgp-crimson shadow-2xs hover:shadow-lg transition cursor-pointer flex flex-col justify-between"
+          >
+            <div>
+              <div className="w-10 h-10 rounded-xl bg-emerald-50 text-emerald-700 flex items-center justify-center mb-3 group-hover:scale-105 transition">
+                <CheckCircle2 className="w-5 h-5" />
+              </div>
+              <h3 className="text-lg font-bold text-slate-900 group-hover:text-kgp-crimson transition font-serif-title">
+                Eligibility &amp; Direct Entry Pathways
+              </h3>
+              <p className="text-xs text-slate-600 mt-2 leading-relaxed">
+                Dual admission routes: Direct entry for WBJEE, JEE Advanced &amp; Tripura JEE qualifiers, or universal entry via the 4-week Qualifier Round.
+              </p>
+            </div>
+            <div className="mt-5 pt-3 border-t border-slate-100 flex items-center justify-between text-xs font-bold text-emerald-800">
+              <span>Check Eligibility Rules</span>
+              <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+            </div>
+          </div>
+
+          {/* 3. Fees Structure & Calculator */}
+          <div 
+            onClick={() => onNavigate('fees')}
+            className="group p-6 rounded-2xl bg-white border-2 border-stone-200 hover:border-kgp-crimson shadow-2xs hover:shadow-lg transition cursor-pointer flex flex-col justify-between"
+          >
+            <div>
+              <div className="w-10 h-10 rounded-xl bg-amber-50 text-amber-800 flex items-center justify-center mb-3 group-hover:scale-105 transition">
+                <Award className="w-5 h-5" />
+              </div>
+              <h3 className="text-lg font-bold text-slate-900 group-hover:text-kgp-crimson transition font-serif-title">
+                Fees Structure &amp; Scholarships
+              </h3>
+              <p className="text-xs text-slate-600 mt-2 leading-relaxed">
+                Affordable modular pay-per-credit structure with up to 75% fee waivers for SC / ST / PwD candidates and low-income families.
+              </p>
+            </div>
+            <div className="mt-5 pt-3 border-t border-slate-100 flex items-center justify-between text-xs font-bold text-amber-800">
+              <span>Open Fee &amp; Waiver Calculator</span>
+              <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+            </div>
+          </div>
+
+          {/* 4. Campus Immersion & Placements */}
+          <div 
+            onClick={() => onNavigate('campus')}
+            className="group p-6 rounded-2xl bg-white border-2 border-stone-200 hover:border-kgp-crimson shadow-2xs hover:shadow-lg transition cursor-pointer flex flex-col justify-between"
+          >
+            <div>
+              <div className="w-10 h-10 rounded-xl bg-blue-50 text-blue-700 flex items-center justify-center mb-3 group-hover:scale-105 transition">
+                <Building2 className="w-5 h-5" />
+              </div>
+              <h3 className="text-lg font-bold text-slate-900 group-hover:text-kgp-crimson transition font-serif-title">
+                Campus Immersion &amp; Placements
+              </h3>
+              <p className="text-xs text-slate-600 mt-2 leading-relaxed">
+                Experience student life on the 2,100-acre green campus, participate in annual tech fests, and leverage the dedicated placement cell.
+              </p>
+            </div>
+            <div className="mt-5 pt-3 border-t border-slate-100 flex items-center justify-between text-xs font-bold text-blue-800">
+              <span>View Campus &amp; Placement Data</span>
+              <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+            </div>
+          </div>
+
+          {/* 5. How to Apply Guide */}
+          <div 
+            onClick={() => onNavigate('how-to-apply')}
+            className="group p-6 rounded-2xl bg-white border-2 border-stone-200 hover:border-kgp-crimson shadow-2xs hover:shadow-lg transition cursor-pointer flex flex-col justify-between"
+          >
+            <div>
+              <div className="w-10 h-10 rounded-xl bg-purple-50 text-purple-700 flex items-center justify-center mb-3 group-hover:scale-105 transition">
+                <FileText className="w-5 h-5" />
+              </div>
+              <h3 className="text-lg font-bold text-slate-900 group-hover:text-kgp-crimson transition font-serif-title">
+                How to Apply (5-Stage Guide)
+              </h3>
+              <p className="text-xs text-slate-600 mt-2 leading-relaxed">
+                Step-by-step instructions for profile creation, age proof, Class 10/12 documents, photo/signature specifications, and fee checkout.
+              </p>
+            </div>
+            <div className="mt-5 pt-3 border-t border-slate-100 flex items-center justify-between text-xs font-bold text-purple-800">
+              <span>Read Application Instructions</span>
+              <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+            </div>
+          </div>
+
+          {/* 6. Bilingual FAQs & Helpdesk */}
+          <div 
+            onClick={() => onNavigate('faqs')}
+            className="group p-6 rounded-2xl bg-white border-2 border-stone-200 hover:border-kgp-crimson shadow-2xs hover:shadow-lg transition cursor-pointer flex flex-col justify-between"
+          >
+            <div>
+              <div className="w-10 h-10 rounded-xl bg-sky-50 text-sky-700 flex items-center justify-center mb-3 group-hover:scale-105 transition">
+                <HelpCircle className="w-5 h-5" />
+              </div>
+              <h3 className="text-lg font-bold text-slate-900 group-hover:text-kgp-crimson transition font-serif-title">
+                Frequently Asked Questions
+              </h3>
+              <p className="text-xs text-slate-600 mt-2 leading-relaxed">
+                Clear answers in English and বাংলা covering exams, eligibility, fee refunds, deferral policy, degree recognition, and LMS access.
+              </p>
+            </div>
+            <div className="mt-5 pt-3 border-t border-slate-100 flex items-center justify-between text-xs font-bold text-sky-800">
+              <span>Browse All Bilingual FAQs</span>
+              <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+            </div>
+          </div>
+
+        </div>
+      </section>
 
       {/* 4. COMPARISON TABLE: WHY IIT KHARAGPUR BS VS OTHERS (Matched to Reference PDF Page 11-12) */}
       <section className="bg-stone-50 py-16 border-y border-stone-200">

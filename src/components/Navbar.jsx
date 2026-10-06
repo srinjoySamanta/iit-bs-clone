@@ -21,8 +21,6 @@ export default function Navbar({
   const [admissionsDropdown, setAdmissionsDropdown] = useState(false);
   const [campusDropdown, setCampusDropdown] = useState(false);
   const [supportDropdown, setSupportDropdown] = useState(false);
-  const [loginDropdown, setLoginDropdown] = useState(false);
-  const loginDropdownRef = useRef(null);
   const dropdownTimers = useRef({});
   const [lang, setLang] = useState('en');
 
@@ -35,7 +33,6 @@ export default function Navbar({
     if (key === 'admissions') setAdmissionsDropdown(true);
     if (key === 'campus') setCampusDropdown(true);
     if (key === 'support') setSupportDropdown(true);
-    if (key === 'login') setLoginDropdown(true);
   };
 
   const closeDropdownWithDelay = (key, delay = 350) => {
@@ -47,7 +44,6 @@ export default function Navbar({
       if (key === 'admissions') setAdmissionsDropdown(false);
       if (key === 'campus') setCampusDropdown(false);
       if (key === 'support') setSupportDropdown(false);
-      if (key === 'login') setLoginDropdown(false);
       delete dropdownTimers.current[key];
     }, delay);
   };
@@ -62,23 +58,7 @@ export default function Navbar({
     if (key === 'admissions') setAdmissionsDropdown(prev => !prev);
     if (key === 'campus') setCampusDropdown(prev => !prev);
     if (key === 'support') setSupportDropdown(prev => !prev);
-    if (key === 'login') setLoginDropdown(prev => !prev);
   };
-
-  // Keep dropdown open stably and close only on outside click
-  useEffect(() => {
-    const handleClickOutside = (event) => {
-      if (loginDropdownRef.current && !loginDropdownRef.current.contains(event.target)) {
-        if (dropdownTimers.current['login']) clearTimeout(dropdownTimers.current['login']);
-        setLoginDropdown(false);
-      }
-    };
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
-      Object.values(dropdownTimers.current).forEach(t => clearTimeout(t));
-    };
-  }, []);
 
   useEffect(() => {
     try {
@@ -223,6 +203,29 @@ export default function Navbar({
                 हिन्दी
               </button>
             </div>
+          </div>
+
+          {/* Separate Direct Links for Staff & Admin Login */}
+          <div className="hidden sm:flex items-center gap-2 text-[11px] pl-2 border-l border-slate-700">
+            <button
+              type="button"
+              onClick={() => onNavigate('staff-login')}
+              className="text-slate-300 hover:text-sky-300 transition flex items-center gap-1 font-semibold cursor-pointer"
+              title="Separate Link: Staff Operations Login"
+            >
+              <UserCheck className="w-3 h-3 text-sky-400" />
+              <span>Staff Login</span>
+            </button>
+            <span className="text-slate-600">•</span>
+            <button
+              type="button"
+              onClick={() => onNavigate('admin-login')}
+              className="text-slate-300 hover:text-amber-300 transition flex items-center gap-1 font-semibold cursor-pointer"
+              title="Separate Link: Super Admin Directorate Login"
+            >
+              <ShieldCheck className="w-3 h-3 text-amber-400" />
+              <span>Admin Login</span>
+            </button>
           </div>
 
         </div>
@@ -520,138 +523,27 @@ export default function Navbar({
               <span>Apply Now</span>
             </button>
 
-            {/* Login Button (Directly beside Apply Now) with Student / Staff / Admin options */}
-            <div 
-              ref={loginDropdownRef}
-              className="relative"
-              onMouseEnter={() => openDropdown('login')}
-              onMouseLeave={() => closeDropdownWithDelay('login', 400)}
+            {/* Dedicated Student Login Button (Strictly Student Only Beside Apply Now) */}
+            <button
+              type="button"
+              onClick={() => onNavigate('student-login')}
+              className="flex items-center space-x-1.5 px-4 py-2.5 text-xs sm:text-sm font-bold text-slate-800 bg-white hover:bg-emerald-50 border-2 border-slate-300 hover:border-emerald-600 rounded-xl shadow-xs transition cursor-pointer select-none"
+              title="BS Student Portal & LMS Login"
             >
-              <button
-                type="button"
-                onClick={(e) => toggleDropdown('login', e)}
-                className={`flex items-center space-x-1.5 px-4 py-2.5 text-xs sm:text-sm font-bold rounded-xl shadow-xs transition cursor-pointer select-none ${
-                  loginDropdown 
-                    ? 'bg-slate-900 text-white border-2 border-slate-900' 
-                    : 'text-slate-800 bg-white hover:bg-slate-50 border-2 border-slate-300 hover:border-kgp-crimson'
-                }`}
-                title="Institutional Login: Student / Staff / Admin"
-              >
-                <LogIn className={`w-4 h-4 ${loginDropdown ? 'text-amber-400' : 'text-kgp-crimson'}`} />
-                <span>Login</span>
-                <ChevronDown className={`w-3.5 h-3.5 transition-transform duration-200 ${loginDropdown ? 'rotate-180 text-white' : 'text-slate-500'}`} />
-              </button>
-
-              {loginDropdown && (
-                <div 
-                  className="absolute right-0 top-full pt-1.5 w-84 z-50 animate-in fade-in slide-in-from-top-1"
-                  onMouseEnter={() => openDropdown('login')}
-                  onMouseLeave={() => closeDropdownWithDelay('login', 400)}
-                  onClick={(e) => e.stopPropagation()}
-                >
-                  <div className="bg-white rounded-2xl shadow-2xl border border-slate-200 py-3">
-                    <div className="px-4 pb-2.5 border-b border-slate-100 flex items-center justify-between">
-                      <div>
-                        <div className="text-[10px] font-bold uppercase tracking-wider text-slate-400">Institutional Access</div>
-                        <div className="text-xs font-bold text-slate-900 font-serif">Select Login Portal</div>
-                      </div>
-                      <span className="text-[9px] font-mono bg-amber-50 text-amber-800 border border-amber-200 px-1.5 py-0.5 rounded font-bold">ERP &amp; LMS</span>
-                    </div>
-
-                    <div className="p-2 space-y-1">
-                      {/* Student Section */}
-                      <button
-                        type="button"
-                        onClick={() => {
-                          setLoginDropdown(false);
-                          onNavigate('student-erp');
-                        }}
-                        className="w-full text-left group flex items-start gap-3 p-2.5 rounded-xl hover:bg-emerald-50 transition border border-transparent hover:border-emerald-200 cursor-pointer"
-                      >
-                        <div className="w-8 h-8 rounded-lg bg-emerald-100 text-emerald-700 flex items-center justify-center flex-shrink-0 mt-0.5 group-hover:scale-105 transition shadow-2xs">
-                          <GraduationCap className="w-4 h-4" />
-                        </div>
-                        <div className="flex-1 min-w-0">
-                          <div className="flex items-center justify-between">
-                            <span className="text-xs font-bold text-slate-900 group-hover:text-emerald-800">Student Login</span>
-                            <span className="text-[9px] font-bold px-1.5 py-0.5 rounded bg-emerald-100 text-emerald-800">ERP &amp; LMS</span>
-                          </div>
-                          <p className="text-[11px] text-slate-500 line-clamp-1">Admission journey, videos, fees &amp; CBT exam</p>
-                        </div>
-                      </button>
-
-                      {/* Staff Section */}
-                      <button
-                        type="button"
-                        onClick={() => {
-                          setLoginDropdown(false);
-                          onNavigate('staff-login');
-                        }}
-                        className="w-full text-left group flex items-start gap-3 p-2.5 rounded-xl hover:bg-sky-50 transition border border-transparent hover:border-sky-200 cursor-pointer"
-                      >
-                        <div className="w-8 h-8 rounded-lg bg-sky-100 text-sky-700 flex items-center justify-center flex-shrink-0 mt-0.5 group-hover:scale-105 transition shadow-2xs">
-                          <UserCheck className="w-4 h-4" />
-                        </div>
-                        <div className="flex-1 min-w-0">
-                          <div className="flex items-center justify-between">
-                            <span className="text-xs font-bold text-slate-900 group-hover:text-sky-800">Staff Login</span>
-                            <span className="text-[9px] font-bold px-1.5 py-0.5 rounded bg-sky-100 text-sky-800">Staff ERP</span>
-                          </div>
-                          <p className="text-[11px] text-slate-500 line-clamp-1">Verification queue, tasks &amp; progress</p>
-                        </div>
-                      </button>
-
-                      {/* Admin Section */}
-                      <button
-                        type="button"
-                        onClick={() => {
-                          setLoginDropdown(false);
-                          onNavigate('admin-login');
-                        }}
-                        className="w-full text-left group flex items-start gap-3 p-2.5 rounded-xl hover:bg-amber-50 transition border border-transparent hover:border-amber-200 cursor-pointer"
-                      >
-                        <div className="w-8 h-8 rounded-lg bg-amber-100 text-amber-800 flex items-center justify-center flex-shrink-0 mt-0.5 group-hover:scale-105 transition shadow-2xs">
-                          <ShieldCheck className="w-4 h-4" />
-                        </div>
-                        <div className="flex-1 min-w-0">
-                          <div className="flex items-center justify-between">
-                            <span className="text-xs font-bold text-slate-900 group-hover:text-amber-800">Admin Login</span>
-                            <span className="text-[9px] font-bold px-1.5 py-0.5 rounded bg-amber-100 text-amber-900">Admin</span>
-                          </div>
-                          <p className="text-[11px] text-slate-500 line-clamp-1">Master console, admissions &amp; cutoffs</p>
-                        </div>
-                      </button>
-                    </div>
-
-                    <div className="px-3 pt-2 border-t border-slate-100 flex items-center justify-between text-[11px]">
-                      <button
-                        type="button"
-                        onClick={() => {
-                          setLoginDropdown(false);
-                          onNavigate('admin-login');
-                        }}
-                        className="text-kgp-crimson hover:underline font-bold flex items-center gap-1 cursor-pointer"
-                      >
-                        <span>Unified Sign In Screen</span>
-                        <ArrowRight className="w-3 h-3" />
-                      </button>
-                      <span className="text-[10px] text-slate-400 font-mono">ERP &amp; LMS</span>
-                    </div>
-                  </div>
-                </div>
-              )}
-            </div>
+              <GraduationCap className="w-4 h-4 text-emerald-600" />
+              <span>Student Login</span>
+            </button>
           </div>
 
           {/* Mobile Navigation Controls */}
           <div className="lg:hidden flex items-center space-x-2">
             <button
-              onClick={() => onNavigate('admin-login')}
+              onClick={() => onNavigate('student-login')}
               className="px-2.5 py-1.5 text-xs font-bold text-slate-800 bg-white border border-slate-300 rounded-lg shadow-2xs flex items-center gap-1 cursor-pointer"
-              title="Institutional Login"
+              title="Student Login"
             >
-              <LogIn className="w-3.5 h-3.5 text-kgp-crimson" />
-              <span>Login</span>
+              <GraduationCap className="w-3.5 h-3.5 text-emerald-600" />
+              <span>Student Login</span>
             </button>
             <button
               onClick={() => onNavigate('student-login')}
@@ -712,73 +604,55 @@ export default function Navbar({
             </div>
           </div>
 
-          {/* Institutional Role Gates (ERP / LMS / Admin) */}
-          <div className="p-3 bg-slate-50 rounded-xl border border-slate-200 space-y-2">
-            <div className="text-[10px] font-bold uppercase tracking-wider text-slate-500 flex items-center justify-between">
-              <span>Institutional Access Gates (ERP)</span>
-              <span className="text-[9px] font-mono text-amber-700 font-bold bg-amber-100/60 px-1.5 py-0.5 rounded">ERP Hub</span>
-            </div>
-            <div className="grid grid-cols-3 gap-1.5 text-center text-xs">
-              <button
-                type="button"
-                onClick={() => {
-                  setMobileMenuOpen(false);
-                  onNavigate('student-erp');
-                }}
-                className="p-2 rounded-lg bg-emerald-50 border border-emerald-200 text-emerald-900 font-bold flex flex-col items-center gap-1 hover:bg-emerald-100 transition shadow-2xs cursor-pointer"
-              >
-                <GraduationCap className="w-4 h-4 text-emerald-600" />
-                <span className="text-[11px]">Student ERP</span>
-              </button>
-              <button
-                type="button"
-                onClick={() => {
-                  setMobileMenuOpen(false);
-                  onNavigate('staff-login');
-                }}
-                className="p-2 rounded-lg bg-sky-50 border border-sky-200 text-sky-900 font-bold flex flex-col items-center gap-1 hover:bg-sky-100 transition shadow-2xs cursor-pointer"
-              >
-                <UserCheck className="w-4 h-4 text-sky-600" />
-                <span className="text-[11px]">Staff</span>
-              </button>
-              <button
-                type="button"
-                onClick={() => {
-                  setMobileMenuOpen(false);
-                  onNavigate('admin-login');
-                }}
-                className="p-2 rounded-lg bg-amber-50 border border-amber-200 text-amber-900 font-bold flex flex-col items-center gap-1 hover:bg-amber-100 transition shadow-2xs cursor-pointer"
-              >
-                <ShieldCheck className="w-4 h-4 text-amber-700" />
-                <span className="text-[11px]">Admin</span>
-              </button>
-            </div>
+          {/* Student Login Primary Action */}
+          <button
+            onClick={() => { onNavigate('student-login'); setMobileMenuOpen(false); }}
+            className="w-full py-2.5 px-4 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl font-bold text-xs flex items-center justify-center gap-1.5 shadow cursor-pointer"
+          >
+            <GraduationCap className="w-4 h-4" />
+            <span>Student Login</span>
+          </button>
+
+          {/* Apply Now */}
+          <button
+            onClick={() => { onNavigate('student-login'); setMobileMenuOpen(false); }}
+            className="w-full py-2.5 px-4 bg-gradient-to-r from-kgp-crimson to-red-800 text-white rounded-xl font-bold text-xs flex items-center justify-center gap-1.5 shadow cursor-pointer"
+          >
+            <UserPlus className="w-4 h-4" />
+            <span>Apply Now (IIT Portal)</span>
+          </button>
+
+          {/* Separate Direct Links for Staff & Admin Login */}
+          <div className="flex items-center justify-around py-2 px-3 bg-slate-50 rounded-xl border border-slate-200 text-xs">
+            <button
+              type="button"
+              onClick={() => { onNavigate('staff-login'); setMobileMenuOpen(false); }}
+              className="text-slate-700 hover:text-sky-600 font-bold flex items-center gap-1.5 cursor-pointer"
+              title="Staff Operations Login"
+            >
+              <UserCheck className="w-3.5 h-3.5 text-sky-600" />
+              <span>Staff Login</span>
+            </button>
+            <span className="text-slate-300">|</span>
+            <button
+              type="button"
+              onClick={() => { onNavigate('admin-login'); setMobileMenuOpen(false); }}
+              className="text-slate-700 hover:text-amber-600 font-bold flex items-center gap-1.5 cursor-pointer"
+              title="Admin Login"
+            >
+              <ShieldCheck className="w-3.5 h-3.5 text-amber-600" />
+              <span>Admin Login</span>
+            </button>
           </div>
 
-          <div className="grid grid-cols-2 gap-2 pt-1 pb-1">
+          <div className="pt-1 pb-1">
             <button
               onClick={() => { onNavigate('home'); setMobileMenuOpen(false); }}
               className="w-full py-2 text-xs font-bold text-slate-800 border border-slate-300 rounded-lg bg-slate-50 text-center cursor-pointer"
             >
               Home Page
             </button>
-            <button
-              type="button"
-              onClick={() => { onNavigate('admin-login'); setMobileMenuOpen(false); }}
-              className="w-full py-2 text-xs font-bold text-kgp-crimson border border-kgp-crimson/40 rounded-lg bg-red-50/50 text-center flex items-center justify-center gap-1 cursor-pointer"
-            >
-              <LogIn className="w-3.5 h-3.5" />
-              <span>Portal Sign In</span>
-            </button>
           </div>
-
-          <button
-            onClick={() => { onNavigate('student-login'); setMobileMenuOpen(false); }}
-            className="w-full py-2.5 px-4 bg-gradient-to-r from-kgp-crimson to-red-800 text-white rounded-xl font-bold text-xs flex items-center justify-center gap-1.5 shadow"
-          >
-            <UserPlus className="w-4 h-4" />
-            <span>Apply Now (IIT Portal)</span>
-          </button>
 
           <div className="space-y-1 text-sm font-medium text-slate-700 divide-y divide-slate-100">
             <button 
