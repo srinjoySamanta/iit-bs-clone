@@ -208,8 +208,8 @@ export default function Hero({ onOpenSignUp, onOpenDiagram, onOpenCertificate, o
           </span>
         </div>
 
-        {/* Master Heading — NO UNDERLINE as requested */}
-        <h1 className="text-3xl sm:text-5xl lg:text-6xl font-black tracking-tight font-serif-title leading-[1.15] text-slate-950">
+        {/* Master Heading — Refined smaller font size as requested */}
+        <h1 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-extrabold tracking-tight font-serif-title leading-tight text-slate-950">
           Bachelor of Science <span className="text-kgp-crimson">(BS)</span> in <br />
           <span className="text-kgp-crimson">
             Data Science &amp; Artificial Intelligence
