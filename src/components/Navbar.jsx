@@ -72,19 +72,21 @@ export default function Navbar({
 
       {/* Main Brand & Navigation Header */}
       <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className={`flex items-center justify-between gap-4 transition-all duration-200 ${isScrolled ? 'min-h-[58px] py-1.5' : 'min-h-[72px] py-2'}`}>
+        <div className={`flex items-center justify-between gap-3 sm:gap-4 transition-all duration-200 ${isScrolled ? 'min-h-[62px] py-1.5' : 'min-h-[82px] sm:min-h-[88px] py-2 sm:py-2.5'}`}>
           
           {/* Logo & Institute Identity (Strictly aligned, zero text overlap) */}
           <button 
             onClick={() => onNavigate('home')}
-            className="flex items-center gap-2.5 sm:gap-3 group text-left flex-shrink-0"
+            className="flex items-center gap-2.5 sm:gap-3.5 md:gap-4 group text-left flex-shrink-0"
           >
-            {/* Official IIT KGP Logo Image */}
-            <div className={`rounded-full bg-white p-1 border-2 border-amber-500/60 shadow-md flex items-center justify-center flex-shrink-0 group-hover:scale-105 transition-all overflow-hidden ${isScrolled ? 'w-10 h-10' : 'w-12 h-12 sm:w-14 sm:h-14'}`}>
+            {/* Official IIT KGP Logo Image - Bigger Size, Fixed in Same Left Position */}
+            <div className={`rounded-2xl bg-white p-1 border-2 border-amber-500/60 shadow-md flex items-center justify-center flex-shrink-0 group-hover:scale-105 transition-all overflow-hidden ${
+              isScrolled ? 'w-11 h-11 sm:w-13 sm:h-13' : 'w-14 h-14 sm:w-18 sm:h-18 md:w-20 md:h-20'
+            }`}>
               <img 
                 src={iitKgpLogo} 
                 alt="IIT Kharagpur Official Crest" 
-                className={`object-contain transition-all ${isScrolled ? 'w-8 h-8' : 'w-10 h-10 sm:w-12 sm:h-12'}`}
+                className="w-full h-full object-contain transition-all"
               />
             </div>
             
@@ -96,7 +98,7 @@ export default function Navbar({
                 </div>
               )}
               {/* English Institution Name */}
-              <div className={`font-bold font-serif-title text-slate-900 leading-tight group-hover:text-kgp-crimson transition-all ${isScrolled ? 'text-sm sm:text-base' : 'text-sm sm:text-base md:text-lg'}`}>
+              <div className={`font-bold font-serif-title text-slate-900 leading-tight group-hover:text-kgp-crimson transition-all ${isScrolled ? 'text-sm sm:text-base' : 'text-sm sm:text-lg md:text-xl'}`}>
                 {IIT_KGP_INFO.name}
               </div>
               {/* Degree Subtitle */}
@@ -107,23 +109,8 @@ export default function Navbar({
             </div>
           </button>
 
-          {/* Right Section: 75th Year Celebration Emblem, Language Switcher, Apply CTA, & Mobile Controls */}
+          {/* Right Section: Language Switcher, Apply CTA, & 75 Years Celebration Emblem */}
           <div className="flex items-center space-x-2.5 sm:space-x-3.5 md:space-x-4 flex-shrink-0">
-            {/* Official IIT KGP 75 Years Emblem */}
-            <div 
-              className="flex items-center flex-shrink-0 group cursor-pointer"
-              onClick={() => onNavigate('campus')}
-              title="75 Years of IIT Kharagpur (1951-2026) - Dedicated to the Service of the Nation / राष्ट्र सेवार्थ समर्पित"
-            >
-              <img 
-                src={logo75Years} 
-                alt="IIT Kharagpur 75 Years (1951-2026) - राष्ट्र सेवार्थ समर्पित" 
-                className={`w-auto object-contain mix-blend-multiply transition-all group-hover:scale-105 drop-shadow-xs ${
-                  isScrolled ? 'h-9 sm:h-11' : 'h-11 sm:h-13 md:h-14'
-                }`}
-              />
-            </div>
-
             {/* Desktop Site Translator Selector */}
             <div className="hidden lg:flex items-center gap-1 px-2.5 py-1 bg-slate-100 border border-slate-200 rounded-xl text-xs">
               <Globe className="w-3.5 h-3.5 text-kgp-crimson mr-0.5" />
@@ -169,6 +156,21 @@ export default function Navbar({
               <UserPlus className="w-4 h-4" />
               <span>Apply Now</span>
             </button>
+
+            {/* Official IIT KGP 75 Years Emblem - Placed to the RIGHT side of the Apply Now option */}
+            <div 
+              className="flex items-center flex-shrink-0 group cursor-pointer pl-0.5 sm:pl-1"
+              onClick={() => onNavigate('campus')}
+              title="75 Years of IIT Kharagpur (1951-2026) - Dedicated to the Service of the Nation / राष्ट्र सेवार्थ समर्पित"
+            >
+              <img 
+                src={logo75Years} 
+                alt="IIT Kharagpur 75 Years (1951-2026) - राष्ट्र सेवार्थ समर्पित" 
+                className={`w-auto object-contain mix-blend-multiply transition-all group-hover:scale-105 drop-shadow-xs ${
+                  isScrolled ? 'h-9 sm:h-11' : 'h-11 sm:h-13 md:h-15'
+                }`}
+              />
+            </div>
 
             {/* Mobile Navigation Controls */}
             <div className="lg:hidden flex items-center space-x-1.5 sm:space-x-2">
@@ -339,7 +341,7 @@ export default function Navbar({
     </header>
       {/* Structural layout spacer so hero content begins cleanly right below the fixed header */}
       <div 
-        className={`w-full transition-all duration-200 ${isScrolled ? 'h-[106px]' : 'h-[126px]'}`} 
+        className={`w-full transition-all duration-200 ${isScrolled ? 'h-[112px]' : 'h-[134px] sm:h-[140px]'}`} 
         aria-hidden="true" 
       />
     </>
