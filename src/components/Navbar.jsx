@@ -24,6 +24,15 @@ export default function Navbar({
   const [supportDropdown, setSupportDropdown] = useState(false);
   const dropdownTimers = useRef({});
   const [lang, setLang] = useState('en');
+  const [isScrolled, setIsScrolled] = useState(false);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      setIsScrolled(window.scrollY > 40);
+    };
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
 
   const openDropdown = (key) => {
     if (dropdownTimers.current[key]) {
@@ -94,39 +103,44 @@ export default function Navbar({
   };
 
   return (
-    <header className="sticky top-0 z-50 w-full bg-white/95 backdrop-blur-md shadow-md border-b border-slate-200 transition-all">
+    <header 
+      className="sticky top-0 z-50 w-full bg-white/95 backdrop-blur-md shadow-md border-b border-slate-200"
+      style={{ position: 'sticky', top: 0, zIndex: 50 }}
+    >
 
       {/* Main Brand & Navigation Header */}
       <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between min-h-[72px] py-2 gap-4">
+        <div className={`flex items-center justify-between gap-4 transition-all duration-200 ${isScrolled ? 'min-h-[58px] py-1.5' : 'min-h-[72px] py-2'}`}>
           
           {/* Logo & Institute Identity (Strictly aligned, zero text overlap) */}
           <button 
             onClick={() => onNavigate('home')}
-            className="flex items-center gap-3 group text-left flex-shrink-0"
+            className="flex items-center gap-2.5 sm:gap-3 group text-left flex-shrink-0"
           >
             {/* Official IIT KGP Logo Image */}
-            <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-full bg-white p-1 border-2 border-amber-500/60 shadow-md flex items-center justify-center flex-shrink-0 group-hover:scale-105 transition-transform overflow-hidden">
+            <div className={`rounded-full bg-white p-1 border-2 border-amber-500/60 shadow-md flex items-center justify-center flex-shrink-0 group-hover:scale-105 transition-all overflow-hidden ${isScrolled ? 'w-10 h-10' : 'w-12 h-12 sm:w-14 sm:h-14'}`}>
               <img 
                 src={iitKgpLogo} 
                 alt="IIT Kharagpur Official Crest" 
-                className="w-10 h-10 sm:w-12 sm:h-12 object-contain"
+                className={`object-contain transition-all ${isScrolled ? 'w-8 h-8' : 'w-10 h-10 sm:w-12 sm:h-12'}`}
               />
             </div>
             
             <div className="flex flex-col justify-center">
-              {/* Hindi Title (Crisp, clean, no negative margins) */}
-              <div className="text-[11px] sm:text-xs font-semibold text-kgp-crimson tracking-wide leading-tight">
-                {IIT_KGP_INFO.hindiName}
-              </div>
+              {/* Hindi Title */}
+              {!isScrolled && (
+                <div className="text-[11px] sm:text-xs font-semibold text-kgp-crimson tracking-wide leading-tight transition-all">
+                  {IIT_KGP_INFO.hindiName}
+                </div>
+              )}
               {/* English Institution Name */}
-              <div className="text-sm sm:text-base md:text-lg font-bold font-serif-title text-slate-900 leading-tight group-hover:text-kgp-crimson transition">
+              <div className={`font-bold font-serif-title text-slate-900 leading-tight group-hover:text-kgp-crimson transition-all ${isScrolled ? 'text-sm sm:text-base' : 'text-sm sm:text-base md:text-lg'}`}>
                 {IIT_KGP_INFO.name}
               </div>
               {/* Degree Subtitle */}
               <div className="text-[11px] sm:text-xs font-semibold text-amber-700 flex items-center gap-1.5 leading-tight mt-0.5">
                 <span className="w-2 h-2 rounded-full bg-emerald-500 flex-shrink-0" />
-                <span>BS in Data Science & Artificial Intelligence</span>
+                <span>BS in Data Science &amp; Artificial Intelligence</span>
               </div>
             </div>
           </button>

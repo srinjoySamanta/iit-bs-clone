@@ -25,13 +25,19 @@ export default function SubnavTabs({ onNavigate }) {
   useEffect(() => {
     const handleScroll = () => {
       if (isClickingRef.current) return;
-      const scrollPosition = window.scrollY + 220;
+      const headerHeight = document.querySelector('header')?.offsetHeight || 110;
+      const scrollPosition = window.scrollY + headerHeight + 60;
+
+      if (window.scrollY < 80) {
+        setActiveTab(tabs[0].id);
+        return;
+      }
 
       for (let i = tabs.length - 1; i >= 0; i--) {
         const tab = tabs[i];
         const el = document.getElementById(tab.id);
         if (el) {
-          const top = el.offsetTop;
+          const top = el.getBoundingClientRect().top + window.pageYOffset;
           if (scrollPosition >= top) {
             setActiveTab(tab.id);
             break;
@@ -45,11 +51,29 @@ export default function SubnavTabs({ onNavigate }) {
   }, [tabs]);
 
   useEffect(() => {
-    if (scrollContainerRef.current) {
-      const activeBtn = scrollContainerRef.current.querySelector(`[data-tab-id="${activeTab}"]`);
-      if (activeBtn) {
-        activeBtn.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'nearest' });
-      }
+    const container = scrollContainerRef.current;
+    if (!container) return;
+
+    const activeBtn = container.querySelector(`[data-tab-id="${activeTab}"]`);
+    if (!activeBtn) return;
+
+    // Pure horizontal scroll of the subnav tabs track ONLY
+    // NEVER call window.scrollTo or activeBtn.scrollIntoView to avoid page jumping
+    const btnLeft = activeBtn.offsetLeft;
+    const btnWidth = activeBtn.offsetWidth;
+    const containerWidth = container.clientWidth;
+    const currentScroll = container.scrollLeft;
+
+    if (btnLeft < currentScroll) {
+      container.scrollTo({
+        left: Math.max(0, btnLeft - 24),
+        behavior: 'smooth'
+      });
+    } else if (btnLeft + btnWidth > currentScroll + containerWidth) {
+      container.scrollTo({
+        left: btnLeft + btnWidth - containerWidth + 24,
+        behavior: 'smooth'
+      });
     }
   }, [activeTab]);
 

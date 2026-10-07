@@ -222,7 +222,7 @@ export default function App() {
   return (
     <AuthProvider>
       <ThemeProvider>
-        <div className="min-h-screen w-full min-w-full overflow-x-hidden flex flex-col bg-slate-50 text-slate-900 font-sans selection:bg-amber-500 selection:text-white">
+        <div className="min-h-screen w-full min-w-full overflow-x-clip flex flex-col bg-slate-50 text-slate-900 font-sans selection:bg-amber-500 selection:text-white">
       
       {/* VIEW 1: DEDICATED QUALIFIER ROUND EXAMINATION PORTAL */}
       {currentView === 'qualifier' && (
