@@ -103,10 +103,12 @@ export default function Navbar({
   };
 
   return (
-    <header 
-      className="sticky top-0 z-50 w-full bg-white/95 backdrop-blur-md shadow-md border-b border-slate-200"
-      style={{ position: 'sticky', top: 0, zIndex: 50 }}
-    >
+    <>
+      <header 
+        id="main-fixed-navbar"
+        className="fixed top-0 left-0 right-0 w-full z-50 bg-white/95 backdrop-blur-md shadow-md border-b border-slate-200"
+        style={{ position: 'fixed', top: 0, left: 0, right: 0, width: '100%', zIndex: 50 }}
+      >
 
       {/* Main Brand & Navigation Header */}
       <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -582,5 +584,11 @@ export default function Navbar({
         </div>
       )}
     </header>
+      {/* Structural layout spacer so hero content begins cleanly right below the fixed header */}
+      <div 
+        className={`w-full transition-all duration-200 ${isScrolled ? 'h-[106px]' : 'h-[126px]'}`} 
+        aria-hidden="true" 
+      />
+    </>
   );
 }

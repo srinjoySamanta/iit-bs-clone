@@ -114,10 +114,10 @@ export default function App() {
           setTimeout(() => {
             const el = document.getElementById(targetId);
             if (el) {
-              const headerHeight = document.querySelector('header')?.offsetHeight || 135;
+              const headerHeight = document.getElementById('main-fixed-navbar')?.offsetHeight || 115;
               const elementPosition = el.getBoundingClientRect().top;
               const offsetPosition = elementPosition + window.pageYOffset - headerHeight + 5;
-              window.scrollTo({ top: offsetPosition, behavior: 'smooth' });
+              window.scrollTo({ top: Math.max(0, offsetPosition), behavior: 'smooth' });
             }
           }, 60);
         }
@@ -174,10 +174,10 @@ export default function App() {
       setTimeout(() => {
         const el = document.getElementById(targetSection);
         if (el) {
-          const headerHeight = document.querySelector('header')?.offsetHeight || 135;
+          const headerHeight = document.getElementById('main-fixed-navbar')?.offsetHeight || 115;
           const elementPosition = el.getBoundingClientRect().top;
           const offsetPosition = elementPosition + window.pageYOffset - headerHeight + 5;
-          window.scrollTo({ top: offsetPosition, behavior: 'smooth' });
+          window.scrollTo({ top: Math.max(0, offsetPosition), behavior: 'smooth' });
         }
       }, 60);
       return;

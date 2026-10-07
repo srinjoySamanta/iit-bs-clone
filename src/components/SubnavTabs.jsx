@@ -25,10 +25,10 @@ export default function SubnavTabs({ onNavigate }) {
   useEffect(() => {
     const handleScroll = () => {
       if (isClickingRef.current) return;
-      const headerHeight = document.querySelector('header')?.offsetHeight || 110;
+      const headerHeight = document.getElementById('main-fixed-navbar')?.offsetHeight || 115;
       const scrollPosition = window.scrollY + headerHeight + 60;
 
-      if (window.scrollY < 80) {
+      if (window.scrollY < 100) {
         setActiveTab(tabs[0].id);
         return;
       }
@@ -92,12 +92,12 @@ export default function SubnavTabs({ onNavigate }) {
 
     const element = document.getElementById(id);
     if (element) {
-      const headerHeight = document.querySelector('header')?.offsetHeight || 135;
+      const headerHeight = document.getElementById('main-fixed-navbar')?.offsetHeight || 115;
       const elementPosition = element.getBoundingClientRect().top;
-      const offsetPosition = elementPosition + window.pageYOffset - headerHeight + 5;
+      const targetTop = elementPosition + window.pageYOffset - headerHeight + 5;
 
       window.scrollTo({
-        top: offsetPosition,
+        top: Math.max(0, targetTop),
         behavior: 'smooth'
       });
 
@@ -108,12 +108,12 @@ export default function SubnavTabs({ onNavigate }) {
 
       setTimeout(() => {
         isClickingRef.current = false;
-      }, 800);
+      }, 900);
     } else if (onNavigate) {
       onNavigate(id);
       setTimeout(() => {
         isClickingRef.current = false;
-      }, 800);
+      }, 900);
     }
   };
 

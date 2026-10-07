@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en" class="scroll-smooth">
+<html lang="en">
   <head>
     <meta charset="UTF-8" />
     <link rel="icon" type="image/png" href="/iitkgp-logo.png" />
@@ -37,12 +37,19 @@
         clip: rect(0 0 0 0) !important;
       }
 
-      html, body, #root {
+      html, body {
         width: 100% !important;
         min-width: 100% !important;
         margin: 0 !important;
         padding: 0 !important;
-        overflow-x: hidden !important;
+        overflow-x: clip !important;
+      }
+
+      #root {
+        width: 100% !important;
+        min-width: 100% !important;
+        margin: 0 !important;
+        padding: 0 !important;
       }
 
       body {
