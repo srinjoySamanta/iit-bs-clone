@@ -9,91 +9,85 @@ export default function Footer({ onOpenDiagram, onOpenStudentLogin, onOpenAdminL
     <footer className="w-full bg-kgp-darknavy text-white pt-14 pb-8 border-t-4 border-kgp-crimson">
       <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         
-        {/* Dedicated Institutional Portal Gateways Section (Student, Staff & Admin Login) */}
-        <div id="institutional-gateways" className="scroll-mt-[135px] mb-14 pb-12 border-b border-slate-800">
-          <div className="text-center max-w-2xl mx-auto mb-8">
-            <span className="text-[11px] font-bold uppercase tracking-widest text-amber-400 px-3 py-1 rounded-full bg-amber-400/10 border border-amber-400/20">
-              Institutional Access &amp; Single Sign-On
-            </span>
-            <h3 className="text-xl sm:text-2xl font-bold font-serif-title text-white mt-2.5">
-              Official Portal Gateways
-            </h3>
-            <p className="text-xs sm:text-sm text-slate-400 mt-1">
-              Authorized entry points for candidates, enrolled students, faculty staff, and institute administration.
+        {/* Dedicated Institutional Portal Gateways Section (Student, Staff & Admin Login) - Small Size matching Footer */}
+        <div id="institutional-gateways" className="scroll-mt-[135px] mb-8 pb-8 border-b border-slate-800">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-1.5 mb-4">
+            <div className="flex items-center gap-2">
+              <ShieldCheck className="w-4 h-4 text-amber-400" />
+              <h5 className="text-xs font-bold uppercase tracking-wider text-amber-400">
+                Official Portal Gateways (Single Sign-On)
+              </h5>
+            </div>
+            <p className="text-[11px] text-slate-400">
+              Authorized entry points for candidates, faculty staff &amp; administration
             </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
             {/* 1. Student Portal */}
-            <div className="bg-slate-900/90 rounded-2xl p-5 border border-emerald-500/30 hover:border-emerald-400 transition-all flex flex-col justify-between shadow-lg group">
+            <div className="bg-slate-900/70 rounded-xl p-3.5 border border-emerald-500/20 hover:border-emerald-500/40 transition-all flex flex-col justify-between gap-2.5">
               <div>
-                <div className="w-10 h-10 rounded-xl bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 flex items-center justify-center mb-3 group-hover:scale-105 transition-transform">
-                  <GraduationCap className="w-5 h-5" />
+                <div className="flex items-center justify-between mb-0.5">
+                  <span className="text-[10px] font-bold text-emerald-400 uppercase tracking-wider">Applicant &amp; Enrolled</span>
+                  <GraduationCap className="w-3.5 h-3.5 text-emerald-400" />
                 </div>
-                <div className="text-[11px] font-bold text-emerald-400 uppercase tracking-wider">Applicant &amp; Enrolled</div>
-                <h4 className="text-base font-bold text-white mt-0.5">Student Portal &amp; LMS</h4>
-                <p className="text-xs text-slate-400 mt-2 leading-relaxed">
+                <h6 className="text-xs font-bold text-white">Student Portal &amp; LMS</h6>
+                <p className="text-[11px] text-slate-400 mt-1 leading-relaxed">
                   Track admission application, complete semester fee payments, access live video lectures, courseware, and grades.
                 </p>
               </div>
-              <div className="pt-5 mt-4 border-t border-slate-800/80">
-                <button
-                  type="button"
-                  onClick={() => onNavigate ? onNavigate('student-login') : (onOpenStudentLogin ? onOpenStudentLogin() : null)}
-                  className="w-full py-2.5 px-4 rounded-xl bg-gradient-to-r from-emerald-600 to-teal-700 hover:from-emerald-500 hover:to-teal-600 text-white font-bold text-xs flex items-center justify-center gap-2 shadow-sm transition cursor-pointer"
-                >
-                  <GraduationCap className="w-4 h-4" />
-                  <span>Student Login</span>
-                </button>
-              </div>
+              <button
+                type="button"
+                onClick={() => onNavigate ? onNavigate('student-login') : (onOpenStudentLogin ? onOpenStudentLogin() : null)}
+                className="w-full py-1.5 px-3 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs flex items-center justify-center gap-1.5 shadow-xs transition cursor-pointer"
+              >
+                <GraduationCap className="w-3.5 h-3.5" />
+                <span>Student Login</span>
+              </button>
             </div>
 
             {/* 2. Staff Operations Portal */}
-            <div className="bg-slate-900/90 rounded-2xl p-5 border border-sky-500/30 hover:border-sky-400 transition-all flex flex-col justify-between shadow-lg group">
+            <div className="bg-slate-900/70 rounded-xl p-3.5 border border-sky-500/20 hover:border-sky-500/40 transition-all flex flex-col justify-between gap-2.5">
               <div>
-                <div className="w-10 h-10 rounded-xl bg-sky-500/10 border border-sky-500/30 text-sky-400 flex items-center justify-center mb-3 group-hover:scale-105 transition-transform">
-                  <UserCheck className="w-5 h-5" />
+                <div className="flex items-center justify-between mb-0.5">
+                  <span className="text-[10px] font-bold text-sky-400 uppercase tracking-wider">Operations &amp; Faculty</span>
+                  <UserCheck className="w-3.5 h-3.5 text-sky-400" />
                 </div>
-                <div className="text-[11px] font-bold text-sky-400 uppercase tracking-wider">Operations &amp; Faculty</div>
-                <h4 className="text-base font-bold text-white mt-0.5">Staff Operations Portal</h4>
-                <p className="text-xs text-slate-400 mt-2 leading-relaxed">
+                <h6 className="text-xs font-bold text-white">Staff Operations Portal</h6>
+                <p className="text-[11px] text-slate-400 mt-1 leading-relaxed">
                   Faculty verification desk, candidate document scrutiny, qualifier attendance records, and student workflow management.
                 </p>
               </div>
-              <div className="pt-5 mt-4 border-t border-slate-800/80">
-                <button
-                  type="button"
-                  onClick={() => onNavigate ? onNavigate('staff-login') : null}
-                  className="w-full py-2.5 px-4 rounded-xl bg-gradient-to-r from-sky-600 to-blue-700 hover:from-sky-500 hover:to-blue-600 text-white font-bold text-xs flex items-center justify-center gap-2 shadow-sm transition cursor-pointer"
-                >
-                  <UserCheck className="w-4 h-4" />
-                  <span>Staff Login</span>
-                </button>
-              </div>
+              <button
+                type="button"
+                onClick={() => onNavigate ? onNavigate('staff-login') : null}
+                className="w-full py-1.5 px-3 rounded-lg bg-sky-600 hover:bg-sky-500 text-white font-bold text-xs flex items-center justify-center gap-1.5 shadow-xs transition cursor-pointer"
+              >
+                <UserCheck className="w-3.5 h-3.5" />
+                <span>Staff Login</span>
+              </button>
             </div>
 
             {/* 3. Super Admin Directorate */}
-            <div className="bg-slate-900/90 rounded-2xl p-5 border border-amber-500/30 hover:border-amber-400 transition-all flex flex-col justify-between shadow-lg group">
+            <div className="bg-slate-900/70 rounded-xl p-3.5 border border-amber-500/20 hover:border-amber-500/40 transition-all flex flex-col justify-between gap-2.5">
               <div>
-                <div className="w-10 h-10 rounded-xl bg-amber-500/10 border border-amber-500/30 text-amber-400 flex items-center justify-center mb-3 group-hover:scale-105 transition-transform">
-                  <ShieldCheck className="w-5 h-5" />
+                <div className="flex items-center justify-between mb-0.5">
+                  <span className="text-[10px] font-bold text-amber-400 uppercase tracking-wider">Super Directorate</span>
+                  <ShieldCheck className="w-3.5 h-3.5 text-amber-400" />
                 </div>
-                <div className="text-[11px] font-bold text-amber-400 uppercase tracking-wider">Super Directorate</div>
-                <h4 className="text-base font-bold text-white mt-0.5">Admin Directorate Console</h4>
-                <p className="text-xs text-slate-400 mt-2 leading-relaxed">
+                <h6 className="text-xs font-bold text-white">Admin Directorate Console</h6>
+                <p className="text-[11px] text-slate-400 mt-1 leading-relaxed">
                   Admin authorization console, strict approval/rejection oversight, system security audit, and batch performance metrics.
                 </p>
               </div>
-              <div className="pt-5 mt-4 border-t border-slate-800/80">
-                <button
-                  type="button"
-                  onClick={() => onNavigate ? onNavigate('admin-login') : (onOpenAdminLogin ? onOpenAdminLogin() : null)}
-                  className="w-full py-2.5 px-4 rounded-xl bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-slate-950 font-bold text-xs flex items-center justify-center gap-2 shadow-sm transition cursor-pointer"
-                >
-                  <ShieldCheck className="w-4 h-4 text-slate-950" />
-                  <span>Admin Login</span>
-                </button>
-              </div>
+              <button
+                type="button"
+                onClick={() => onNavigate ? onNavigate('admin-login') : (onOpenAdminLogin ? onOpenAdminLogin() : null)}
+                className="w-full py-1.5 px-3 rounded-lg bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold text-xs flex items-center justify-center gap-1.5 shadow-xs transition cursor-pointer"
+              >
+                <ShieldCheck className="w-3.5 h-3.5 text-slate-950" />
+                <span>Admin Login</span>
+              </button>
             </div>
           </div>
         </div>
@@ -167,8 +161,38 @@ export default function Footer({ onOpenDiagram, onOpenStudentLogin, onOpenAdminL
               <li><a href="#eligibility" className="hover:text-white transition">JEE Advanced Qualifier Entry</a></li>
               <li><a href="#eligibility" className="hover:text-white transition">Tripura JEE Direct Entry</a></li>
               <li><a href="#eligibility" className="hover:text-white transition">Regular Qualifier Exam</a></li>
-              <li><a href="#fees" className="hover:text-white transition">Fee & Scholarship Calculator</a></li>
-              <li><a href="#faqs" className="hover:text-white transition">FAQs (English & Bengali)</a></li>
+              <li><a href="#fees" className="hover:text-white transition">Fee &amp; Scholarship Calculator</a></li>
+              <li><a href="#faqs" className="hover:text-white transition">FAQs (English &amp; Bengali)</a></li>
+              <li className="pt-2 border-t border-slate-800">
+                <button 
+                  type="button"
+                  onClick={() => onNavigate ? onNavigate('student-login') : (onOpenStudentLogin ? onOpenStudentLogin() : null)} 
+                  className="hover:text-emerald-300 transition text-[11px] flex items-center gap-1.5 text-slate-400 cursor-pointer"
+                >
+                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 flex-shrink-0" />
+                  <span>Student Portal &amp; LMS</span>
+                </button>
+              </li>
+              <li>
+                <button 
+                  type="button"
+                  onClick={() => onNavigate ? onNavigate('staff-login') : null} 
+                  className="hover:text-sky-300 transition text-[11px] flex items-center gap-1.5 text-slate-400 cursor-pointer"
+                >
+                  <span className="w-1.5 h-1.5 rounded-full bg-sky-400 flex-shrink-0" />
+                  <span>Staff Operations Portal</span>
+                </button>
+              </li>
+              <li>
+                <button 
+                  type="button"
+                  onClick={() => onNavigate ? onNavigate('admin-login') : (onOpenAdminLogin ? onOpenAdminLogin() : null)} 
+                  className="hover:text-amber-300 transition text-[11px] flex items-center gap-1.5 text-slate-400 cursor-pointer"
+                >
+                  <span className="w-1.5 h-1.5 rounded-full bg-amber-400 flex-shrink-0" />
+                  <span>Admin Directorate Console</span>
+                </button>
+              </li>
             </ul>
           </div>
 
