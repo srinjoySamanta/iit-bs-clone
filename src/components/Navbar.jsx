@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 import { 
   Menu, X, ExternalLink, ChevronDown, GraduationCap, ShieldCheck, 
   LogIn, UserPlus, BookOpen, Phone, HelpCircle, User, Home, Sparkles, Globe,
@@ -6,6 +6,7 @@ import {
 } from 'lucide-react';
 import { IIT_KGP_INFO, ANNOUNCEMENT_TICKER } from '../data/portalData';
 import iitKgpLogo from '../assets/logo';
+import logo75Years from '../assets/images/iitkgp-75-years.png';
 import { getErpLoginUrl, redirectToErpPortal } from '../config/portalConfig';
 import SubnavTabs from './SubnavTabs';
 
@@ -18,11 +19,6 @@ export default function Navbar({
   currentView
 }) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const [academicsDropdown, setAcademicsDropdown] = useState(false);
-  const [admissionsDropdown, setAdmissionsDropdown] = useState(false);
-  const [campusDropdown, setCampusDropdown] = useState(false);
-  const [supportDropdown, setSupportDropdown] = useState(false);
-  const dropdownTimers = useRef({});
   const [lang, setLang] = useState('en');
   const [isScrolled, setIsScrolled] = useState(false);
 
@@ -33,42 +29,6 @@ export default function Navbar({
     window.addEventListener('scroll', handleScroll, { passive: true });
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
-
-  const openDropdown = (key) => {
-    if (dropdownTimers.current[key]) {
-      clearTimeout(dropdownTimers.current[key]);
-      delete dropdownTimers.current[key];
-    }
-    if (key === 'academics') setAcademicsDropdown(true);
-    if (key === 'admissions') setAdmissionsDropdown(true);
-    if (key === 'campus') setCampusDropdown(true);
-    if (key === 'support') setSupportDropdown(true);
-  };
-
-  const closeDropdownWithDelay = (key, delay = 350) => {
-    if (dropdownTimers.current[key]) {
-      clearTimeout(dropdownTimers.current[key]);
-    }
-    dropdownTimers.current[key] = setTimeout(() => {
-      if (key === 'academics') setAcademicsDropdown(false);
-      if (key === 'admissions') setAdmissionsDropdown(false);
-      if (key === 'campus') setCampusDropdown(false);
-      if (key === 'support') setSupportDropdown(false);
-      delete dropdownTimers.current[key];
-    }, delay);
-  };
-
-  const toggleDropdown = (key, e) => {
-    if (e) e.stopPropagation();
-    if (dropdownTimers.current[key]) {
-      clearTimeout(dropdownTimers.current[key]);
-      delete dropdownTimers.current[key];
-    }
-    if (key === 'academics') setAcademicsDropdown(prev => !prev);
-    if (key === 'admissions') setAdmissionsDropdown(prev => !prev);
-    if (key === 'campus') setCampusDropdown(prev => !prev);
-    if (key === 'support') setSupportDropdown(prev => !prev);
-  };
 
   useEffect(() => {
     try {
@@ -147,232 +107,25 @@ export default function Navbar({
             </div>
           </button>
 
-          {/* Desktop Navigation Links (Organized into Eye-Soothing Dropdowns matching Block Diagram) */}
-          <nav className="hidden xl:flex items-center space-x-6 text-sm font-semibold text-slate-700">
-            
-            {/* 1. Academics Dropdown */}
+          {/* Right Section: 75th Year Celebration Emblem, Language Switcher, Apply CTA, & Mobile Controls */}
+          <div className="flex items-center space-x-2.5 sm:space-x-3.5 md:space-x-4 flex-shrink-0">
+            {/* Official IIT KGP 75 Years Emblem */}
             <div 
-              className="relative"
-              onMouseEnter={() => openDropdown('academics')}
-              onMouseLeave={() => closeDropdownWithDelay('academics', 350)}
+              className="flex items-center flex-shrink-0 group cursor-pointer"
+              onClick={() => onNavigate('campus')}
+              title="75 Years of IIT Kharagpur (1951-2026) - Dedicated to the Service of the Nation / राष्ट्र सेवार्थ समर्पित"
             >
-              <button 
-                type="button"
-                onClick={(e) => toggleDropdown('academics', e)}
-                className="flex items-center space-x-1 hover:text-kgp-crimson transition py-2"
-              >
-                <span>Academics</span>
-                <ChevronDown className={`w-3.5 h-3.5 text-slate-400 transition-transform ${academicsDropdown ? 'rotate-180' : ''}`} />
-              </button>
-              {academicsDropdown && (
-                <div 
-                  className="absolute left-0 top-full pt-1.5 w-76 z-50 animate-in fade-in slide-in-from-top-1"
-                  onMouseEnter={() => openDropdown('academics')}
-                  onMouseLeave={() => closeDropdownWithDelay('academics', 350)}
-                >
-                  <div className="bg-white rounded-2xl shadow-xl border border-slate-200 py-2.5">
-                    <a href="#structure" onClick={() => { onNavigate('structure'); setAcademicsDropdown(false); }} className="block px-4 py-2 hover:bg-slate-50 text-slate-800 hover:text-kgp-crimson transition">
-                      <div className="font-bold text-xs">Course Structure</div>
-                      <div className="text-[11px] text-slate-500">Foundation, Diploma, BSc &amp; BS (4 Levels)</div>
-                    </a>
-                    <a href="#structure" onClick={() => { onNavigate('structure'); setAcademicsDropdown(false); }} className="block px-4 py-2 hover:bg-slate-50 text-slate-800 hover:text-kgp-crimson transition">
-                      <div className="font-bold text-xs">DS &amp; AI Syllabus Roadmap</div>
-                      <div className="text-[11px] text-slate-500">142 Credits modular curriculum</div>
-                    </a>
-                    <a href="#structure" onClick={() => { onNavigate('structure'); setAcademicsDropdown(false); }} className="block px-4 py-2 hover:bg-slate-50 text-slate-800 hover:text-kgp-crimson transition">
-                      <div className="font-bold text-xs">Academic Aspects</div>
-                      <div className="text-[11px] text-slate-500">Online video lectures &amp; offline proctored exams</div>
-                    </a>
-                    <a href="#campus" onClick={() => { onNavigate('campus'); setAcademicsDropdown(false); }} className="block px-4 py-2 hover:bg-slate-50 text-slate-800 hover:text-kgp-crimson transition">
-                      <div className="font-bold text-xs">Central Library Access</div>
-                      <div className="text-[11px] text-slate-500">Physical campus library &amp; digital IEEE/ACM access</div>
-                    </a>
-                    <a href="#campus" onClick={() => { onNavigate('campus'); setAcademicsDropdown(false); }} className="block px-4 py-2 hover:bg-slate-50 text-slate-800 hover:text-kgp-crimson transition">
-                      <div className="flex items-center justify-between">
-                        <span className="font-bold text-xs">Alumni Status</span>
-                        <span className="text-[9px] font-bold px-1.5 py-0.5 rounded bg-amber-100 text-amber-900 border border-amber-200">Only Degree Level</span>
-                      </div>
-                      <div className="text-[11px] text-slate-500">Official IIT KGP Alumni Association membership</div>
-                    </a>
-                    <button 
-                      onClick={() => { onOpenCertificate(); setAcademicsDropdown(false); }} 
-                      className="w-full text-left px-4 py-2 hover:bg-slate-50 text-kgp-crimson font-bold text-xs flex items-center justify-between border-t border-slate-100 mt-1"
-                    >
-                      <span>Sample Degree Certificate</span>
-                      <ExternalLink className="w-3.5 h-3.5" />
-                    </button>
-                  </div>
-                </div>
-              )}
+              <img 
+                src={logo75Years} 
+                alt="IIT Kharagpur 75 Years (1951-2026) - राष्ट्र सेवार्थ समर्पित" 
+                className={`w-auto object-contain mix-blend-multiply transition-all group-hover:scale-105 drop-shadow-xs ${
+                  isScrolled ? 'h-9 sm:h-11' : 'h-11 sm:h-13 md:h-14'
+                }`}
+              />
             </div>
 
-            {/* 2. Admissions Dropdown */}
-            <div 
-              className="relative"
-              onMouseEnter={() => openDropdown('admissions')}
-              onMouseLeave={() => closeDropdownWithDelay('admissions', 350)}
-            >
-              <button 
-                type="button"
-                onClick={(e) => toggleDropdown('admissions', e)}
-                className="flex items-center space-x-1 hover:text-kgp-crimson transition py-2"
-              >
-                <span>Admissions</span>
-                <ChevronDown className={`w-3.5 h-3.5 text-slate-400 transition-transform ${admissionsDropdown ? 'rotate-180' : ''}`} />
-              </button>
-              {admissionsDropdown && (
-                <div 
-                  className="absolute left-0 top-full pt-1.5 w-80 z-50 animate-in fade-in slide-in-from-top-1"
-                  onMouseEnter={() => openDropdown('admissions')}
-                  onMouseLeave={() => closeDropdownWithDelay('admissions', 350)}
-                >
-                  <div className="bg-white rounded-2xl shadow-xl border border-slate-200 py-2.5">
-                    <button 
-                      onClick={() => { if (onOpenHowToApply) onOpenHowToApply(); setAdmissionsDropdown(false); }} 
-                      className="w-full text-left px-4 py-2.5 hover:bg-red-50 text-kgp-crimson transition"
-                    >
-                      <div className="font-bold text-xs flex items-center justify-between">
-                        <span className="flex items-center gap-1.5">
-                          <FileText className="w-3.5 h-3.5" />
-                          <span>How to Apply</span>
-                        </span>
-                        <span className="text-[9px] font-bold bg-red-100 text-red-800 px-1.5 py-0.5 rounded">Instructions</span>
-                      </div>
-                      <div className="text-[11px] text-slate-500 mt-0.5">Complete application guide, documents &amp; age criteria</div>
-                    </button>
-
-                    <button 
-                      onClick={() => { onNavigate('qualifier'); setAdmissionsDropdown(false); }} 
-                      className="w-full text-left px-4 py-2 hover:bg-emerald-50 text-emerald-900 transition"
-                    >
-                      <div className="font-bold text-xs flex items-center gap-1.5">
-                        <Sparkles className="w-3.5 h-3.5 text-emerald-600" /> Qualifier Round Examination
-                      </div>
-                      <div className="text-[11px] text-slate-500">Register, Pay &amp; Take Computer-Based Exam</div>
-                    </button>
-
-                    <a href="#eligibility" onClick={() => { onNavigate('eligibility'); setAdmissionsDropdown(false); }} className="block px-4 py-2 hover:bg-slate-50 text-slate-800 hover:text-amber-800 transition">
-                      <div className="font-bold text-xs">Direct Admission Pathways</div>
-                      <div className="text-[11px] text-slate-500">WBJEE / JEE Advanced / Tripura JEE Ranks</div>
-                    </a>
-
-                    <a href="#fees" onClick={() => { onNavigate('fees'); setAdmissionsDropdown(false); }} className="block px-4 py-2 hover:bg-slate-50 text-slate-800 hover:text-kgp-crimson transition border-t border-slate-100 mt-1">
-                      <div className="font-bold text-xs">Fee &amp; Scholarship Calculator</div>
-                      <div className="text-[11px] text-slate-500">Modular pay-per-credit with up to 75% fee waivers</div>
-                    </a>
-                  </div>
-                </div>
-              )}
-            </div>
-
-            {/* 3. Campus & Institute Dropdown */}
-            <div 
-              className="relative"
-              onMouseEnter={() => openDropdown('campus')}
-              onMouseLeave={() => closeDropdownWithDelay('campus', 350)}
-            >
-              <button 
-                type="button"
-                onClick={(e) => toggleDropdown('campus', e)}
-                className="flex items-center space-x-1 hover:text-kgp-crimson transition py-2"
-              >
-                <span>Campus &amp; Institute</span>
-                <ChevronDown className={`w-3.5 h-3.5 text-slate-400 transition-transform ${campusDropdown ? 'rotate-180' : ''}`} />
-              </button>
-              {campusDropdown && (
-                <div 
-                  className="absolute left-0 top-full pt-1.5 w-76 z-50 animate-in fade-in slide-in-from-top-1"
-                  onMouseEnter={() => openDropdown('campus')}
-                  onMouseLeave={() => closeDropdownWithDelay('campus', 350)}
-                >
-                  <div className="bg-white rounded-2xl shadow-xl border border-slate-200 py-2.5">
-                    <a href="#campus" onClick={() => { onNavigate('campus'); setCampusDropdown(false); }} className="block px-4 py-2 hover:bg-slate-50 text-slate-800 hover:text-kgp-crimson transition">
-                      <div className="font-bold text-xs">About IIT Kharagpur</div>
-                      <div className="text-[11px] text-slate-500">Estd. 1951 • India's First &amp; Premier IIT</div>
-                    </a>
-                    <a href="#director-message" onClick={() => { onNavigate('director'); setCampusDropdown(false); }} className="block px-4 py-2 hover:bg-amber-50 text-amber-900 transition">
-                      <div className="font-bold text-xs flex items-center justify-between">
-                        <span>Director's Message</span>
-                        <span className="text-[9px] font-bold bg-amber-100 text-amber-900 px-1.5 py-0.5 rounded">TOI Feature</span>
-                      </div>
-                      <div className="text-[11px] text-slate-500">Vision of Prof. Suman Chakraborty, Director</div>
-                    </a>
-                    <a href="#campus" onClick={() => { onNavigate('campus'); setCampusDropdown(false); }} className="block px-4 py-2 hover:bg-slate-50 text-slate-800 hover:text-kgp-crimson transition">
-                      <div className="font-bold text-xs">Campus Immersion</div>
-                      <div className="text-[11px] text-slate-500">Annual Fest &amp; on-campus immersion at Kharagpur</div>
-                    </a>
-                    <a href="#campus" onClick={() => { onNavigate('campus'); setCampusDropdown(false); }} className="block px-4 py-2 hover:bg-slate-50 text-slate-800 hover:text-kgp-crimson transition border-t border-slate-100 mt-1">
-                      <div className="font-bold text-xs">Internship &amp; Placement</div>
-                      <div className="text-[11px] text-slate-500">Dedicated career placement cell &amp; industry ecosystem</div>
-                    </a>
-                  </div>
-                </div>
-              )}
-            </div>
-
-            {/* 4. Support & Info Dropdown */}
-            <div 
-              className="relative"
-              onMouseEnter={() => openDropdown('support')}
-              onMouseLeave={() => closeDropdownWithDelay('support', 350)}
-            >
-              <button 
-                type="button"
-                onClick={(e) => toggleDropdown('support', e)}
-                className="flex items-center space-x-1 hover:text-kgp-crimson transition py-2"
-              >
-                <span>Support &amp; Info</span>
-                <ChevronDown className={`w-3.5 h-3.5 text-slate-400 transition-transform ${supportDropdown ? 'rotate-180' : ''}`} />
-              </button>
-              {supportDropdown && (
-                <div 
-                  className="absolute left-0 top-full pt-1.5 w-76 z-50 animate-in fade-in slide-in-from-top-1"
-                  onMouseEnter={() => openDropdown('support')}
-                  onMouseLeave={() => closeDropdownWithDelay('support', 350)}
-                >
-                  <div className="bg-white rounded-2xl shadow-xl border border-slate-200 py-2.5">
-                    <a href="#faqs" onClick={() => { onNavigate('faqs'); setSupportDropdown(false); }} className="block px-4 py-2 hover:bg-slate-50 text-slate-800 hover:text-kgp-crimson transition">
-                      <div className="font-bold text-xs">Frequently Asked Questions</div>
-                      <div className="text-[11px] text-slate-500">Bilingual Support (English &amp; বাংলা)</div>
-                    </a>
-                    <a href="#contact" onClick={() => { onNavigate('contact'); setSupportDropdown(false); }} className="block px-4 py-2 hover:bg-slate-50 text-slate-800 hover:text-kgp-crimson transition">
-                      <div className="font-bold text-xs">Contact Details</div>
-                      <div className="text-[11px] text-slate-500">Admissions email, helpline &amp; campus address</div>
-                    </a>
-                    <button 
-                      type="button"
-                      onClick={() => { onNavigate('student-login'); setSupportDropdown(false); }} 
-                      className="w-full text-left px-4 py-2 hover:bg-emerald-50 text-slate-800 hover:text-emerald-800 transition flex items-center justify-between border-t border-slate-100"
-                    >
-                      <div>
-                        <div className="font-bold text-xs flex items-center gap-1.5 text-emerald-800">
-                          <GraduationCap className="w-3.5 h-3.5 text-emerald-600" />
-                          <span>Student Portal Login</span>
-                        </div>
-                        <div className="text-[11px] text-slate-500">Sign in, application tracker &amp; LMS access</div>
-                      </div>
-                    </button>
-                    <button 
-                      onClick={() => { onOpenDiagram(); setSupportDropdown(false); }} 
-                      className="w-full text-left px-4 py-2 hover:bg-slate-50 text-kgp-crimson font-bold text-xs flex items-center justify-between border-t border-slate-100 mt-1"
-                    >
-                      <div className="flex items-center gap-1.5">
-                        <Layers className="w-3.5 h-3.5 text-kgp-crimson" />
-                        <span>Portal Architecture (Block Diagram)</span>
-                      </div>
-                      <ExternalLink className="w-3.5 h-3.5" />
-                    </button>
-                  </div>
-                </div>
-              )}
-            </div>
-
-          </nav>
-
-          {/* Action CTAs */}
-          <div className="hidden lg:flex items-center space-x-3 flex-shrink-0">
-            {/* Site Translator Selector */}
-            <div className="flex items-center gap-1 px-2.5 py-1 bg-slate-100 border border-slate-200 rounded-xl text-xs">
+            {/* Desktop Site Translator Selector */}
+            <div className="hidden lg:flex items-center gap-1 px-2.5 py-1 bg-slate-100 border border-slate-200 rounded-xl text-xs">
               <Globe className="w-3.5 h-3.5 text-kgp-crimson mr-0.5" />
               <div className="inline-flex rounded-lg p-0.5 bg-slate-200/70">
                 <button
@@ -408,32 +161,32 @@ export default function Navbar({
               </div>
             </div>
 
-            {/* Apply Now */}
+            {/* Desktop Apply Now Button */}
             <button
               onClick={() => onNavigate('student-login')}
-              className="flex items-center space-x-1.5 px-6 py-2.5 text-xs sm:text-sm font-bold text-white bg-kgp-crimson hover:bg-kgp-darkred rounded-full shadow-md hover:shadow-lg transition transform hover:-translate-y-0.5 cursor-pointer uppercase font-sans tracking-wide"
+              className="hidden lg:flex items-center space-x-1.5 px-5 sm:px-6 py-2 sm:py-2.5 text-xs sm:text-sm font-bold text-white bg-kgp-crimson hover:bg-kgp-darkred rounded-full shadow-md hover:shadow-lg transition transform hover:-translate-y-0.5 cursor-pointer uppercase font-sans tracking-wide"
             >
               <UserPlus className="w-4 h-4" />
               <span>Apply Now</span>
             </button>
-          </div>
 
-          {/* Mobile Navigation Controls */}
-          <div className="lg:hidden flex items-center space-x-2">
-            <button
-              onClick={() => onNavigate('student-login')}
-              className="px-3 py-1.5 text-xs font-bold text-white bg-gradient-to-r from-kgp-crimson to-red-800 rounded-lg shadow flex items-center gap-1 cursor-pointer"
-            >
-              <UserPlus className="w-3.5 h-3.5" />
-              <span>Apply</span>
-            </button>
-            <button
-              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              className="p-1.5 rounded-lg text-slate-700 hover:bg-slate-100 transition cursor-pointer"
-              aria-label="Toggle navigation menu"
-            >
-              {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
-            </button>
+            {/* Mobile Navigation Controls */}
+            <div className="lg:hidden flex items-center space-x-1.5 sm:space-x-2">
+              <button
+                onClick={() => onNavigate('student-login')}
+                className="px-3 py-1.5 text-xs font-bold text-white bg-gradient-to-r from-kgp-crimson to-red-800 rounded-lg shadow flex items-center gap-1 cursor-pointer"
+              >
+                <UserPlus className="w-3.5 h-3.5" />
+                <span>Apply</span>
+              </button>
+              <button
+                onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+                className="p-1.5 rounded-lg text-slate-700 hover:bg-slate-100 transition cursor-pointer"
+                aria-label="Toggle navigation menu"
+              >
+                {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+              </button>
+            </div>
           </div>
 
         </div>
