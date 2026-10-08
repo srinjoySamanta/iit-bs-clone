@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import MasterLandingPage from './components/master/MasterLandingPage';
+import MasterPageTwo from './components/master/MasterPageTwo';
 import Navbar from './components/Navbar';
 import Hero from './components/Hero';
 import DirectorMessage from './components/DirectorMessage';
@@ -52,7 +53,9 @@ export default function App() {
       const rawHash = window.location.hash.replace(/^#\/?/, '');
       const hash = rawHash.toLowerCase();
 
-      if (hash.startsWith('student-erp') || hash === 'erp' || hash === 'student-portal' || hash === 'lms' || hash === 'student/dashboard') {
+      if (hash === 'programme' || hash === 'programme-highlights' || hash === 'highlights' || hash === 'page2') {
+        setCurrentView('programme');
+      } else if (hash.startsWith('student-erp') || hash === 'erp' || hash === 'student-portal' || hash === 'lms' || hash === 'student/dashboard') {
         setCurrentView('student-erp');
       } else if (hash === 'admin' || hash === 'admin-portal' || hash === 'admin-dashboard' || hash === 'admin/dashboard' || hash === 'admin-students') {
         setCurrentView('admin-portal');
@@ -75,54 +78,8 @@ export default function App() {
       } else if (hash === 'diagram') {
         setShowDiagram(true);
       } else {
-        // In-page sections remain on the comprehensive landing page with standby subnav tabs
+        // Default: Page 1 (Landing Page)
         setCurrentView('home');
-
-        const sectionMap = {
-          'director-note': 'director-note',
-          'director': 'director-note',
-          'director-message': 'director-note',
-          'programme-highlights': 'programme-highlights',
-          'highlights': 'programme-highlights',
-          'curriculum-overview': 'curriculum-overview',
-          'structure': 'curriculum-overview',
-          'syllabus': 'curriculum-overview',
-          'academics': 'curriculum-overview',
-          'how-will-you-learn': 'how-will-you-learn',
-          'who-should-apply': 'who-should-apply',
-          'admission-process': 'admission-process',
-          'eligibility': 'eligibility',
-          'direct': 'eligibility',
-          'fees-structure': 'fees-structure',
-          'fees': 'fees-structure',
-          'scholarship': 'fees-structure',
-          'how-is-this-course-different': 'how-is-this-course-different',
-          'why-this-course': 'how-is-this-course-different',
-          'about-institute': 'about-institute',
-          'campus': 'about-institute',
-          'library': 'about-institute',
-          'placement': 'about-institute',
-          'faqs': 'faqs',
-          'faq': 'faqs',
-          'contact-us': 'contact-us',
-          'contact': 'contact-us',
-          'helpdesk': 'contact-us',
-          'institutional-gateways': 'institutional-gateways',
-          'portals': 'institutional-gateways'
-        };
-
-        const targetId = sectionMap[hash];
-        if (targetId) {
-          setTimeout(() => {
-            const el = document.getElementById(targetId);
-            if (el) {
-              const headerHeight = document.getElementById('main-fixed-navbar')?.offsetHeight || 115;
-              const elementPosition = el.getBoundingClientRect().top;
-              const offsetPosition = elementPosition + window.pageYOffset - headerHeight + 5;
-              window.scrollTo({ top: Math.max(0, offsetPosition), behavior: 'smooth' });
-            }
-          }, 60);
-        }
       }
     };
 
@@ -132,56 +89,21 @@ export default function App() {
   }, []);
 
   const navigateTo = (view) => {
-    const sectionMap = {
-      'director-note': 'director-note',
-      'director': 'director-note',
-      'director-message': 'director-note',
-      'programme-highlights': 'programme-highlights',
-      'highlights': 'programme-highlights',
-      'curriculum-overview': 'curriculum-overview',
-      'structure': 'curriculum-overview',
-      'syllabus': 'curriculum-overview',
-      'academics': 'curriculum-overview',
-      'how-will-you-learn': 'how-will-you-learn',
-      'who-should-apply': 'who-should-apply',
-      'admission-process': 'admission-process',
-      'eligibility': 'eligibility',
-      'direct': 'eligibility',
-      'fees-structure': 'fees-structure',
-      'fees': 'fees-structure',
-      'scholarship': 'fees-structure',
-      'how-is-this-course-different': 'how-is-this-course-different',
-      'why-this-course': 'how-is-this-course-different',
-      'about-institute': 'about-institute',
-      'campus': 'about-institute',
-      'library': 'about-institute',
-      'placement': 'about-institute',
-      'faqs': 'faqs',
-      'faq': 'faqs',
-      'contact-us': 'contact-us',
-      'contact': 'contact-us',
-      'helpdesk': 'contact-us',
-      'institutional-gateways': 'institutional-gateways',
-      'portals': 'institutional-gateways'
-    };
-
-    const targetSection = sectionMap[view];
-    if (targetSection) {
-      if (currentView !== 'home') {
-        setCurrentView('home');
-      }
+    if (view === 'programme' || view === 'programme-highlights' || view === 'page2') {
+      setCurrentView('programme');
       try {
-        window.history.replaceState(null, '', `#${targetSection}`);
+        window.history.replaceState(null, '', '#programme');
       } catch (e) {}
-      setTimeout(() => {
-        const el = document.getElementById(targetSection);
-        if (el) {
-          const headerHeight = document.getElementById('main-fixed-navbar')?.offsetHeight || 115;
-          const elementPosition = el.getBoundingClientRect().top;
-          const offsetPosition = elementPosition + window.pageYOffset - headerHeight + 5;
-          window.scrollTo({ top: Math.max(0, offsetPosition), behavior: 'smooth' });
-        }
-      }, 60);
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+      return;
+    }
+
+    if (view === 'home' || view === 'page1') {
+      setCurrentView('home');
+      try {
+        window.history.replaceState(null, '', '#home');
+      } catch (e) {}
+      window.scrollTo({ top: 0, behavior: 'smooth' });
       return;
     }
 
@@ -631,19 +553,21 @@ export default function App() {
         </>
       )}
 
-      {/* VIEW 13: THE MAIN HOME PAGE (Strict Master UI Reference Replication Combined with Full Portal Ecosystem) */}
+      {/* VIEW 1: PAGE 1 — LANDING PAGE (Strict Master UI Reference Replication: Header -> Hero -> Direct Entry -> Explore Programme -> 8 Feature Cards. END.) */}
       {currentView === 'home' && (
         <MasterLandingPage
           onNavigate={navigateTo}
           onOpenCertificate={() => setShowCertificate(true)}
           onOpenHowToApply={() => setShowHowToApply(true)}
-          onOpenDiagram={() => setShowDiagram(true)}
-          onOpenSignUp={() => navigateTo('student-login')}
-          onOpenQualifier={() => navigateTo('qualifier')}
-          showDiagram={showDiagram}
-          setShowDiagram={setShowDiagram}
-          onOpenStudentLogin={() => navigateTo('student-erp')}
-          onOpenAdminLogin={() => navigateTo('admin-login')}
+        />
+      )}
+
+      {/* VIEW 2: PAGE 2 — PROGRAMME HIGHLIGHTS (Director's Message Left | Programme Highlights Continuous Right-to-Left Marquee Right. END.) */}
+      {currentView === 'programme' && (
+        <MasterPageTwo
+          onNavigate={navigateTo}
+          onOpenCertificate={() => setShowCertificate(true)}
+          onOpenHowToApply={() => setShowHowToApply(true)}
         />
       )}
 

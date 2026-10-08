@@ -3,7 +3,7 @@ import { Menu, X, ChevronDown, ExternalLink, Sparkles, FileText, GraduationCap, 
 import iitKgpLogo from '../../assets/logo';
 import { useDropdownGate } from '../../context/DropdownGateContext';
 
-export default function MasterHeader({ onNavigate, onOpenCertificate, onOpenHowToApply }) {
+export default function MasterHeader({ currentPage = 'home', onNavigate, onOpenCertificate, onOpenHowToApply }) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [openDropdown, setOpenDropdown] = useState(null);
   const headerRef = useRef(null);
@@ -60,7 +60,16 @@ export default function MasterHeader({ onNavigate, onOpenCertificate, onOpenHowT
         <div className="flex items-center justify-between h-[78px] sm:h-[84px]">
           
           {/* Left: IIT Kharagpur Crest Logo & Trilingual Official Identity */}
-          <a href="#home" className="flex items-center gap-3 group text-left flex-shrink-0">
+          <a 
+            href="#home" 
+            onClick={(e) => {
+              if (onNavigate) {
+                e.preventDefault();
+                onNavigate('home');
+              }
+            }}
+            className="flex items-center gap-3 group text-left flex-shrink-0"
+          >
             <img 
               src={iitKgpLogo} 
               alt="IIT Kharagpur Crest" 
@@ -91,13 +100,23 @@ export default function MasterHeader({ onNavigate, onOpenCertificate, onOpenHowT
           {/* Right: Desktop Navigation Links + Apply Now Button */}
           <nav className="hidden xl:flex items-center space-x-5 text-[14px]">
             
-            {/* 1. Home Link */}
+            {/* 1. Home Link (Page 1) */}
             <a
               href="#home"
-              className="relative px-0.5 py-1 text-[14px] text-[#0f2942] font-bold"
+              onClick={(e) => {
+                if (onNavigate) {
+                  e.preventDefault();
+                  onNavigate('home');
+                }
+              }}
+              className={`relative px-0.5 py-1 text-[14px] font-bold transition ${
+                currentPage === 'home' ? 'text-[#0f2942]' : 'text-[#0f2942]/80 hover:text-[#003893]'
+              }`}
             >
               Home
-              <span className="absolute bottom-[-4px] left-0 w-full h-[3px] bg-[#eab308] rounded-full" />
+              {currentPage === 'home' && (
+                <span className="absolute bottom-[-4px] left-0 w-full h-[3px] bg-[#eab308] rounded-full" />
+              )}
             </a>
 
             {/* 2. Programme Dropdown */}
@@ -105,31 +124,42 @@ export default function MasterHeader({ onNavigate, onOpenCertificate, onOpenHowT
               <button
                 type="button"
                 onClick={(e) => handleDropdownTrigger('programme', e)}
-                className={`flex items-center gap-1 px-1 py-1 text-[14px] font-medium transition cursor-pointer ${
-                  openDropdown === 'programme' ? 'text-[#003893] font-bold' : 'text-[#0f2942] hover:text-[#003893]'
+                className={`flex items-center gap-1 px-1 py-1 text-[14px] font-medium transition cursor-pointer relative ${
+                  openDropdown === 'programme' || currentPage === 'programme' ? 'text-[#003893] font-bold' : 'text-[#0f2942] hover:text-[#003893]'
                 }`}
                 aria-expanded={openDropdown === 'programme'}
               >
                 <span>Programme</span>
                 <ChevronDown className={`w-3.5 h-3.5 transition-transform duration-200 ${openDropdown === 'programme' ? 'rotate-180 text-[#003893]' : 'text-slate-400'}`} />
+                {currentPage === 'programme' && (
+                  <span className="absolute bottom-[-4px] left-0 w-full h-[3px] bg-[#eab308] rounded-full" />
+                )}
               </button>
 
               {openDropdown === 'programme' && (
                 <div className="absolute left-0 top-full pt-2 w-80 z-50 animate-in fade-in slide-in-from-top-1">
                   <div className="bg-white rounded-2xl shadow-xl border border-slate-200/90 py-2.5 overflow-hidden">
-                    <a href="#programme-highlights" onClick={closeDropdown} className="block px-4 py-2 hover:bg-slate-50 transition">
-                      <div className="font-bold text-xs text-[#0f2942]">Programme Highlights</div>
-                      <div className="text-[11px] text-slate-500">8 key pillars of BS in Data Science &amp; AI</div>
+                    <a 
+                      href="#programme" 
+                      onClick={(e) => {
+                        e.preventDefault();
+                        if (onNavigate) onNavigate('programme');
+                        closeDropdown();
+                      }} 
+                      className="block px-4 py-2 hover:bg-slate-50 transition"
+                    >
+                      <div className="font-bold text-xs text-[#0f2942]">Programme Highlights (Page 2)</div>
+                      <div className="text-[11px] text-slate-500">8 key pillars &amp; Director's Note</div>
                     </a>
-                    <a href="#structure" onClick={closeDropdown} className="block px-4 py-2 hover:bg-slate-50 transition">
+                    <a href="#" onClick={(e) => { e.preventDefault(); closeDropdown(); }} className="block px-4 py-2 hover:bg-slate-50 transition">
                       <div className="font-bold text-xs text-[#0f2942]">Curriculum Overview &amp; Roadmap</div>
                       <div className="text-[11px] text-slate-500">142 Credits multi-tier modular syllabus</div>
                     </a>
-                    <a href="#how-will-you-learn" onClick={closeDropdown} className="block px-4 py-2 hover:bg-slate-50 transition">
+                    <a href="#" onClick={(e) => { e.preventDefault(); closeDropdown(); }} className="block px-4 py-2 hover:bg-slate-50 transition">
                       <div className="font-bold text-xs text-[#0f2942]">How Will You Learn</div>
                       <div className="text-[11px] text-slate-500">Online video modules, doubt sessions &amp; CBT exams</div>
                     </a>
-                    <a href="#who-should-apply" onClick={closeDropdown} className="block px-4 py-2 hover:bg-slate-50 transition border-t border-slate-100 mt-1">
+                    <a href="#" onClick={(e) => { e.preventDefault(); closeDropdown(); }} className="block px-4 py-2 hover:bg-slate-50 transition border-t border-slate-100 mt-1">
                       <div className="font-bold text-xs text-[#0f2942]">Who Should Apply</div>
                       <div className="text-[11px] text-slate-500">Class 12th passouts, college students &amp; professionals</div>
                     </a>
@@ -316,7 +346,8 @@ export default function MasterHeader({ onNavigate, onOpenCertificate, onOpenHowT
 
             {/* 7. Contact us Link */}
             <a
-              href="#contact-us"
+              href="#"
+              onClick={(e) => e.preventDefault()}
               className="text-[#0f2942] hover:text-[#003893] font-medium text-[14px] px-1 py-1 transition-colors"
             >
               Contact us
@@ -324,7 +355,8 @@ export default function MasterHeader({ onNavigate, onOpenCertificate, onOpenHowT
 
             {/* 8. FAQs Link */}
             <a
-              href="#faqs"
+              href="#"
+              onClick={(e) => e.preventDefault()}
               className="text-[#0f2942] hover:text-[#003893] font-medium text-[14px] px-1 py-1 transition-colors"
             >
               FAQs
@@ -368,8 +400,16 @@ export default function MasterHeader({ onNavigate, onOpenCertificate, onOpenHowT
           <div className="flex flex-col space-y-1">
             <a
               href="#home"
-              onClick={() => setMobileMenuOpen(false)}
-              className="py-2 px-3 rounded-lg text-sm font-bold text-[#003893] bg-blue-50/80"
+              onClick={(e) => {
+                if (onNavigate) {
+                  e.preventDefault();
+                  onNavigate('home');
+                }
+                setMobileMenuOpen(false);
+              }}
+              className={`py-2 px-3 rounded-lg text-sm font-bold ${
+                currentPage === 'home' ? 'text-[#003893] bg-blue-50/80' : 'text-slate-700 hover:bg-slate-50'
+              }`}
             >
               Home
             </a>
@@ -385,7 +425,17 @@ export default function MasterHeader({ onNavigate, onOpenCertificate, onOpenHowT
             </button>
             {openDropdown === 'programme' && (
               <div className="pl-4 pr-2 py-1 space-y-1 text-xs border-l-2 border-blue-500 ml-3 bg-slate-50/70 rounded-r-lg">
-                <a href="#programme-highlights" onClick={() => setMobileMenuOpen(false)} className="block py-1.5 text-slate-700 font-semibold">Programme Highlights</a>
+                <a 
+                  href="#programme" 
+                  onClick={(e) => {
+                    e.preventDefault();
+                    if (onNavigate) onNavigate('programme');
+                    setMobileMenuOpen(false);
+                  }} 
+                  className="block py-1.5 text-slate-700 font-semibold"
+                >
+                  Programme Highlights (Page 2)
+                </a>
                 <a href="#structure" onClick={() => setMobileMenuOpen(false)} className="block py-1.5 text-slate-600">Curriculum Overview &amp; Roadmap</a>
                 <a href="#how-will-you-learn" onClick={() => setMobileMenuOpen(false)} className="block py-1.5 text-slate-600">How Will You Learn</a>
                 <a href="#who-should-apply" onClick={() => setMobileMenuOpen(false)} className="block py-1.5 text-slate-600">Who Should Apply</a>
@@ -491,15 +541,21 @@ export default function MasterHeader({ onNavigate, onOpenCertificate, onOpenHowT
             )}
 
             <a
-              href="#contact-us"
-              onClick={() => setMobileMenuOpen(false)}
+              href="#"
+              onClick={(e) => {
+                e.preventDefault();
+                setMobileMenuOpen(false);
+              }}
               className="py-2 px-3 rounded-lg text-sm font-medium text-slate-700 hover:bg-slate-50"
             >
               Contact us
             </a>
             <a
-              href="#faqs"
-              onClick={() => setMobileMenuOpen(false)}
+              href="#"
+              onClick={(e) => {
+                e.preventDefault();
+                setMobileMenuOpen(false);
+              }}
               className="py-2 px-3 rounded-lg text-sm font-medium text-slate-700 hover:bg-slate-50"
             >
               FAQs

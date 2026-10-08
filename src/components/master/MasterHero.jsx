@@ -3,7 +3,7 @@ import { GraduationCap, Check } from 'lucide-react';
 import heroCampusImg from '../../assets/images/hero-student-campus-clean.png';
 import { HERO_CONTENT } from '../../data/masterReferenceData';
 
-export default function MasterHero() {
+export default function MasterHero({ onExploreProgramme }) {
   return (
     <section className="w-full bg-white pt-4 pb-6 sm:py-8 overflow-hidden">
       <div className="max-w-[1380px] mx-auto px-4 sm:px-6 lg:px-8">
@@ -73,8 +73,14 @@ export default function MasterHero() {
             {/* Outlined Explore Programme Hyperlink Button */}
             <div>
               <a
-                href={HERO_CONTENT.exploreButton.href}
-                className="inline-flex items-center justify-center px-7 py-2.5 rounded-full border-2 border-[#1d4ed8] text-[#1d4ed8] hover:bg-[#1d4ed8]/5 text-[15px] font-bold transition-all shadow-xs"
+                href="#programme"
+                onClick={(e) => {
+                  if (onExploreProgramme) {
+                    e.preventDefault();
+                    onExploreProgramme();
+                  }
+                }}
+                className="inline-flex items-center justify-center px-7 py-2.5 rounded-full border-2 border-[#1d4ed8] text-[#1d4ed8] hover:bg-[#1d4ed8]/5 text-[15px] font-bold transition-all shadow-xs cursor-pointer"
               >
                 {HERO_CONTENT.exploreButton.label}
               </a>

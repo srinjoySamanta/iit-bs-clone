@@ -82,10 +82,29 @@
   animation-play-state: paused;
 }
 
+/* Programme Highlights Right-to-Left Continuous Infinite Marquee */
+@keyframes marqueeRightToLeft {
+  0% { transform: translateX(0%); }
+  100% { transform: translateX(-50%); }
+}
+
+.marquee-right-to-left {
+  display: flex;
+  width: max-content;
+  animation: marqueeRightToLeft 26s linear infinite;
+  will-change: transform;
+}
+
+.marquee-right-to-left:hover {
+  animation-play-state: paused;
+}
+
 @media (prefers-reduced-motion: reduce) {
-  .marquee-left-to-right {
+  .marquee-left-to-right,
+  .marquee-right-to-left {
     animation: none;
     overflow-x: auto;
   }
 }
+
 
