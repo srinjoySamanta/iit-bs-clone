@@ -149,20 +149,8 @@ export default function MasterHeader({
             </div>
           </a>
 
-          {/* Right Corner: Apply Now Button + IIT KGP 75 Years Emblem */}
+          {/* Right Corner: IIT KGP 75 Years Emblem + Mobile Menu Toggle */}
           <div className="flex items-center gap-3 sm:gap-5 flex-shrink-0">
-            {/* Active Apply Now Button */}
-            <button
-              type="button"
-              onClick={() => {
-                if (onNavigate) onNavigate('student-login');
-              }}
-              className="inline-flex items-center justify-center gap-1.5 px-5 sm:px-6 py-2 sm:py-2.5 bg-[#003893] hover:bg-[#002b70] text-white text-[13px] sm:text-[14px] font-bold rounded-full shadow-sm hover:shadow-md transition-all transform hover:-translate-y-0.5 cursor-pointer uppercase tracking-wider"
-            >
-              <UserPlus className="w-4 h-4" />
-              <span>Apply Now</span>
-            </button>
-
             {/* Official IIT KGP 75 Years Emblem in Right Corner */}
             <div 
               className="flex items-center flex-shrink-0 group cursor-pointer"
@@ -193,7 +181,9 @@ export default function MasterHeader({
           LEVEL 2: HORIZONTAL NAVIGATION DOWNLINE (ALL WORKING)
          ============================================================ */}
       <nav className="w-full bg-[#f8fafc] border-t border-slate-200/90 px-4 sm:px-6 lg:px-8 py-1.5 sm:py-2">
-        <div className="max-w-[1380px] mx-auto flex items-center justify-center lg:justify-start flex-wrap gap-x-1 sm:gap-x-2 md:gap-x-3 text-[13.5px] sm:text-[14px]">
+        <div className="max-w-[1380px] mx-auto flex items-center justify-between gap-3 sm:gap-4 flex-wrap sm:flex-nowrap">
+          {/* Navigation Links (Home, Programme, Academics, Admissions, etc.) */}
+          <div className="flex items-center flex-wrap gap-x-1 sm:gap-x-2 md:gap-x-3 text-[13.5px] sm:text-[14px]">
           
           {/* 1. Home Link */}
           <a
@@ -487,9 +477,22 @@ export default function MasterHeader({
           >
             FAQs
           </button>
-
         </div>
-      </nav>
+
+        {/* Active Apply Now Button alongside (Home, Programme, Academics, Admissions...) Navigation */}
+        <button
+          type="button"
+          onClick={() => {
+            if (onNavigate) onNavigate('student-login');
+          }}
+          className="inline-flex items-center justify-center gap-1.5 px-4 sm:px-5 py-1.5 sm:py-2 bg-[#003893] hover:bg-[#002b70] text-white text-[12.5px] sm:text-[13px] font-bold rounded-full shadow-sm hover:shadow-md transition-all transform hover:-translate-y-0.5 cursor-pointer uppercase tracking-wider flex-shrink-0"
+        >
+          <UserPlus className="w-3.5 h-3.5" />
+          <span>Apply Now</span>
+        </button>
+
+      </div>
+    </nav>
 
       {/* ============================================================
           MOBILE DRAWER
