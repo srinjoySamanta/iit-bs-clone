@@ -185,15 +185,15 @@ export default function MasterHeader({ currentPage = 'home', onNavigate, onOpenC
               {openDropdown === 'academics' && (
                 <div className="absolute left-0 top-full pt-2 w-80 z-50 animate-in fade-in slide-in-from-top-1">
                   <div className="bg-white rounded-2xl shadow-xl border border-slate-200/90 py-2.5 overflow-hidden">
-                    <a href="#structure" onClick={closeDropdown} className="block px-4 py-2 hover:bg-slate-50 transition">
+                    <a href="#" onClick={(e) => { e.preventDefault(); closeDropdown(); }} className="block px-4 py-2 hover:bg-slate-50 transition">
                       <div className="font-bold text-xs text-[#0f2942]">Academic Levels (NEP 2020)</div>
                       <div className="text-[11px] text-slate-500">Foundation, Diploma, BSc, and 4-Year BS Degree</div>
                     </a>
-                    <a href="#structure" onClick={closeDropdown} className="block px-4 py-2 hover:bg-slate-50 transition">
+                    <a href="#" onClick={(e) => { e.preventDefault(); closeDropdown(); }} className="block px-4 py-2 hover:bg-slate-50 transition">
                       <div className="font-bold text-xs text-[#0f2942]">Data Science &amp; AI Syllabus</div>
                       <div className="text-[11px] text-slate-500">Comprehensive course credit structure</div>
                     </a>
-                    <a href="#about-institute" onClick={closeDropdown} className="block px-4 py-2 hover:bg-slate-50 transition">
+                    <a href="#" onClick={(e) => { e.preventDefault(); closeDropdown(); }} className="block px-4 py-2 hover:bg-slate-50 transition">
                       <div className="font-bold text-xs text-[#0f2942]">Central Library &amp; Academic Access</div>
                       <div className="text-[11px] text-slate-500">Digital IEEE/ACM library and physical campus access</div>
                     </a>
@@ -242,7 +242,7 @@ export default function MasterHeader({ currentPage = 'home', onNavigate, onOpenC
                         <span className="text-[9px] font-bold bg-red-100 text-red-800 px-1.5 py-0.5 rounded">Instructions</span>
                       </button>
                     )}
-                    <a href="#eligibility" onClick={closeDropdown} className="block px-4 py-2 hover:bg-slate-50 transition">
+                    <a href="#" onClick={(e) => { e.preventDefault(); closeDropdown(); }} className="block px-4 py-2 hover:bg-slate-50 transition">
                       <div className="font-bold text-xs text-[#0f2942]">Direct Admission Pathways</div>
                       <div className="text-[11px] text-slate-500">WBJEE / JEE Advanced / Tripura JEE Ranks</div>
                     </a>
@@ -257,7 +257,7 @@ export default function MasterHeader({ currentPage = 'home', onNavigate, onOpenC
                         <div className="text-[11px] text-slate-500">Register, Pay &amp; Take Computer-Based Test</div>
                       </div>
                     </button>
-                    <a href="#fees-structure" onClick={closeDropdown} className="block px-4 py-2 hover:bg-slate-50 transition border-t border-slate-100 mt-1">
+                    <a href="#" onClick={(e) => { e.preventDefault(); closeDropdown(); }} className="block px-4 py-2 hover:bg-slate-50 transition border-t border-slate-100 mt-1">
                       <div className="font-bold text-xs text-[#0f2942]">Fee &amp; Scholarship Calculator</div>
                       <div className="text-[11px] text-slate-500">Modular pay-per-credit with fee waivers up to 75%</div>
                     </a>
@@ -294,11 +294,11 @@ export default function MasterHeader({ currentPage = 'home', onNavigate, onOpenC
                         <div className="text-[11px] text-slate-500">Courseware, video lectures &amp; grades</div>
                       </div>
                     </button>
-                    <a href="#faqs" onClick={closeDropdown} className="block px-4 py-2 hover:bg-slate-50 transition">
+                    <a href="#" onClick={(e) => { e.preventDefault(); closeDropdown(); }} className="block px-4 py-2 hover:bg-slate-50 transition">
                       <div className="font-bold text-xs text-[#0f2942]">Frequently Asked Questions</div>
                       <div className="text-[11px] text-slate-500">Bilingual English &amp; Bengali assistance</div>
                     </a>
-                    <a href="#contact-us" onClick={closeDropdown} className="block px-4 py-2 hover:bg-slate-50 transition border-t border-slate-100 mt-1">
+                    <a href="#" onClick={(e) => { e.preventDefault(); closeDropdown(); }} className="block px-4 py-2 hover:bg-slate-50 transition border-t border-slate-100 mt-1">
                       <div className="font-bold text-xs text-[#0f2942]">Helpdesk &amp; Admissions Office</div>
                       <div className="text-[11px] text-slate-500">Helpline email and CET campus desk</div>
                     </a>
@@ -324,21 +324,29 @@ export default function MasterHeader({ currentPage = 'home', onNavigate, onOpenC
               {openDropdown === 'news-events' && (
                 <div className="absolute left-0 top-full pt-2 w-80 z-50 animate-in fade-in slide-in-from-top-1">
                   <div className="bg-white rounded-2xl shadow-xl border border-slate-200/90 py-2.5 overflow-hidden">
-                    <div className="px-4 py-2 hover:bg-slate-50 transition">
+                    <a href="#" onClick={(e) => { e.preventDefault(); closeDropdown(); }} className="block px-4 py-2 hover:bg-slate-50 transition">
                       <div className="font-bold text-xs text-[#0f2942]">Admission Notification 2026-27</div>
                       <div className="text-[11px] text-slate-500">Applications open for Qualifier Round 1</div>
-                    </div>
-                    <a href="#director-note" onClick={closeDropdown} className="block px-4 py-2 hover:bg-amber-50 text-amber-900 transition">
+                    </a>
+                    <a 
+                      href="#programme" 
+                      onClick={(e) => { 
+                        e.preventDefault(); 
+                        if (onNavigate) onNavigate('programme'); 
+                        closeDropdown(); 
+                      }} 
+                      className="block px-4 py-2 hover:bg-amber-50 text-amber-900 transition"
+                    >
                       <div className="font-bold text-xs flex items-center justify-between">
                         <span>Director's Message</span>
                         <span className="text-[9px] font-bold bg-amber-100 text-amber-900 px-1.5 py-0.5 rounded">TOI Feature</span>
                       </div>
                       <div className="text-[11px] text-slate-500">Vision of Prof. Suman Chakraborty, Director</div>
                     </a>
-                    <div className="px-4 py-2 hover:bg-slate-50 transition border-t border-slate-100 mt-1">
+                    <a href="#" onClick={(e) => { e.preventDefault(); closeDropdown(); }} className="block px-4 py-2 hover:bg-slate-50 transition border-t border-slate-100 mt-1">
                       <div className="font-bold text-xs text-[#0f2942]">National Education Day Conclave</div>
                       <div className="text-[11px] text-slate-500">IIT Kharagpur outreach events</div>
-                    </div>
+                    </a>
                   </div>
                 </div>
               )}
@@ -436,9 +444,9 @@ export default function MasterHeader({ currentPage = 'home', onNavigate, onOpenC
                 >
                   Programme Highlights (Page 2)
                 </a>
-                <a href="#structure" onClick={() => setMobileMenuOpen(false)} className="block py-1.5 text-slate-600">Curriculum Overview &amp; Roadmap</a>
-                <a href="#how-will-you-learn" onClick={() => setMobileMenuOpen(false)} className="block py-1.5 text-slate-600">How Will You Learn</a>
-                <a href="#who-should-apply" onClick={() => setMobileMenuOpen(false)} className="block py-1.5 text-slate-600">Who Should Apply</a>
+                <a href="#" onClick={(e) => { e.preventDefault(); setMobileMenuOpen(false); }} className="block py-1.5 text-slate-600">Curriculum Overview &amp; Roadmap</a>
+                <a href="#" onClick={(e) => { e.preventDefault(); setMobileMenuOpen(false); }} className="block py-1.5 text-slate-600">How Will You Learn</a>
+                <a href="#" onClick={(e) => { e.preventDefault(); setMobileMenuOpen(false); }} className="block py-1.5 text-slate-600">Who Should Apply</a>
               </div>
             )}
 
@@ -453,9 +461,9 @@ export default function MasterHeader({ currentPage = 'home', onNavigate, onOpenC
             </button>
             {openDropdown === 'academics' && (
               <div className="pl-4 pr-2 py-1 space-y-1 text-xs border-l-2 border-blue-500 ml-3 bg-slate-50/70 rounded-r-lg">
-                <a href="#structure" onClick={() => setMobileMenuOpen(false)} className="block py-1.5 text-slate-700 font-semibold">Course Structure (4 Levels)</a>
-                <a href="#structure" onClick={() => setMobileMenuOpen(false)} className="block py-1.5 text-slate-600">DS &amp; AI Syllabus Roadmap</a>
-                <a href="#about-institute" onClick={() => setMobileMenuOpen(false)} className="block py-1.5 text-slate-600">Central Library Access</a>
+                <a href="#" onClick={(e) => { e.preventDefault(); setMobileMenuOpen(false); }} className="block py-1.5 text-slate-700 font-semibold">Course Structure (4 Levels)</a>
+                <a href="#" onClick={(e) => { e.preventDefault(); setMobileMenuOpen(false); }} className="block py-1.5 text-slate-600">DS &amp; AI Syllabus Roadmap</a>
+                <a href="#" onClick={(e) => { e.preventDefault(); setMobileMenuOpen(false); }} className="block py-1.5 text-slate-600">Central Library Access</a>
                 {onOpenCertificate && (
                   <button
                     type="button"
@@ -489,7 +497,7 @@ export default function MasterHeader({ currentPage = 'home', onNavigate, onOpenC
                     How to Apply (Instructions)
                   </button>
                 )}
-                <a href="#eligibility" onClick={() => setMobileMenuOpen(false)} className="block py-1.5 text-slate-700 font-semibold">Direct Admission Pathways</a>
+                <a href="#" onClick={(e) => { e.preventDefault(); setMobileMenuOpen(false); }} className="block py-1.5 text-slate-700 font-semibold">Direct Admission Pathways</a>
                 <button
                   type="button"
                   onClick={() => { if (onNavigate) onNavigate('qualifier'); setMobileMenuOpen(false); }}
@@ -497,7 +505,7 @@ export default function MasterHeader({ currentPage = 'home', onNavigate, onOpenC
                 >
                   Qualifier Round CBT Exam
                 </button>
-                <a href="#fees-structure" onClick={() => setMobileMenuOpen(false)} className="block py-1.5 text-slate-600">Fee &amp; Scholarship Calculator</a>
+                <a href="#" onClick={(e) => { e.preventDefault(); setMobileMenuOpen(false); }} className="block py-1.5 text-slate-600">Fee &amp; Scholarship Calculator</a>
               </div>
             )}
 
@@ -519,8 +527,8 @@ export default function MasterHeader({ currentPage = 'home', onNavigate, onOpenC
                 >
                   Student Portal &amp; LMS
                 </button>
-                <a href="#faqs" onClick={() => setMobileMenuOpen(false)} className="block py-1.5 text-slate-600">Frequently Asked Questions</a>
-                <a href="#contact-us" onClick={() => setMobileMenuOpen(false)} className="block py-1.5 text-slate-600">Helpdesk &amp; Admissions Office</a>
+                <a href="#" onClick={(e) => { e.preventDefault(); setMobileMenuOpen(false); }} className="block py-1.5 text-slate-600">Frequently Asked Questions</a>
+                <a href="#" onClick={(e) => { e.preventDefault(); setMobileMenuOpen(false); }} className="block py-1.5 text-slate-600">Helpdesk &amp; Admissions Office</a>
               </div>
             )}
 
@@ -535,8 +543,18 @@ export default function MasterHeader({ currentPage = 'home', onNavigate, onOpenC
             </button>
             {openDropdown === 'news-events' && (
               <div className="pl-4 pr-2 py-1 space-y-1 text-xs border-l-2 border-blue-500 ml-3 bg-slate-50/70 rounded-r-lg">
-                <div className="py-1.5 text-slate-700 font-semibold">Admission Notification 2026-27</div>
-                <a href="#director-note" onClick={() => setMobileMenuOpen(false)} className="block py-1.5 text-amber-800 font-bold">Director's Message (TOI)</a>
+                <a href="#" onClick={(e) => { e.preventDefault(); setMobileMenuOpen(false); }} className="block py-1.5 text-slate-700 font-semibold">Admission Notification 2026-27</a>
+                <a 
+                  href="#programme" 
+                  onClick={(e) => { 
+                    e.preventDefault(); 
+                    if (onNavigate) onNavigate('programme'); 
+                    setMobileMenuOpen(false); 
+                  }} 
+                  className="block py-1.5 text-amber-800 font-bold"
+                >
+                  Director's Message (TOI)
+                </a>
               </div>
             )}
 

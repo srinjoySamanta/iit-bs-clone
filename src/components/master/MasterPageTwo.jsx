@@ -161,51 +161,33 @@ export default function MasterPageTwo({ onNavigate, onOpenCertificate, onOpenHow
               </div>
 
               {/* Continuous Infinite Marquee: RIGHT → LEFT */}
-              <div className="relative w-full overflow-hidden bg-white rounded-3xl border border-slate-200 shadow-sm py-6 group">
+              <div className="relative w-full overflow-hidden bg-white rounded-3xl border border-slate-200/90 shadow-sm py-8">
                 {/* Infinite Marquee Track Moving from RIGHT to LEFT */}
                 <div className="marquee-right-to-left flex items-center">
                   {marqueeItems.map((item, index) => (
                     <a
                       key={`${item.id}-${index}`}
                       href="#"
-                      className="flex flex-col items-center text-center px-6 py-2 w-[220px] sm:w-[240px] flex-shrink-0 group/item transition-transform hover:scale-[1.03] cursor-pointer"
+                      className="flex flex-col items-center text-center px-6 py-4 w-[240px] sm:w-[260px] flex-shrink-0 group/item transition-transform hover:scale-[1.03] cursor-pointer"
                       title={item.title}
                     >
                       {/* Clickable Icon */}
-                      <div className="mb-3 p-3 rounded-2xl bg-blue-50/90 group-hover/item:bg-blue-100 transition-colors flex items-center justify-center shadow-xs">
+                      <div className="mb-3.5 p-3.5 rounded-2xl bg-blue-50/90 group-hover/item:bg-blue-100 transition-colors flex items-center justify-center shadow-xs">
                         {getHighlightIcon(item.iconType)}
                       </div>
 
                       {/* Title */}
-                      <h4 className="font-bold text-[13px] text-[#0f172a] group-hover/item:text-[#1d4ed8] leading-[1.3] mb-1.5 transition-colors">
+                      <h4 className="font-bold text-[13.5px] text-[#0f172a] group-hover/item:text-[#1d4ed8] leading-[1.3] mb-2 transition-colors">
                         {item.title}
                       </h4>
 
                       {/* Description Subtitle */}
-                      <p className="text-[11.5px] text-[#64748b] leading-[1.4]">
+                      <p className="text-[12px] text-[#64748b] leading-[1.45]">
                         {item.description}
                       </p>
                     </a>
                   ))}
                 </div>
-              </div>
-
-              {/* All 8 Items Card Directory (All Hyperlinks) */}
-              <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mt-6">
-                {PROGRAMME_HIGHLIGHTS.map((item) => (
-                  <a
-                    key={item.id}
-                    href="#"
-                    className="p-3.5 rounded-2xl bg-white border border-slate-200/90 shadow-2xs hover:border-[#1d4ed8] hover:shadow-sm transition-all text-left block group"
-                  >
-                    <div className="font-bold text-[12px] text-[#0f2942] group-hover:text-[#1d4ed8] leading-tight mb-1 transition-colors">
-                      {item.title}
-                    </div>
-                    <div className="text-[10.5px] text-slate-500 leading-tight">
-                      {item.description}
-                    </div>
-                  </a>
-                ))}
               </div>
 
             </div>

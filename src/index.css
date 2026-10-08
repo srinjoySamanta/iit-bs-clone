@@ -91,13 +91,10 @@
 .marquee-right-to-left {
   display: flex;
   width: max-content;
-  animation: marqueeRightToLeft 26s linear infinite;
+  animation: marqueeRightToLeft 24s linear infinite;
   will-change: transform;
 }
 
-.marquee-right-to-left:hover {
-  animation-play-state: paused;
-}
 
 @media (prefers-reduced-motion: reduce) {
   .marquee-left-to-right,
