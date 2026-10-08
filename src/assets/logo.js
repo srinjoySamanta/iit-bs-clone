@@ -1,2 +1,2 @@
-import logo from './iitkgp-logo.png';
+import logo from './iitkgp-logo.svg';
 export default logo;

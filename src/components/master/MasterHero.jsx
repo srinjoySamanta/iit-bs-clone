@@ -5,7 +5,7 @@ import { HERO_CONTENT } from '../../data/masterReferenceData';
 
 export default function MasterHero({ onExploreProgramme }) {
   return (
-    <section className="w-full bg-white pt-4 pb-6 sm:py-8 overflow-hidden">
+    <section id="home" className="w-full bg-white pt-4 pb-6 sm:py-8 overflow-hidden scroll-mt-6">
       <div className="max-w-[1380px] mx-auto px-4 sm:px-6 lg:px-8">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-6 items-center">
           
