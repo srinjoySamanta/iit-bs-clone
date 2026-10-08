@@ -619,6 +619,85 @@ app.post('/api/payments/simulate-checkout', async (req, res) => {
 });
 
 // ==========================================
+// 6. VISITOR LEADS & MANDATORY DROPDOWN GATING API
+// ==========================================
+
+// POST /api/visitor-info (Mandatory dropdown gating lead capture)
+app.post(['/api/visitor-info', '/api/leads'], async (req, res) => {
+  try {
+    const { fullName, email, mobileNumber, userType, institution, targetDropdown, sessionId } = req.body;
+
+    // Strict Server-Side Validation & Sanitization
+    if (!fullName || typeof fullName !== 'string' || fullName.trim().length < 2) {
+      return res.status(400).json({ success: false, error: 'Full Name must be at least 2 characters.' });
+    }
+
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!email || typeof email !== 'string' || !emailRegex.test(email.trim())) {
+      return res.status(400).json({ success: false, error: 'A valid email address is required.' });
+    }
+
+    const phoneDigits = String(mobileNumber || '').replace(/\D/g, '');
+    if (!phoneDigits || phoneDigits.length < 7 || phoneDigits.length > 15) {
+      return res.status(400).json({ success: false, error: 'A valid mobile number is required.' });
+    }
+
+    const allowedTypes = ['Student', 'Faculty', 'Staff', 'Alumni', 'Industry Professional', 'Other'];
+    if (!userType || !allowedTypes.includes(userType.trim())) {
+      return res.status(400).json({ success: false, error: 'Please select a valid User Type category.' });
+    }
+
+    if (!institution || typeof institution !== 'string' || institution.trim().length < 2) {
+      return res.status(400).json({ success: false, error: 'Institution or Organization is required.' });
+    }
+
+    const ipAddress = req.headers['x-forwarded-for'] || req.socket.remoteAddress || '127.0.0.1';
+    const userAgent = req.headers['user-agent'] || '';
+
+    const savedLead = await db.saveVisitorLead({
+      fullName: fullName.trim(),
+      email: email.trim().toLowerCase(),
+      mobileNumber: phoneDigits,
+      userType: userType.trim(),
+      institution: institution.trim(),
+      targetDropdown: String(targetDropdown || '').trim(),
+      sessionId: String(sessionId || '').trim(),
+      ipAddress,
+      userAgent
+    });
+
+    res.status(200).json({
+      success: true,
+      message: 'Visitor information recorded successfully.',
+      lead: {
+        id: savedLead.id,
+        fullName: savedLead.full_name,
+        email: savedLead.email,
+        userType: savedLead.user_type,
+        institution: savedLead.institution,
+        createdAt: savedLead.created_at
+      }
+    });
+  } catch (err) {
+    console.error('Error saving visitor lead:', err);
+    res.status(500).json({
+      success: false,
+      error: 'An internal server error occurred while saving information. Please try again.'
+    });
+  }
+});
+
+// GET /api/visitor-info (Staff/Admin access only)
+app.get('/api/visitor-info', authenticateToken, requireStaffOrAdmin, async (req, res) => {
+  try {
+    const leads = await db.getVisitorLeads();
+    res.json({ success: true, count: leads.length, leads });
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+// ==========================================
 // 7. AUDIT LOGS & HEALTH
 // ==========================================
 

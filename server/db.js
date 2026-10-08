@@ -2041,6 +2041,134 @@ class DatabaseAdapter {
     }
     return this.memoryDb.students.length;
   }
+
+  // =============================================================
+  // VISITOR LEADS & DROPDOWN INQUIRIES
+  // =============================================================
+  async saveVisitorLead(leadData) {
+    const {
+      fullName,
+      email,
+      mobileNumber,
+      userType,
+      institution,
+      targetDropdown = '',
+      sessionId = '',
+      ipAddress = '',
+      userAgent = ''
+    } = leadData;
+
+    const normalizedEmail = String(email || '').trim().toLowerCase();
+    const cleanName = String(fullName || '').trim();
+    const cleanPhone = String(mobileNumber || '').trim();
+    const cleanType = String(userType || 'Student').trim();
+    const cleanInst = String(institution || '').trim();
+
+    if (this.isPg) {
+      // Check existing lead by email to prevent duplicate explosion
+      const checkRes = await this.pgPool.query(
+        'SELECT id FROM visitor_leads WHERE LOWER(email) = $1 LIMIT 1',
+        [normalizedEmail]
+      );
+
+      let savedRecord;
+      if (checkRes.rows.length > 0) {
+        const updateRes = await this.pgPool.query(
+          `UPDATE visitor_leads 
+           SET full_name = $1, mobile_number = $2, user_type = $3, institution = $4, target_dropdown = $5, session_id = $6, ip_address = $7, user_agent = $8, updated_at = NOW()
+           WHERE LOWER(email) = $9
+           RETURNING *`,
+          [cleanName, cleanPhone, cleanType, cleanInst, targetDropdown, sessionId, ipAddress, userAgent, normalizedEmail]
+        );
+        savedRecord = updateRes.rows[0];
+      } else {
+        const insertRes = await this.pgPool.query(
+          `INSERT INTO visitor_leads (full_name, email, mobile_number, user_type, institution, target_dropdown, session_id, ip_address, user_agent, created_at, updated_at)
+           VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, NOW(), NOW())
+           RETURNING *`,
+          [cleanName, normalizedEmail, cleanPhone, cleanType, cleanInst, targetDropdown, sessionId, ipAddress, userAgent]
+        );
+        savedRecord = insertRes.rows[0];
+      }
+
+      await this.logAudit({
+        action: 'VISITOR_LEAD_SUBMISSION',
+        entityType: 'LEAD',
+        entityId: normalizedEmail,
+        actorRole: cleanType,
+        actorName: cleanName,
+        details: `Visitor information captured before dropdown [${targetDropdown}]. Institution: ${cleanInst}, Phone: ${cleanPhone}.`
+      });
+
+      return savedRecord;
+    } else {
+      if (!this.memoryDb.visitor_leads) {
+        this.memoryDb.visitor_leads = [];
+      }
+
+      const existingIndex = this.memoryDb.visitor_leads.findIndex(
+        l => l.email && l.email.toLowerCase() === normalizedEmail
+      );
+
+      const now = new Date().toISOString();
+      let record;
+
+      if (existingIndex >= 0) {
+        this.memoryDb.visitor_leads[existingIndex] = {
+          ...this.memoryDb.visitor_leads[existingIndex],
+          full_name: cleanName,
+          mobile_number: cleanPhone,
+          user_type: cleanType,
+          institution: cleanInst,
+          target_dropdown: targetDropdown,
+          session_id: sessionId,
+          ip_address: ipAddress,
+          user_agent: userAgent,
+          updated_at: now
+        };
+        record = this.memoryDb.visitor_leads[existingIndex];
+      } else {
+        record = {
+          id: this.memoryDb.visitor_leads.length + 1,
+          full_name: cleanName,
+          email: normalizedEmail,
+          mobile_number: cleanPhone,
+          user_type: cleanType,
+          institution: cleanInst,
+          target_dropdown: targetDropdown,
+          session_id: sessionId,
+          ip_address: ipAddress,
+          user_agent: userAgent,
+          created_at: now,
+          updated_at: now
+        };
+        this.memoryDb.visitor_leads.push(record);
+      }
+
+      this.saveLocal();
+
+      await this.logAudit({
+        action: 'VISITOR_LEAD_SUBMISSION',
+        entityType: 'LEAD',
+        entityId: normalizedEmail,
+        actorRole: cleanType,
+        actorName: cleanName,
+        details: `Visitor information captured before dropdown [${targetDropdown}]. Institution: ${cleanInst}, Phone: ${cleanPhone}.`
+      });
+
+      return record;
+    }
+  }
+
+  async getVisitorLeads() {
+    if (this.isPg) {
+      const res = await this.pgPool.query(
+        'SELECT * FROM visitor_leads ORDER BY created_at DESC'
+      );
+      return res.rows;
+    }
+    return (this.memoryDb.visitor_leads || []).slice().reverse();
+  }
 }
 
 export const db = new DatabaseAdapter();

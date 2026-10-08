@@ -43,8 +43,8 @@ export default function HomeOverview({
   return (
     <div className="w-full space-y-20 sm:space-y-28 py-10 bg-white text-slate-900 font-sans">
       
-      {/* 1. PROGRAMME HIGHLIGHTS (#programme-highlights) */}
-      <section id="programme-highlights" className="scroll-mt-[120px] w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      {/* 1. PROGRAMME HIGHLIGHTS (#programme-highlights-grid) */}
+      <section id="programme-highlights-grid" className="scroll-mt-[120px] w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center max-w-3xl mx-auto mb-12">
           <span className="text-xs font-bold uppercase tracking-widest text-kgp-crimson bg-red-50 px-3.5 py-1 rounded-full border border-red-200">
             Institutional Excellence

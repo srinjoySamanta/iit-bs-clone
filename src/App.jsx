@@ -18,6 +18,7 @@ import SignUpWizardModal from './components/student/SignUpWizardModal';
 import SampleCertificateModal from './components/SampleCertificateModal';
 import HowToApplyModal from './components/HowToApplyModal';
 import { AuthProvider, ThemeProvider } from './context/ErpAuthContext';
+import { DropdownGateProvider } from './context/DropdownGateContext';
 import LoginPage from './pages/auth/LoginPage';
 import AdminPortal from './pages/admin/AdminPortal';
 import EmployeePortal from './pages/employee/EmployeePortal';
@@ -223,7 +224,8 @@ export default function App() {
   return (
     <AuthProvider>
       <ThemeProvider>
-        <div className="min-h-screen w-full min-w-full overflow-x-clip flex flex-col bg-slate-50 text-slate-900 font-sans selection:bg-amber-500 selection:text-white">
+        <DropdownGateProvider>
+          <div className="min-h-screen w-full min-w-full overflow-x-clip flex flex-col bg-slate-50 text-slate-900 font-sans selection:bg-amber-500 selection:text-white">
       
       {/* VIEW 1: DEDICATED QUALIFIER ROUND EXAMINATION PORTAL */}
       {currentView === 'qualifier' && (
@@ -629,44 +631,52 @@ export default function App() {
         </>
       )}
 
-      {/* VIEW 13: THE MAIN HOME PAGE (Strict Master UI Reference Replication) */}
+      {/* VIEW 13: THE MAIN HOME PAGE (Strict Master UI Reference Replication Combined with Full Portal Ecosystem) */}
       {currentView === 'home' && (
-        <MasterLandingPage />
+        <MasterLandingPage
+          onNavigate={navigateTo}
+          onOpenCertificate={() => setShowCertificate(true)}
+          onOpenHowToApply={() => setShowHowToApply(true)}
+          onOpenDiagram={() => setShowDiagram(true)}
+          onOpenSignUp={() => navigateTo('student-login')}
+          onOpenQualifier={() => navigateTo('qualifier')}
+          showDiagram={showDiagram}
+          setShowDiagram={setShowDiagram}
+          onOpenStudentLogin={() => navigateTo('student-erp')}
+          onOpenAdminLogin={() => navigateTo('admin-login')}
+        />
       )}
 
-      {/* MODALS & PORTAL WIDGETS (Active only on non-home auxiliary routes) */}
-      {currentView !== 'home' && (
-        <>
-          <StudentPortalModal
-            isOpen={showStudentModal}
-            onClose={() => setShowStudentModal(false)}
-          />
-          <AdminPortalModal
-            isOpen={showAdminModal}
-            onClose={() => setShowAdminModal(false)}
-          />
-          <SignUpWizardModal
-            isOpen={showSignUp}
-            onClose={() => setShowSignUp(false)}
-          />
-          <SampleCertificateModal
-            isOpen={showCertificate}
-            onClose={() => setShowCertificate(false)}
-          />
-          <HowToApplyModal
-            isOpen={showHowToApply}
-            onClose={() => setShowHowToApply(false)}
-            onStartApplication={() => navigateTo('student-login')}
-          />
-          {currentView !== 'exam' && (
-            <AdmissionsChatbot
-              onOpenQualifier={() => navigateTo('qualifier')}
-            />
-          )}
-        </>
+      {/* UNIVERSAL MODALS & PORTAL WIDGETS */}
+      <StudentPortalModal
+        isOpen={showStudentModal}
+        onClose={() => setShowStudentModal(false)}
+      />
+      <AdminPortalModal
+        isOpen={showAdminModal}
+        onClose={() => setShowAdminModal(false)}
+      />
+      <SignUpWizardModal
+        isOpen={showSignUp}
+        onClose={() => setShowSignUp(false)}
+      />
+      <SampleCertificateModal
+        isOpen={showCertificate}
+        onClose={() => setShowCertificate(false)}
+      />
+      <HowToApplyModal
+        isOpen={showHowToApply}
+        onClose={() => setShowHowToApply(false)}
+        onStartApplication={() => navigateTo('student-login')}
+      />
+      {currentView !== 'exam' && (
+        <AdmissionsChatbot
+          onOpenQualifier={() => navigateTo('qualifier')}
+        />
       )}
 
-        </div>
+          </div>
+        </DropdownGateProvider>
       </ThemeProvider>
     </AuthProvider>
   );

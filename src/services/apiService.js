@@ -395,3 +395,86 @@ export async function triggerDummySimulation(count = 50) {
   } catch (e) {}
   return generateMassDummyApplications(count);
 }
+
+// ==========================================
+// VISITOR INFORMATION & DROPDOWN GATING API
+// ==========================================
+
+export function isVisitorRegistered() {
+  if (typeof window === 'undefined') return false;
+  // If user is already logged in as a student, staff, or admin, consider registered
+  if (getCurrentAdminUser() !== null) return true;
+  try {
+    const isSessionRegistered = sessionStorage.getItem('iitkgp_visitor_registered') === 'true';
+    const isLocalRegistered = localStorage.getItem('iitkgp_visitor_registered') === 'true';
+    return isSessionRegistered || isLocalRegistered;
+  } catch (e) {
+    return false;
+  }
+}
+
+export function setVisitorRegisteredLocal(email, fullName) {
+  if (typeof window === 'undefined') return;
+  try {
+    sessionStorage.setItem('iitkgp_visitor_registered', 'true');
+    localStorage.setItem('iitkgp_visitor_registered', 'true');
+    if (email) localStorage.setItem('iitkgp_visitor_email', email);
+    if (fullName) localStorage.setItem('iitkgp_visitor_name', fullName);
+  } catch (e) {}
+}
+
+export async function submitVisitorLead(formData) {
+  const sessionId = sessionStorage.getItem('iitkgp_session_id') || `sess_${Date.now()}_${Math.random().toString(36).substring(2, 9)}`;
+  sessionStorage.setItem('iitkgp_session_id', sessionId);
+
+  const payload = {
+    ...formData,
+    sessionId
+  };
+
+  try {
+    const res = await fetch(`${API_BASE}/visitor-info`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(payload)
+    });
+
+    const data = await res.json();
+
+    if (!res.ok || !data.success) {
+      throw new Error(data.error || 'Failed to submit visitor information.');
+    }
+
+    // Mark user as registered in session & persistent storage
+    setVisitorRegisteredLocal(formData.email, formData.fullName);
+
+    return {
+      success: true,
+      data: data.lead
+    };
+  } catch (err) {
+    // If backend is unreachable (e.g. running statically without active backend server),
+    // save locally to localStorage as reliable fallback to ensure seamless visitor experience!
+    console.warn('API error saving visitor lead, using client fallback:', err.message);
+
+    try {
+      const existingLeads = JSON.parse(localStorage.getItem('iitkgp_visitor_leads') || '[]');
+      existingLeads.push({
+        ...payload,
+        id: Date.now(),
+        createdAt: new Date().toISOString()
+      });
+      localStorage.setItem('iitkgp_visitor_leads', JSON.stringify(existingLeads));
+      setVisitorRegisteredLocal(formData.email, formData.fullName);
+      return {
+        success: true,
+        data: payload
+      };
+    } catch (localErr) {
+      throw err;
+    }
+  }
+}
+

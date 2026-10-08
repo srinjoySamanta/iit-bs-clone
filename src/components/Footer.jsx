@@ -6,92 +6,9 @@ import { getErpLoginUrl } from '../config/portalConfig';
 
 export default function Footer({ onOpenDiagram, onOpenStudentLogin, onOpenAdminLogin, onOpenCertificate, onNavigate }) {
   return (
-    <footer className="w-full bg-kgp-darknavy text-white pt-14 pb-8 border-t-4 border-kgp-crimson">
+    <footer id="institutional-gateways" className="w-full bg-kgp-darknavy text-white pt-14 pb-8 border-t-4 border-kgp-crimson scroll-mt-[135px]">
       <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         
-        {/* Dedicated Institutional Portal Gateways Section (Student, Staff & Admin Login) - Small Size matching Footer */}
-        <div id="institutional-gateways" className="scroll-mt-[135px] mb-8 pb-8 border-b border-slate-800">
-          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-1.5 mb-4">
-            <div className="flex items-center gap-2">
-              <ShieldCheck className="w-4 h-4 text-amber-400" />
-              <h5 className="text-xs font-bold uppercase tracking-wider text-amber-400">
-                Official Portal Gateways (Single Sign-On)
-              </h5>
-            </div>
-            <p className="text-[11px] text-slate-400">
-              Authorized entry points for candidates, faculty staff &amp; administration
-            </p>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
-            {/* 1. Student Portal */}
-            <div className="bg-slate-900/70 rounded-xl p-3.5 border border-emerald-500/20 hover:border-emerald-500/40 transition-all flex flex-col justify-between gap-2.5">
-              <div>
-                <div className="flex items-center justify-between mb-0.5">
-                  <span className="text-[10px] font-bold text-emerald-400 uppercase tracking-wider">Applicant &amp; Enrolled</span>
-                  <GraduationCap className="w-3.5 h-3.5 text-emerald-400" />
-                </div>
-                <h6 className="text-xs font-bold text-white">Student Portal &amp; LMS</h6>
-                <p className="text-[11px] text-slate-400 mt-1 leading-relaxed">
-                  Track admission application, complete semester fee payments, access live video lectures, courseware, and grades.
-                </p>
-              </div>
-              <button
-                type="button"
-                onClick={() => onNavigate ? onNavigate('student-login') : (onOpenStudentLogin ? onOpenStudentLogin() : null)}
-                className="w-full py-1.5 px-3 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs flex items-center justify-center gap-1.5 shadow-xs transition cursor-pointer"
-              >
-                <GraduationCap className="w-3.5 h-3.5" />
-                <span>Student Login</span>
-              </button>
-            </div>
-
-            {/* 2. Staff Operations Portal */}
-            <div className="bg-slate-900/70 rounded-xl p-3.5 border border-sky-500/20 hover:border-sky-500/40 transition-all flex flex-col justify-between gap-2.5">
-              <div>
-                <div className="flex items-center justify-between mb-0.5">
-                  <span className="text-[10px] font-bold text-sky-400 uppercase tracking-wider">Operations &amp; Faculty</span>
-                  <UserCheck className="w-3.5 h-3.5 text-sky-400" />
-                </div>
-                <h6 className="text-xs font-bold text-white">Staff Operations Portal</h6>
-                <p className="text-[11px] text-slate-400 mt-1 leading-relaxed">
-                  Faculty verification desk, candidate document scrutiny, qualifier attendance records, and student workflow management.
-                </p>
-              </div>
-              <button
-                type="button"
-                onClick={() => onNavigate ? onNavigate('staff-login') : null}
-                className="w-full py-1.5 px-3 rounded-lg bg-sky-600 hover:bg-sky-500 text-white font-bold text-xs flex items-center justify-center gap-1.5 shadow-xs transition cursor-pointer"
-              >
-                <UserCheck className="w-3.5 h-3.5" />
-                <span>Staff Login</span>
-              </button>
-            </div>
-
-            {/* 3. Super Admin Directorate */}
-            <div className="bg-slate-900/70 rounded-xl p-3.5 border border-amber-500/20 hover:border-amber-500/40 transition-all flex flex-col justify-between gap-2.5">
-              <div>
-                <div className="flex items-center justify-between mb-0.5">
-                  <span className="text-[10px] font-bold text-amber-400 uppercase tracking-wider">Super Directorate</span>
-                  <ShieldCheck className="w-3.5 h-3.5 text-amber-400" />
-                </div>
-                <h6 className="text-xs font-bold text-white">Admin Directorate Console</h6>
-                <p className="text-[11px] text-slate-400 mt-1 leading-relaxed">
-                  Admin authorization console, strict approval/rejection oversight, system security audit, and batch performance metrics.
-                </p>
-              </div>
-              <button
-                type="button"
-                onClick={() => onNavigate ? onNavigate('admin-login') : (onOpenAdminLogin ? onOpenAdminLogin() : null)}
-                className="w-full py-1.5 px-3 rounded-lg bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold text-xs flex items-center justify-center gap-1.5 shadow-xs transition cursor-pointer"
-              >
-                <ShieldCheck className="w-3.5 h-3.5 text-slate-950" />
-                <span>Admin Login</span>
-              </button>
-            </div>
-          </div>
-        </div>
-
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 pb-12 border-b border-slate-800">
           
           {/* Col 1 & 2: Branding & Address */}

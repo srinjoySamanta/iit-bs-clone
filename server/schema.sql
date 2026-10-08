@@ -268,3 +268,24 @@ CREATE TABLE IF NOT EXISTS audit_logs (
 
 CREATE INDEX IF NOT EXISTS idx_audit_logs_created_at ON audit_logs(created_at DESC);
 CREATE INDEX IF NOT EXISTS idx_audit_logs_entity ON audit_logs(entity_type, entity_id);
+
+-- 14. Visitor Leads & Dropdown Inquiries Table
+CREATE TABLE IF NOT EXISTS visitor_leads (
+    id SERIAL PRIMARY KEY,
+    full_name VARCHAR(255) NOT NULL,
+    email VARCHAR(255) NOT NULL,
+    mobile_number VARCHAR(30) NOT NULL,
+    user_type VARCHAR(100) NOT NULL,
+    institution VARCHAR(255) NOT NULL,
+    target_dropdown VARCHAR(100) DEFAULT '',
+    session_id VARCHAR(100) DEFAULT '',
+    ip_address VARCHAR(100) DEFAULT '',
+    user_agent TEXT DEFAULT '',
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE INDEX IF NOT EXISTS idx_visitor_leads_email ON visitor_leads(email);
+CREATE INDEX IF NOT EXISTS idx_visitor_leads_user_type ON visitor_leads(user_type);
+CREATE INDEX IF NOT EXISTS idx_visitor_leads_created_at ON visitor_leads(created_at DESC);
+
