@@ -1,6 +1,5 @@
 import React from 'react';
 import MasterHeader from './MasterHeader';
-import SubnavTabs from '../SubnavTabs';
 import MasterHero from './MasterHero';
 import MasterFeatureCards from './MasterFeatureCards';
 import MasterProgrammeHighlights from './MasterProgrammeHighlights';
@@ -24,31 +23,25 @@ export default function MasterLandingPage({
   return (
     <div className="w-full min-h-screen bg-white text-slate-800 flex flex-col font-sans selection:bg-blue-100 selection:text-blue-900">
       
-      {/* Permanent Fixed/Sticky Header with Master Top Bar & 13-Tab Standby Subnav */}
-      <div id="main-fixed-navbar" className="sticky top-0 z-50 bg-white/95 backdrop-blur-md shadow-xs border-b border-slate-200">
-        {/* Row 1: Master UI Top Navigation Header (with Gated Dropdowns & Apply Now) */}
-        <MasterHeader 
-          onNavigate={onNavigate} 
-          onOpenCertificate={onOpenCertificate} 
-          onOpenHowToApply={onOpenHowToApply} 
-        />
-
-        {/* Row 2: 13-Tab Standby Subnav Bar (Permanently standby on top, never disappears on scroll) */}
-        <SubnavTabs onNavigate={onNavigate} />
-      </div>
+      {/* Top Navigation Header strictly matching Master Reference */}
+      <MasterHeader 
+        onNavigate={onNavigate} 
+        onOpenCertificate={onOpenCertificate} 
+        onOpenHowToApply={onOpenHowToApply} 
+      />
 
       {/* Main Landing Area */}
       <main className="w-full flex-1">
-        {/* Page 1: Hero Section (Master UI Reference) */}
+        {/* Page 1: Hero Section (Master UI Reference: Headline, Direct Entry Box, Explore Programme, Visual Composition) */}
         <MasterHero />
 
         {/* Page 1: 8 Feature Pastel Cards (Master UI Reference) */}
         <MasterFeatureCards />
 
-        {/* Page 2: Programme Highlights with Continuous Left-to-Right Marquee */}
+        {/* Page 2: Programme Highlights with Continuous Left-to-Right Marquee (Master UI Reference) */}
         <MasterProgrammeHighlights />
 
-        {/* Note from our Director (TOI Exclusive Feature & Visionary Address) */}
+        {/* Additional Website Content placed cleanly below the Master Reference pages */}
         <DirectorMessage
           onOpenQualifier={onOpenQualifier}
           onOpenSignUp={onOpenSignUp}

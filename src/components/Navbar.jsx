@@ -8,7 +8,6 @@ import { IIT_KGP_INFO, ANNOUNCEMENT_TICKER } from '../data/portalData';
 import iitKgpLogo from '../assets/logo';
 import logo75Years from '../assets/images/iitkgp-75-years.png';
 import { getErpLoginUrl, redirectToErpPortal } from '../config/portalConfig';
-import SubnavTabs from './SubnavTabs';
 
 export default function Navbar({ 
   onNavigate,
@@ -194,10 +193,6 @@ export default function Navbar({
         </div>
       </div>
 
-      {/* Row 2: 13-Tab Standby Subnav Bar (Permanently standby on top, never disappears) */}
-      <SubnavTabs onNavigate={onNavigate} />
-
-      {/* Mobile Drawer */}
       {mobileMenuOpen && (
         <div className="lg:hidden border-t border-slate-200 bg-white px-4 pt-3 pb-6 space-y-3 shadow-2xl animate-in slide-in-from-top-2">
           {/* Mobile Trilingual Selector */}
