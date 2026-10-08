@@ -3,7 +3,13 @@ import { Menu, X, ChevronDown, ExternalLink, Sparkles, FileText, GraduationCap, 
 import iitKgpLogo from '../../assets/logo';
 import { useDropdownGate } from '../../context/DropdownGateContext';
 
-export default function MasterHeader({ currentPage = 'home', onNavigate, onOpenCertificate, onOpenHowToApply }) {
+export default function MasterHeader({ 
+  currentPage = 'home', 
+  onNavigate, 
+  onOpenCertificate, 
+  onOpenHowToApply,
+  onScrollToHighlights 
+}) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [openDropdown, setOpenDropdown] = useState(null);
   const headerRef = useRef(null);
@@ -63,10 +69,9 @@ export default function MasterHeader({ currentPage = 'home', onNavigate, onOpenC
           <a 
             href="#home" 
             onClick={(e) => {
-              if (onNavigate) {
-                e.preventDefault();
-                onNavigate('home');
-              }
+              e.preventDefault();
+              window.scrollTo({ top: 0, behavior: 'smooth' });
+              if (onNavigate) onNavigate('home');
             }}
             className="flex items-center gap-3 group text-left flex-shrink-0"
           >
@@ -104,19 +109,14 @@ export default function MasterHeader({ currentPage = 'home', onNavigate, onOpenC
             <a
               href="#home"
               onClick={(e) => {
-                if (onNavigate) {
-                  e.preventDefault();
-                  onNavigate('home');
-                }
+                e.preventDefault();
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+                if (onNavigate) onNavigate('home');
               }}
-              className={`relative px-0.5 py-1 text-[14px] font-bold transition ${
-                currentPage === 'home' ? 'text-[#0f2942]' : 'text-[#0f2942]/80 hover:text-[#003893]'
-              }`}
+              className="relative px-0.5 py-1 text-[14px] font-bold text-[#0f2942] transition"
             >
               Home
-              {currentPage === 'home' && (
-                <span className="absolute bottom-[-4px] left-0 w-full h-[3px] bg-[#eab308] rounded-full" />
-              )}
+              <span className="absolute bottom-[-4px] left-0 w-full h-[3px] bg-[#eab308] rounded-full" />
             </a>
 
             {/* 2. Programme Dropdown */}
@@ -125,31 +125,32 @@ export default function MasterHeader({ currentPage = 'home', onNavigate, onOpenC
                 type="button"
                 onClick={(e) => handleDropdownTrigger('programme', e)}
                 className={`flex items-center gap-1 px-1 py-1 text-[14px] font-medium transition cursor-pointer relative ${
-                  openDropdown === 'programme' || currentPage === 'programme' ? 'text-[#003893] font-bold' : 'text-[#0f2942] hover:text-[#003893]'
+                  openDropdown === 'programme' ? 'text-[#003893] font-bold' : 'text-[#0f2942] hover:text-[#003893]'
                 }`}
                 aria-expanded={openDropdown === 'programme'}
               >
                 <span>Programme</span>
                 <ChevronDown className={`w-3.5 h-3.5 transition-transform duration-200 ${openDropdown === 'programme' ? 'rotate-180 text-[#003893]' : 'text-slate-400'}`} />
-                {currentPage === 'programme' && (
-                  <span className="absolute bottom-[-4px] left-0 w-full h-[3px] bg-[#eab308] rounded-full" />
-                )}
               </button>
 
               {openDropdown === 'programme' && (
                 <div className="absolute left-0 top-full pt-2 w-80 z-50 animate-in fade-in slide-in-from-top-1">
                   <div className="bg-white rounded-2xl shadow-xl border border-slate-200/90 py-2.5 overflow-hidden">
                     <a 
-                      href="#programme" 
+                      href="#programme-highlights" 
                       onClick={(e) => {
                         e.preventDefault();
-                        if (onNavigate) onNavigate('programme');
+                        if (onScrollToHighlights) {
+                          onScrollToHighlights();
+                        } else {
+                          document.getElementById('programme-highlights')?.scrollIntoView({ behavior: 'smooth' });
+                        }
                         closeDropdown();
                       }} 
                       className="block px-4 py-2 hover:bg-slate-50 transition"
                     >
-                      <div className="font-bold text-xs text-[#0f2942]">Programme Highlights (Page 2)</div>
-                      <div className="text-[11px] text-slate-500">8 key pillars &amp; Director's Note</div>
+                      <div className="font-bold text-xs text-[#0f2942]">Programme Highlights &amp; Director's Note</div>
+                      <div className="text-[11px] text-slate-500">8 key pillars &amp; leadership vision</div>
                     </a>
                     <a href="#" onClick={(e) => { e.preventDefault(); closeDropdown(); }} className="block px-4 py-2 hover:bg-slate-50 transition">
                       <div className="font-bold text-xs text-[#0f2942]">Curriculum Overview &amp; Roadmap</div>
@@ -329,10 +330,14 @@ export default function MasterHeader({ currentPage = 'home', onNavigate, onOpenC
                       <div className="text-[11px] text-slate-500">Applications open for Qualifier Round 1</div>
                     </a>
                     <a 
-                      href="#programme" 
+                      href="#programme-highlights" 
                       onClick={(e) => { 
                         e.preventDefault(); 
-                        if (onNavigate) onNavigate('programme'); 
+                        if (onScrollToHighlights) {
+                          onScrollToHighlights();
+                        } else {
+                          document.getElementById('programme-highlights')?.scrollIntoView({ behavior: 'smooth' });
+                        }
                         closeDropdown(); 
                       }} 
                       className="block px-4 py-2 hover:bg-amber-50 text-amber-900 transition"
@@ -434,15 +439,19 @@ export default function MasterHeader({ currentPage = 'home', onNavigate, onOpenC
             {openDropdown === 'programme' && (
               <div className="pl-4 pr-2 py-1 space-y-1 text-xs border-l-2 border-blue-500 ml-3 bg-slate-50/70 rounded-r-lg">
                 <a 
-                  href="#programme" 
+                  href="#programme-highlights" 
                   onClick={(e) => {
                     e.preventDefault();
-                    if (onNavigate) onNavigate('programme');
+                    if (onScrollToHighlights) {
+                      onScrollToHighlights();
+                    } else {
+                      document.getElementById('programme-highlights')?.scrollIntoView({ behavior: 'smooth' });
+                    }
                     setMobileMenuOpen(false);
                   }} 
                   className="block py-1.5 text-slate-700 font-semibold"
                 >
-                  Programme Highlights (Page 2)
+                  Programme Highlights &amp; Director's Note
                 </a>
                 <a href="#" onClick={(e) => { e.preventDefault(); setMobileMenuOpen(false); }} className="block py-1.5 text-slate-600">Curriculum Overview &amp; Roadmap</a>
                 <a href="#" onClick={(e) => { e.preventDefault(); setMobileMenuOpen(false); }} className="block py-1.5 text-slate-600">How Will You Learn</a>
@@ -545,10 +554,14 @@ export default function MasterHeader({ currentPage = 'home', onNavigate, onOpenC
               <div className="pl-4 pr-2 py-1 space-y-1 text-xs border-l-2 border-blue-500 ml-3 bg-slate-50/70 rounded-r-lg">
                 <a href="#" onClick={(e) => { e.preventDefault(); setMobileMenuOpen(false); }} className="block py-1.5 text-slate-700 font-semibold">Admission Notification 2026-27</a>
                 <a 
-                  href="#programme" 
+                  href="#programme-highlights" 
                   onClick={(e) => { 
                     e.preventDefault(); 
-                    if (onNavigate) onNavigate('programme'); 
+                    if (onScrollToHighlights) {
+                      onScrollToHighlights();
+                    } else {
+                      document.getElementById('programme-highlights')?.scrollIntoView({ behavior: 'smooth' });
+                    }
                     setMobileMenuOpen(false); 
                   }} 
                   className="block py-1.5 text-amber-800 font-bold"

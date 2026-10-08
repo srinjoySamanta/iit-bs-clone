@@ -2,8 +2,16 @@ import React from 'react';
 import MasterHeader from './MasterHeader';
 import MasterHero from './MasterHero';
 import MasterFeatureCards from './MasterFeatureCards';
+import MasterDirectorAndHighlights from './MasterDirectorAndHighlights';
 
 export default function MasterLandingPage({ onNavigate, onOpenCertificate, onOpenHowToApply }) {
+  const handleScrollToHighlights = () => {
+    const el = document.getElementById('programme-highlights');
+    if (el) {
+      el.scrollIntoView({ behavior: 'smooth' });
+    }
+  };
+
   return (
     <div className="w-full min-h-screen bg-white text-slate-800 flex flex-col font-sans selection:bg-blue-100 selection:text-blue-900">
       {/* 1. Header (Strict Master Reference Navigation) */}
@@ -11,19 +19,24 @@ export default function MasterLandingPage({ onNavigate, onOpenCertificate, onOpe
         currentPage="home"
         onNavigate={onNavigate} 
         onOpenCertificate={onOpenCertificate} 
-        onOpenHowToApply={onOpenHowToApply} 
+        onOpenHowToApply={onOpenHowToApply}
+        onScrollToHighlights={handleScrollToHighlights}
       />
 
       {/* Main Landing Area */}
       <main className="w-full flex-1 bg-white">
         {/* 2, 3, 4: Hero Section with Direct Entry box & Explore Programme button */}
-        <MasterHero onExploreProgramme={() => onNavigate('programme')} />
+        <MasterHero onExploreProgramme={handleScrollToHighlights} />
 
         {/* 5: Eight Feature Cards */}
         <MasterFeatureCards />
+
+        {/* 6: Next Scroll Down Section: Director's Message (Left) + Programme Highlights (Right, Right-to-Left Marquee) */}
+        <MasterDirectorAndHighlights />
       </main>
 
-      {/* PAGE 1 ENDS HERE — NOTHING ELSE */}
+      {/* LANDING PAGE ENDS HERE — NOTHING ELSE */}
     </div>
   );
 }
+

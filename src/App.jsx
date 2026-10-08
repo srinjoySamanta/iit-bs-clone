@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import MasterLandingPage from './components/master/MasterLandingPage';
-import MasterPageTwo from './components/master/MasterPageTwo';
 import StudentPortalModal from './components/student/StudentPortalModal';
 import AdminPortalModal from './components/admin/AdminPortalModal';
 import SignUpWizardModal from './components/student/SignUpWizardModal';
@@ -39,8 +38,11 @@ export default function App() {
       const rawHash = window.location.hash.replace(/^#\/?/, '');
       const hash = rawHash.toLowerCase();
 
-      if (hash === 'programme' || hash === 'programme-highlights' || hash === 'highlights' || hash === 'page2') {
-        setCurrentView('programme');
+      if (hash === 'programme' || hash === 'programme-highlights' || hash === 'highlights' || hash === 'page2' || hash === 'director-note') {
+        setCurrentView('home');
+        setTimeout(() => {
+          document.getElementById('programme-highlights')?.scrollIntoView({ behavior: 'smooth' });
+        }, 150);
       } else if (hash.startsWith('student-erp') || hash === 'erp' || hash === 'student-portal' || hash === 'lms' || hash === 'student/dashboard') {
         setCurrentView('student-erp');
       } else if (hash === 'admin' || hash === 'admin-portal' || hash === 'admin-dashboard' || hash === 'admin/dashboard' || hash === 'admin-students') {
@@ -64,7 +66,7 @@ export default function App() {
       } else if (hash === 'diagram') {
         setShowDiagram(true);
       } else {
-        // Default: Page 1 (Landing Page)
+        // Default: Landing Page
         setCurrentView('home');
       }
     };
@@ -75,12 +77,14 @@ export default function App() {
   }, []);
 
   const navigateTo = (view) => {
-    if (view === 'programme' || view === 'programme-highlights' || view === 'page2') {
-      setCurrentView('programme');
+    if (view === 'programme' || view === 'programme-highlights' || view === 'page2' || view === 'director-note') {
+      setCurrentView('home');
       try {
-        window.history.replaceState(null, '', '#programme');
+        window.history.replaceState(null, '', '#programme-highlights');
       } catch (e) {}
-      window.scrollTo({ top: 0, behavior: 'smooth' });
+      setTimeout(() => {
+        document.getElementById('programme-highlights')?.scrollIntoView({ behavior: 'smooth' });
+      }, 100);
       return;
     }
 
@@ -201,18 +205,9 @@ export default function App() {
 
 
 
-      {/* VIEW 1: PAGE 1 — LANDING PAGE (Strict Master UI Reference Replication: Header -> Hero -> Direct Entry -> Explore Programme -> 8 Feature Cards. END.) */}
-      {currentView === 'home' && (
+      {/* MAIN LANDING EXPERIENCE: Header -> Hero -> Direct Entry -> Explore Programme -> 8 Feature Cards -> Director's Message & Programme Highlights (Right -> Left Marquee). END. */}
+      {(currentView === 'home' || currentView === 'programme') && (
         <MasterLandingPage
-          onNavigate={navigateTo}
-          onOpenCertificate={() => setShowCertificate(true)}
-          onOpenHowToApply={() => setShowHowToApply(true)}
-        />
-      )}
-
-      {/* VIEW 2: PAGE 2 — PROGRAMME HIGHLIGHTS (Director's Message Left | Programme Highlights Continuous Right-to-Left Marquee Right. END.) */}
-      {currentView === 'programme' && (
-        <MasterPageTwo
           onNavigate={navigateTo}
           onOpenCertificate={() => setShowCertificate(true)}
           onOpenHowToApply={() => setShowHowToApply(true)}
