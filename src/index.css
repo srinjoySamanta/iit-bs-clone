@@ -64,3 +64,28 @@
 .flash-marquee:hover {
   animation-play-state: paused;
 }
+
+/* Programme Highlights Left-to-Right Continuous Infinite Marquee */
+@keyframes marqueeLeftToRight {
+  0% { transform: translateX(-50%); }
+  100% { transform: translateX(0%); }
+}
+
+.marquee-left-to-right {
+  display: flex;
+  width: max-content;
+  animation: marqueeLeftToRight 32s linear infinite;
+  will-change: transform;
+}
+
+.marquee-left-to-right:hover {
+  animation-play-state: paused;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .marquee-left-to-right {
+    animation: none;
+    overflow-x: auto;
+  }
+}
+

@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import MasterLandingPage from './components/master/MasterLandingPage';
 import Navbar from './components/Navbar';
 import Hero from './components/Hero';
 import DirectorMessage from './components/DirectorMessage';
@@ -628,105 +629,41 @@ export default function App() {
         </>
       )}
 
-      {/* VIEW 13: THE MAIN HOME PAGE (Clean, Eye-Smoothing Landing Page matching Reference PDF) */}
+      {/* VIEW 13: THE MAIN HOME PAGE (Strict Master UI Reference Replication) */}
       {currentView === 'home' && (
-        <>
-          {/* Main Sticky Navbar */}
-          <Navbar
-            onNavigate={navigateTo}
-            onOpenDiagram={() => setShowDiagram(true)}
-            onOpenSignUp={() => navigateTo('student-login')}
-            onOpenCertificate={() => setShowCertificate(true)}
-            onOpenHowToApply={() => setShowHowToApply(true)}
-            currentView={currentView}
-          />
-
-          {/* Hero Section with Unblurred Slides, Degree Titles & 5-Pill Facts Strip */}
-          <Hero
-            onOpenSignUp={() => navigateTo('student-login')}
-            onOpenDiagram={() => setShowDiagram(true)}
-            onOpenCertificate={() => setShowCertificate(true)}
-            onOpenQualifier={() => navigateTo('qualifier')}
-          />
-
-          {/* Note from our Director (Executive Summary + Expandable TOI Address) */}
-          <DirectorMessage
-            onOpenQualifier={() => navigateTo('qualifier')}
-            onOpenSignUp={() => navigateTo('student-login')}
-          />
-
-          {/* Block Diagram Section (Toggled on demand) */}
-          {showDiagram && (
-            <section id="diagram-section" className="bg-slate-200/70 py-10 px-4 sm:px-6 lg:px-8 border-b-2 border-slate-300">
-              <div className="max-w-7xl mx-auto">
-                <BlockDiagramViewer
-                  onClose={() => setShowDiagram(false)}
-                  onOpenStudentLogin={() => setShowStudentModal(true)}
-                  onOpenAdminLogin={() => setShowAdminModal(true)}
-                  onOpenSignUp={() => navigateTo('student-login')}
-                  onOpenCertificate={() => setShowCertificate(true)}
-                />
-              </div>
-            </section>
-          )}
-
-          {/* Executive Overview Matching Reference PDF: Highlights, Credentials, Hyperlink Directory, Comparison Table, and Final CTA */}
-          <HomeOverview
-            onNavigate={navigateTo}
-            onOpenCertificate={() => setShowCertificate(true)}
-            onOpenHowToApply={() => setShowHowToApply(true)}
-            onOpenQualifier={() => navigateTo('qualifier')}
-            onOpenSignUp={() => navigateTo('student-login')}
-          />
-
-          {/* Clean Institutional Footer */}
-          <Footer
-            onNavigate={navigateTo}
-            onOpenDiagram={() => setShowDiagram(true)}
-            onOpenStudentLogin={() => navigateTo('student-erp')}
-            onOpenAdminLogin={() => navigateTo('admin-login')}
-            onOpenCertificate={() => setShowCertificate(true)}
-          />
-        </>
+        <MasterLandingPage />
       )}
 
-      {/* MODALS */}
-      {/* 1. Student Portal Dashboard Modal */}
-      <StudentPortalModal
-        isOpen={showStudentModal}
-        onClose={() => setShowStudentModal(false)}
-      />
-
-      {/* 2. Admin Management Console Modal */}
-      <AdminPortalModal
-        isOpen={showAdminModal}
-        onClose={() => setShowAdminModal(false)}
-      />
-
-      {/* 3. Applicant Sign Up 5-Stage Wizard */}
-      <SignUpWizardModal
-        isOpen={showSignUp}
-        onClose={() => setShowSignUp(false)}
-      />
-
-      {/* 4. Sample Degree Certificate Preview */}
-      <SampleCertificateModal
-        isOpen={showCertificate}
-        onClose={() => setShowCertificate(false)}
-      />
-
-      {/* 5. How to Apply Official Guide Modal */}
-      <HowToApplyModal
-        isOpen={showHowToApply}
-        onClose={() => setShowHowToApply(false)}
-        onStartApplication={() => navigateTo('student-login')}
-      />
-
-      {/* 6. Bottom-Right Floating AI Admissions Chatbot */}
-      {currentView !== 'exam' && (
-        <AdmissionsChatbot
-          onOpenQualifier={() => navigateTo('qualifier')}
-        />
+      {/* MODALS & PORTAL WIDGETS (Active only on non-home auxiliary routes) */}
+      {currentView !== 'home' && (
+        <>
+          <StudentPortalModal
+            isOpen={showStudentModal}
+            onClose={() => setShowStudentModal(false)}
+          />
+          <AdminPortalModal
+            isOpen={showAdminModal}
+            onClose={() => setShowAdminModal(false)}
+          />
+          <SignUpWizardModal
+            isOpen={showSignUp}
+            onClose={() => setShowSignUp(false)}
+          />
+          <SampleCertificateModal
+            isOpen={showCertificate}
+            onClose={() => setShowCertificate(false)}
+          />
+          <HowToApplyModal
+            isOpen={showHowToApply}
+            onClose={() => setShowHowToApply(false)}
+            onStartApplication={() => navigateTo('student-login')}
+          />
+          {currentView !== 'exam' && (
+            <AdmissionsChatbot
+              onOpenQualifier={() => navigateTo('qualifier')}
+            />
+          )}
+        </>
       )}
 
         </div>
