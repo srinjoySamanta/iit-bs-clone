@@ -19,6 +19,7 @@ import {
 } from 'lucide-react';
 import iitKgpLogo from '../../assets/logo';
 import logo75Years from '../../assets/images/iitkgp-75-years.png';
+import headerBanner from '../../assets/images/iitkgp-header-banner.png';
 import { useDropdownGate } from '../../context/DropdownGateContext';
 
 export default function MasterHeader({ 
@@ -110,70 +111,33 @@ export default function MasterHeader({
     <header ref={headerRef} className="w-full bg-white border-b border-slate-200/90 sticky top-0 z-50 shadow-xs select-none">
       
       {/* ============================================================
-          LEVEL 1: BRANDING (LEFT) & ACTIONS (RIGHT)
+          LEVEL 1: OFFICIAL IIT KHARAGPUR FULL-WIDTH HEADER BANNER
          ============================================================ */}
-      <div className="w-full bg-white border-b border-slate-100">
-        <div className="max-w-[1380px] mx-auto px-4 sm:px-6 lg:px-8 py-2.5 sm:py-3.5 flex items-center justify-between gap-4">
-          
-          {/* Left-Aligned IIT Kharagpur Crest & Trilingual Official Identity */}
-          <a
-            href="#home"
-            onClick={handleHomeClick}
-            className="flex items-center gap-3 sm:gap-3.5 group text-left cursor-pointer flex-shrink-0"
-            title="Indian Institute of Technology Kharagpur"
+      <div className="w-full bg-[#05132d] overflow-hidden leading-none relative">
+        <a 
+          href="#home" 
+          onClick={handleHomeClick}
+          className="block w-full cursor-pointer leading-none"
+          title="Indian Institute of Technology Kharagpur"
+        >
+          <img
+            src={headerBanner}
+            alt="Indian Institute of Technology Kharagpur - 75 Years Dedicated to the Service of the Nation"
+            className="w-full h-auto block select-none"
+            style={{ width: '100%', height: 'auto', display: 'block' }}
+          />
+        </a>
+
+        {/* Mobile Hamburger Menu Toggle on small screens */}
+        <div className="absolute right-3 top-3 lg:hidden z-20">
+          <button
+            type="button"
+            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+            className="p-1.5 bg-black/50 hover:bg-black/70 text-white rounded-lg backdrop-blur-xs transition cursor-pointer border border-white/20 shadow-md"
+            aria-label="Toggle navigation menu"
           >
-            <img
-              src={iitKgpLogo}
-              alt="IIT Kharagpur Crest"
-              className="w-14 h-14 sm:w-16 sm:h-16 md:w-[68px] md:h-[68px] object-contain flex-shrink-0 transition-transform group-hover:scale-105"
-            />
-            <div className="flex flex-col justify-center">
-              {/* Bengali Line */}
-              <div
-                className="text-[12px] sm:text-[13.5px] md:text-[14px] font-semibold text-[#15803d] leading-tight pb-0.5 border-b border-slate-200"
-                style={{ fontFamily: "'Noto Sans Bengali', sans-serif" }}
-              >
-                ভারতীয় প্রযুক্তিবিদ্যা প্রতিষ্ঠান খড়গপুর
-              </div>
-              {/* Hindi Line */}
-              <div
-                className="text-[12px] sm:text-[13.5px] md:text-[14px] font-bold text-[#0f172a] leading-tight py-0.5 border-b border-slate-200"
-                style={{ fontFamily: "'Noto Sans Devanagari', sans-serif" }}
-              >
-                भारतीय प्रौद्योगिकी संस्थान खड़गपुर
-              </div>
-              {/* English Line */}
-              <div className="text-[11px] sm:text-[12.5px] md:text-[13px] font-extrabold text-[#b91c1c] tracking-wider leading-tight pt-0.5 uppercase font-sans">
-                INDIAN INSTITUTE OF TECHNOLOGY KHARAGPUR
-              </div>
-            </div>
-          </a>
-
-          {/* Right Corner: IIT KGP 75 Years Emblem + Mobile Menu Toggle */}
-          <div className="flex items-center gap-3 sm:gap-5 flex-shrink-0">
-            {/* Official IIT KGP 75 Years Emblem in Right Corner */}
-            <div 
-              className="flex items-center flex-shrink-0 group cursor-pointer"
-              title="75 Years of IIT Kharagpur (1951-2026) - Dedicated to the Service of the Nation"
-            >
-              <img
-                src={logo75Years}
-                alt="IIT Kharagpur 75 Years"
-                className="h-12 sm:h-14 md:h-16 w-auto object-contain transition-transform group-hover:scale-105"
-              />
-            </div>
-
-            {/* Mobile Hamburger Menu Button */}
-            <button
-              type="button"
-              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              className="lg:hidden p-2 text-slate-700 hover:text-slate-900 rounded-lg hover:bg-slate-100 transition cursor-pointer"
-              aria-label="Toggle navigation menu"
-            >
-              {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6 text-[#003893]" />}
-            </button>
-          </div>
-
+            {mobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5 text-white" />}
+          </button>
         </div>
       </div>
 

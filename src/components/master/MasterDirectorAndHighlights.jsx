@@ -11,16 +11,16 @@ import {
   Award, 
   Newspaper, 
   CheckCircle2,
-  ChevronDown,
   ChevronLeft,
-  ChevronRight
+  ChevronRight,
+  X
 } from 'lucide-react';
 import directorPic from '../../assets/images/director-suman-chakraborty.jpg';
 import iitKgpLogo from '../../assets/logo';
 import { PROGRAMME_HIGHLIGHTS } from '../../data/masterReferenceData';
 
 export default function MasterDirectorAndHighlights() {
-  const [isExpanded, setIsExpanded] = useState(false);
+  const [showDirectorModal, setShowDirectorModal] = useState(false);
   const [isHovered, setIsHovered] = useState(false);
   const scrollRef = useRef(null);
   const pauseTimerRef = useRef(null);
@@ -120,13 +120,14 @@ export default function MasterDirectorAndHighlights() {
     >
       <div className="max-w-[1380px] mx-auto px-4 sm:px-6 lg:px-8">
         
-        {/* Split 2-Column Grid: Top-aligned, balanced side-by-side on desktop */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8 items-start">
+        {/* Split 2-Column Grid: Stretched for pixel-perfect equal height on desktop */}
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8 items-stretch">
           
           {/* ====================================================
               1. LEFT SIDE: COMPACT DIRECTOR'S MESSAGE CARD
+                 (EQUAL SIZE TO PROGRAMME HIGHLIGHTS SECTION)
              ==================================================== */}
-          <div className="lg:col-span-5 xl:col-span-5 flex flex-col justify-between bg-[#0a192f] text-white rounded-3xl p-5 sm:p-6 shadow-xl border border-slate-800 transition-all duration-300">
+          <div className="lg:col-span-5 xl:col-span-5 flex flex-col justify-between h-full bg-[#0a192f] text-white rounded-3xl p-5 sm:p-6 shadow-xl border border-slate-800">
             <div>
               {/* TOI Exclusive Feature Badge */}
               <div className="flex items-center gap-2 mb-3">
@@ -137,7 +138,7 @@ export default function MasterDirectorAndHighlights() {
               </div>
 
               {/* Director Header: Photo, Name, Designation & Laureate Award */}
-              <div className="flex items-center gap-3.5 mb-3.5 pb-3 border-b border-white/10">
+              <div className="flex items-center gap-3.5 mb-3 pb-3 border-b border-white/10">
                 <div className="relative w-14 h-14 sm:w-16 sm:h-16 rounded-xl overflow-hidden border-2 border-[#eab308] shadow-md flex-shrink-0">
                   <img
                     src={directorPic}
@@ -162,38 +163,23 @@ export default function MasterDirectorAndHighlights() {
                 </div>
               </div>
 
-              {/* Director Visionary Message (Preview by default, expandable with Read More) */}
+              {/* Director Visionary Message Preview (Compact 2 lines) */}
               <div className="text-slate-200">
-                <p className="font-serif italic text-[12.5px] sm:text-[13px] leading-relaxed text-slate-100">
+                <p className="font-serif italic text-[12px] sm:text-[12.5px] leading-relaxed text-slate-100">
                   “Artificial Intelligence and Data Science are the defining frontiers of our generation. 
                   Our vision with the 4-Year Bachelor of Science (BS) Degree is to make world-class education from 
                   India's first IIT universally accessible...”
                 </p>
 
-                {/* Clearly Visible Read More / Read Less Toggle */}
+                {/* Clearly Visible Read More Button */}
                 <button
                   type="button"
-                  onClick={() => setIsExpanded(!isExpanded)}
-                  className="inline-flex items-center gap-1 text-[11px] sm:text-[11.5px] font-bold text-amber-400 hover:text-amber-300 transition-colors mt-1.5 cursor-pointer focus:outline-none"
-                  aria-expanded={isExpanded}
+                  onClick={() => setShowDirectorModal(true)}
+                  className="inline-flex items-center gap-1.5 text-[11px] sm:text-[11.5px] font-bold text-amber-400 hover:text-amber-300 transition-colors mt-2 cursor-pointer focus:outline-none group"
                 >
-                  <span>{isExpanded ? 'Read Less' : 'Read More'}</span>
-                  <ChevronDown className={`w-3.5 h-3.5 transition-transform duration-200 ${isExpanded ? 'rotate-180' : ''}`} />
+                  <span>Read More</span>
+                  <span className="text-amber-300 group-hover:translate-x-0.5 transition-transform">→</span>
                 </button>
-
-                {/* Expanded Full Message Content */}
-                {isExpanded && (
-                  <div className="mt-2.5 pt-2.5 border-t border-white/10 space-y-2 animate-in fade-in duration-200">
-                    <p className="font-serif italic text-[12.5px] sm:text-[13px] leading-relaxed text-slate-200">
-                      “Our vision with the 4-Year Bachelor of Science (BS) Degree is to make world-class education from India's first IIT universally accessible.”
-                    </p>
-                    <p className="text-[11.5px] sm:text-[12px] text-slate-300 leading-relaxed font-sans">
-                      “Language, rigid entry barriers, or socioeconomic background must never prevent 
-                      a talented student from mastering cutting-edge technology. Through this degree, 
-                      we prepare visionary technologists who will shape industry, academia, and global innovation.”
-                    </p>
-                  </div>
-                )}
               </div>
 
               {/* Compact Key Highlights */}
@@ -214,7 +200,7 @@ export default function MasterDirectorAndHighlights() {
             </div>
 
             {/* Bottom Institutional Seal */}
-            <div className="mt-3.5 pt-2.5 border-t border-white/10 flex items-center justify-between text-xs text-slate-400">
+            <div className="mt-3 pt-2.5 border-t border-white/10 flex items-center justify-between text-xs text-slate-400">
               <div className="flex items-center gap-2">
                 <img src={iitKgpLogo} alt="IIT KGP" className="w-4 h-4 object-contain" />
                 <span className="font-serif text-amber-300 font-bold text-[11px]">योगঃ कर्मसु कौशलम्</span>
@@ -227,8 +213,9 @@ export default function MasterDirectorAndHighlights() {
 
           {/* ====================================================
               2. RIGHT SIDE: SCROLLING PROGRAMME HIGHLIGHTS
+                 (EQUAL SIZE TO DIRECTOR'S CARD)
              ==================================================== */}
-          <div className="lg:col-span-7 xl:col-span-7 flex flex-col justify-start">
+          <div className="lg:col-span-7 xl:col-span-7 flex flex-col justify-between h-full">
             
             {/* Section Header with Left/Right Navigation Arrows */}
             <div className="flex items-start justify-between gap-4 mb-3 sm:mb-4">
@@ -267,7 +254,7 @@ export default function MasterDirectorAndHighlights() {
 
             {/* Clean, White, Rounded Highlights Container */}
             <div 
-              className="relative w-full overflow-hidden bg-white rounded-3xl border border-slate-200/90 shadow-sm py-5 px-3 sm:px-4 group/carousel"
+              className="relative w-full overflow-hidden bg-white rounded-3xl border border-slate-200/90 shadow-sm py-5 px-3 sm:px-4 group/carousel flex-1 flex flex-col justify-center"
               onMouseEnter={() => setIsHovered(true)}
               onMouseLeave={() => setIsHovered(false)}
               onTouchStart={() => setIsHovered(true)}
@@ -333,6 +320,110 @@ export default function MasterDirectorAndHighlights() {
         </div>
 
       </div>
+
+      {/* ============================================================
+          DIRECTOR'S FULL MESSAGE MODAL OVERLAY (OPENS ON "READ MORE")
+         ============================================================ */}
+      {showDirectorModal && (
+        <div 
+          className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs animate-in fade-in duration-200"
+          onClick={() => setShowDirectorModal(false)}
+        >
+          <div 
+            className="bg-[#0a192f] text-white rounded-3xl max-w-2xl w-full p-6 sm:p-8 shadow-2xl border border-slate-700 max-h-[90vh] overflow-y-auto animate-in zoom-in-95 duration-200 relative"
+            onClick={(e) => e.stopPropagation()}
+          >
+            {/* Close Button */}
+            <button
+              type="button"
+              onClick={() => setShowDirectorModal(false)}
+              className="absolute top-5 right-5 p-2 rounded-full bg-white/10 hover:bg-white/20 text-slate-300 hover:text-white transition cursor-pointer"
+              aria-label="Close message"
+            >
+              <X className="w-5 h-5" />
+            </button>
+
+            {/* TOI Exclusive Feature Badge */}
+            <div className="flex items-center gap-2 mb-4">
+              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider bg-red-950/80 text-red-300 border border-red-800/60">
+                <Newspaper className="w-3.5 h-3.5 text-red-400" />
+                <span>The Times of India Feature</span>
+              </span>
+            </div>
+
+            {/* Director Header */}
+            <div className="flex items-center gap-4 mb-5 pb-5 border-b border-white/10">
+              <div className="w-18 h-18 sm:w-20 sm:h-20 rounded-2xl overflow-hidden border-2 border-[#eab308] shadow-md flex-shrink-0">
+                <img
+                  src={directorPic}
+                  alt="Prof. Suman Chakraborty, Director, IIT Kharagpur"
+                  className="w-full h-full object-cover object-top"
+                />
+              </div>
+              <div>
+                <span className="text-[10px] font-bold uppercase tracking-widest text-amber-400 block mb-0.5">
+                  Director's Address
+                </span>
+                <h3 className="text-white text-lg sm:text-xl font-bold font-serif-title leading-snug">
+                  Prof. Suman Chakraborty
+                </h3>
+                <p className="text-slate-300 text-xs font-medium mt-0.5">
+                  Director, IIT Kharagpur
+                </p>
+                <p className="text-amber-300/90 text-xs mt-1 flex items-center gap-1">
+                  <Award className="w-3.5 h-3.5 text-amber-400 flex-shrink-0" />
+                  <span>Shanti Swarup Bhatnagar Awardee &amp; Infosys Laureate</span>
+                </p>
+              </div>
+            </div>
+
+            {/* Complete Visionary Message */}
+            <div className="space-y-4 text-slate-200 text-sm sm:text-base leading-relaxed">
+              <p className="font-serif italic text-white text-base sm:text-[17px] leading-relaxed">
+                “Artificial Intelligence and Data Science are the defining frontiers of our generation. 
+                Our vision with the 4-Year Bachelor of Science (BS) Degree is to make world-class education from 
+                India's first IIT universally accessible.”
+              </p>
+              <p className="text-slate-300 font-sans">
+                “Language, rigid entry barriers, or socioeconomic background must never prevent 
+                a talented student from mastering cutting-edge technology. Through this degree, 
+                we prepare visionary technologists who will shape industry, academia, and global innovation.”
+              </p>
+            </div>
+
+            {/* Key Highlights */}
+            <div className="mt-6 pt-5 border-t border-white/10 space-y-2.5 text-xs sm:text-sm text-slate-300">
+              <div className="flex items-center gap-2.5">
+                <CheckCircle2 className="w-4 h-4 text-emerald-400 flex-shrink-0" />
+                <span>Universal Qualifier pathway without mandatory JEE cutoff</span>
+              </div>
+              <div className="flex items-center gap-2.5">
+                <CheckCircle2 className="w-4 h-4 text-sky-400 flex-shrink-0" />
+                <span>Bilingual support (Bangla explanations + English terminology)</span>
+              </div>
+              <div className="flex items-center gap-2.5">
+                <CheckCircle2 className="w-4 h-4 text-amber-400 flex-shrink-0" />
+                <span>Permanent IIT Kharagpur Alumni Status &amp; Convocation Degree</span>
+              </div>
+            </div>
+
+            {/* Footer */}
+            <div className="mt-6 pt-4 border-t border-white/10 flex items-center justify-between text-xs text-slate-400">
+              <div className="flex items-center gap-2">
+                <img src={iitKgpLogo} alt="IIT KGP" className="w-5 h-5 object-contain" />
+                <span className="font-serif text-amber-300 font-bold">योगঃ कर्मसु कौशलम्</span>
+              </div>
+              <button
+                type="button"
+                onClick={() => setShowDirectorModal(false)}
+                className="px-4 py-1.5 rounded-lg bg-white/10 hover:bg-white/20 text-white font-semibold transition cursor-pointer"
+              >
+                Close
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </section>
   );
 }
