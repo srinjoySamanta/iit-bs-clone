@@ -111,28 +111,29 @@ export default function MasterHeader({
     <header ref={headerRef} className="w-full bg-white border-b border-slate-200/90 sticky top-0 z-50 shadow-xs select-none">
       
       {/* ============================================================
-          LEVEL 1: OFFICIAL IIT KHARAGPUR COMPACT HEADER BANNER
+          LEVEL 1: OFFICIAL IIT KHARAGPUR FULL-WIDTH HEADER BANNER
          ============================================================ */}
-      <div className="w-full bg-[#05132d] py-1 sm:py-1.5 px-4 flex items-center justify-center relative overflow-hidden">
+      <div className="w-full bg-[#05132d] overflow-hidden leading-none relative">
         <a 
           href="#home" 
           onClick={handleHomeClick}
-          className="block cursor-pointer select-none mx-auto"
+          className="block w-full cursor-pointer leading-none"
           title="Indian Institute of Technology Kharagpur"
         >
           <img
             src={headerBanner}
             alt="Indian Institute of Technology Kharagpur - 75 Years Dedicated to the Service of the Nation"
-            className="h-[68px] sm:h-[85px] md:h-[100px] lg:h-[115px] w-auto max-w-full object-contain mx-auto block select-none"
+            className="w-full h-auto block select-none"
+            style={{ width: '100%', height: 'auto', display: 'block' }}
           />
         </a>
 
         {/* Mobile Hamburger Menu Toggle on small screens */}
-        <div className="absolute right-3 top-1/2 -translate-y-1/2 lg:hidden z-20">
+        <div className="absolute right-3 top-3 lg:hidden z-20">
           <button
             type="button"
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            className="p-1.5 bg-black/50 hover:bg-black/70 text-white rounded-lg backdrop-blur-xs transition cursor-pointer border border-white/20 shadow-xs"
+            className="p-1.5 bg-black/50 hover:bg-black/70 text-white rounded-lg backdrop-blur-xs transition cursor-pointer border border-white/20 shadow-md"
             aria-label="Toggle navigation menu"
           >
             {mobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5 text-white" />}
