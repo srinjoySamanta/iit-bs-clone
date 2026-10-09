@@ -698,6 +698,201 @@ app.get('/api/visitor-info', authenticateToken, requireStaffOrAdmin, async (req,
 });
 
 // ==========================================
+// 6.5 SECURE AI ASSISTANT BACKEND ENDPOINT (/api/ai-chat)
+// ==========================================
+
+const KGP_PROGRAM_SYSTEM_PROMPT = `You are the official IIT Kharagpur AI Admissions Assistant for the Bachelor of Science (B.S.) in Data Science and Artificial Intelligence.
+Rules:
+1. Only answer based on verified official facts for IIT Kharagpur's B.S. in Data Science & AI.
+2. Program details: Approved by the Senate of IIT Kharagpur; 4-Year B.S. Honours degree with NEP 2020 multi-exit options (Foundation Certificate at Level 1, Diploma at Level 2, B.Sc. at Level 3, full B.S. with 8-month research thesis at Level 4).
+3. Universal Entry: Qualifier Exam (45-min CBT, 40% cutoff, 4 subjects: Math for DS & AI, Stats & Probability, Computational Thinking & Python, AI & ML).
+4. Direct Entry (Bypasses Qualifier): Valid merit rank in WBJEE, JEE Advanced qualified candidates, Tripura JEE (TJEE) rank holders, and school/college teachers.
+5. Fees: Qualifier Exam is ₹1,500 standard; ₹375 (75% waiver for family income < ₹1 LPA); ₹750 (50% waiver for ₹1-5 LPA or SC/ST/PwD). Foundation level is ₹32,000 (₹8,000 after 75% waiver).
+6. Learning format: Bilingual delivery (concepts in Bangla, technical terms in English), English proficiency training, campus immersion at IIT Kharagpur, flexible online lectures with live faculty/TA doubt sessions, proctored examinations.
+7. Official contact: bs-admissions@iitkgp.ac.in | Phone: +91 (03222) 282000 / 282022.
+8. Guardrail: Do not invent unverified rules, fees, or exemptions. If verified data is unavailable, politely direct the candidate to contact the official desk.`;
+
+function getVerifiedKnowledgeResponse(query) {
+  const q = String(query || '').toLowerCase().trim();
+
+  // 1. Direct Entry / WBJEE / JEE / TJEE
+  if (q.includes('direct') || q.includes('wbjee') || q.includes('jee') || q.includes('tripura') || q.includes('tjee') || q.includes('teacher')) {
+    return `### 🎓 Direct Entry Pathways (Bypassing Qualifier Exam)
+
+Eligible candidates do **not** need to write the Qualifier Examination and receive direct admission into the **Foundation Level**:
+
+* **WBJEE Merit Holders**: Any candidate holding a valid rank in the West Bengal Joint Entrance Examination.
+* **IIT JEE Advanced Qualifiers**: Candidates who have qualified in JEE Advanced.
+* **Tripura JEE (TJEE) Rank Holders**: Valid score & rank in Tripura JEE.
+* **School & College Teachers**: Practicing educators seeking formal AI & DS credentials.
+
+👉 Once document verification is completed, candidates in these categories are directly enrolled into Level 1 (Foundation)!`;
+  }
+
+  // 2. Qualifier Exam / Format / Cutoff / Syllabus
+  if (q.includes('qualifier') || q.includes('exam') || q.includes('cbt') || q.includes('cutoff') || q.includes('cut off') || q.includes('pass mark') || q.includes('syllabus')) {
+    return `### 🎯 Universal Qualifier Round Examination 2026
+
+The **Qualifier Exam** is the universal gateway into the **B.S. in Data Science & AI** at IIT Kharagpur:
+
+* **Format**: 45-Minute Computer-Based Test (CBT) covering **4 Core AI Sections**:
+  1. *Mathematics for DS & AI* (Linear algebra, vector spaces, multivariable gradients)
+  2. *Statistics & Probability for AI* (Bayesian probability, distributions, random variables)
+  3. *Computational Thinking & Python for AI* (Algorithmic logic, data structures, list comprehensions)
+  4. *Artificial Intelligence & Machine Learning* (Activation functions, loss functions, overfitting)
+* **Cut-off**: Minimum **40% marks**. Scoring ≥ 40% grants **guaranteed unconditional admission** to Level 1!
+* **Exam Mode**: Available via AI-proctored online test or at **115+ in-person test centers** across India.`;
+  }
+
+  // 3. Fees / Scholarships / Waivers
+  if (q.includes('fee') || q.includes('cost') || q.includes('price') || q.includes('waiver') || q.includes('scholarship') || q.includes('concession') || q.includes('afford')) {
+    return `### 💰 Fee Structure & Financial Scholarships
+
+IIT Kharagpur provides income-based scholarships to ensure no deserving student is left behind:
+
+* **Qualifier Examination Fee**:
+  * Standard General Fee: **₹1,500**
+  * With 75% Income Waiver (Family income < ₹1 LPA): **₹375 only**
+  * With 50% Income Waiver (Family income ₹1 – 5 LPA): **₹750 only**
+  * SC / ST / PwD Candidates: **50% concession** (₹750)
+* **Tuition Fees by Level**:
+  * **Foundation Level**: ₹32,000 standard (₹8,000 after 75% waiver)
+  * **Diploma Level**: ₹47,250 per track
+  * **Full 4-Year B.S. Degree**: ~₹3,15,000 total across 4 years
+* **Financial Aid**: Over ₹24 Crores in scholarships distributed pan-India.`;
+  }
+
+  // 4. Eligibility / Who can apply / Age limit
+  if (q.includes('eligib') || q.includes('who can apply') || q.includes('age') || q.includes('requirement') || q.includes('qualification') || q.includes('12th') || q.includes('math')) {
+    return `### 📋 Eligibility Criteria
+
+The **B.S. in Data Science and Artificial Intelligence** is open to students and working professionals nationwide:
+
+* **Academic Requirement**: Completed Class 12 / Higher Secondary (10+2) with **Mathematics** as a subject (or equivalent qualification).
+* **Age Limit**: **No upper age limit**. College students, working professionals, and career switchers are welcome.
+* **Concurrent Degree**: You can pursue this online degree alongside an existing offline college degree or full-time employment.
+* **Pathways**: Either qualify via the 40% Qualifier Exam cutoff OR apply through Direct Entry (WBJEE / JEE Advanced / TJEE).`;
+  }
+
+  // 5. Curriculum / Subjects / NEP Exit Awards / 4-Year BS Degree / Alumni
+  if (q.includes('curriculum') || q.includes('subject') || q.includes('degree') || q.includes('level') || q.includes('alumni') || q.includes('thesis') || q.includes('nep') || q.includes('exit')) {
+    return `### 🤖 Curriculum & Flexible Multi-Exit Options (NEP 2020)
+
+Approved by the **Senate of IIT Kharagpur**, this degree is strictly focused on Data Science & Artificial Intelligence:
+
+* **Level 1 — Foundation (32 Credits)**: Math for DS & AI, Probability & Statistics, Computational Thinking, Python Programming. *(Exit: Foundation Certificate)*
+* **Level 2 — Diploma (54 Credits)**: Machine Learning, Deep Learning Architectures, Database & Big Data, AI App Dev. *(Exit: Diploma in DS & AI)*
+* **Level 3 — B.Sc. Degree (114 Credits)**: Computer Vision, Natural Language Processing (NLP), Knowledge Graphs, MLOps. *(Exit: B.Sc. Degree)*
+* **Level 4 — Flagship 4-Year B.S. (142 Credits)**: Generative AI & LLMs, Reinforcement Learning, AI Ethics, plus an **8-Month Research Thesis**.
+* **Alumni Privilege**: 4-Year graduates receive **Official IIT Kharagpur Alumni Association Membership** and attend the formal in-person **Convocation on campus**!`;
+  }
+
+  // 6. Learning Format / Language / Campus Immersion
+  if (q.includes('language') || q.includes('bengali') || q.includes('bangla') || q.includes('immersion') || q.includes('online') || q.includes('format') || q.includes('live') || q.includes('recorded')) {
+    return `### 🏫 Learning Format & Academic Support
+
+* **Bilingual Delivery**: Core theoretical concepts are explained in **Bangla (Bengali)** with technical nomenclature and notation in English.
+* **English Proficiency**: Integrated modules to develop spoken and written academic English.
+* **Hybrid Flexibility**: High-quality recorded lectures by IIT Kharagpur professors + weekly live interactive problem-solving tutorials.
+* **Campus Immersion**: Opportunities to attend residential campus immersion sessions on IIT Kharagpur's historic 2,100-acre Kharagpur campus.
+* **Placement & Internships**: Career mentoring, industry internships, and placement assistance starting from the Diploma level.`;
+  }
+
+  // 7. Contact / Helpdesk / Official Admissions Desk
+  if (q.includes('contact') || q.includes('helpline') || q.includes('phone') || q.includes('email') || q.includes('address') || q.includes('office') || q.includes('support')) {
+    return `### 📞 Official Admissions Helpdesk
+
+For official queries, document verification, or administrative support, please contact the dedicated admissions team:
+
+* **Helpline Phone**: +91 (03222) 282000 / 282022
+* **Official Email**: bs-admissions@iitkgp.ac.in
+* **Postal Address**: Center for Educational Technology, Indian Institute of Technology Kharagpur, Paschim Medinipur, West Bengal - 721302, India.`;
+  }
+
+  // Fallback with strict guardrail
+  return `Thank you for asking! The **IIT Kharagpur B.S. in Data Science and Artificial Intelligence** is India's premier online undergraduate degree in AI.
+
+Key areas you can ask about:
+* **Direct Entry Pathways** (WBJEE, JEE Advanced, Tripura JEE, Teachers)
+* **Qualifier Round Exam** (45-min CBT, 40% cutoff, 4 subjects)
+* **Course Fees & Scholarships** (Up to 75% fee waivers based on income)
+* **Eligibility Criteria** (Class 12 with Math, no age limit)
+* **Curriculum & NEP 2020 Multi-Exit Options** (Certificate, Diploma, B.Sc., 4-Year B.S.)
+
+*Note: Verified official information only. For specific unlisted queries, please reach out to the admissions office at **bs-admissions@iitkgp.ac.in**.*`;
+}
+
+// POST /api/ai-chat
+app.post('/api/ai-chat', async (req, res) => {
+  try {
+    const { message, history, sessionId } = req.body || {};
+
+    if (!message || typeof message !== 'string' || !message.trim()) {
+      return res.status(400).json({
+        success: false,
+        error: 'Question or message cannot be empty.'
+      });
+    }
+
+    const cleanMessage = message.trim().slice(0, 1000);
+
+    // 1. If an external LLM key is configured on the server, call the AI model securely
+    const geminiKey = process.env.GEMINI_API_KEY;
+    if (geminiKey) {
+      try {
+        const geminiRes = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${geminiKey}`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            contents: [
+              {
+                role: 'user',
+                parts: [{ text: `${KGP_PROGRAM_SYSTEM_PROMPT}\n\nUser Question: ${cleanMessage}` }]
+              }
+            ],
+            generationConfig: {
+              temperature: 0.2,
+              maxOutputTokens: 600
+            }
+          })
+        });
+
+        if (geminiRes.ok) {
+          const geminiData = await geminiRes.json();
+          const aiReply = geminiData?.candidates?.[0]?.content?.parts?.[0]?.text;
+          if (aiReply) {
+            return res.json({
+              success: true,
+              reply: aiReply,
+              mode: 'llm',
+              timestamp: new Date().toISOString()
+            });
+          }
+        }
+      } catch (llmErr) {
+        console.warn('External LLM call failed, falling back to verified knowledge engine:', llmErr.message);
+      }
+    }
+
+    // 2. Verified IIT Kharagpur Knowledge Base Engine (Safe, instantaneous, grounded)
+    const reply = getVerifiedKnowledgeResponse(cleanMessage);
+
+    res.json({
+      success: true,
+      reply,
+      mode: 'verified-knowledge-base',
+      timestamp: new Date().toISOString()
+    });
+  } catch (err) {
+    console.error('Error handling /api/ai-chat:', err);
+    res.status(500).json({
+      success: false,
+      error: 'An internal server error occurred while processing your request. Please try again or contact bs-admissions@iitkgp.ac.in.'
+    });
+  }
+});
+
+// ==========================================
 // 7. AUDIT LOGS & HEALTH
 // ==========================================
 

@@ -15,6 +15,7 @@ import StudentLoginPage from './pages/StudentLoginPage';
 import QualifierRoundPortal from './components/qualifier/QualifierRoundPortal';
 import QualifierExamEngine from './components/exam/QualifierExamEngine';
 import StudentErpPortal from './pages/StudentErpPortal';
+import AiAssistant from './components/chat/AiAssistant';
 import { clearAdminSession, getCurrentAdminUser, getAdminToken } from './services/apiService';
 
 export default function App() {
@@ -237,6 +238,8 @@ export default function App() {
         onStartApplication={() => navigateTo('student-login')}
       />
 
+      {/* FLOATING AI ASSISTANT (Accessible at bottom-right corner on every page) */}
+      <AiAssistant onNavigate={navigateTo} />
 
           </div>
         </DropdownGateProvider>
