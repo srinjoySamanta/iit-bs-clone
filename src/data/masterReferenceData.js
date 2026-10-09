@@ -18,7 +18,7 @@ export const APPLY_NOW_LINK = {
 };
 
 export const HERO_CONTENT = {
-  headingLine1: 'IIT Kharagpur’s B.S. in',
+  headingLine1: 'B.S. in',
   headingLine2: 'Data Science &',
   headingLine3: 'Artificial Intelligence',
   description:
