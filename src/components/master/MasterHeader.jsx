@@ -20,6 +20,9 @@ import {
 import iitKgpLogo from '../../assets/logo';
 import logo75Years from '../../assets/images/iitkgp-75-years.png';
 import headerBanner from '../../assets/images/iitkgp-header-banner.png';
+import bannerSliceBrand from '../../assets/images/banner-slice-brand.png';
+import bannerSliceTower from '../../assets/images/banner-slice-tower.png';
+import bannerSlice75th from '../../assets/images/banner-slice-75th.png';
 import { useDropdownGate } from '../../context/DropdownGateContext';
 
 export default function MasterHeader({ 
@@ -111,28 +114,70 @@ export default function MasterHeader({
     <header ref={headerRef} className="w-full bg-white border-b border-slate-200/90 sticky top-0 z-50 shadow-xs select-none">
       
       {/* ============================================================
-          LEVEL 1: OFFICIAL IIT KHARAGPUR COMPACT HEADER BANNER
+          LEVEL 1: OFFICIAL IIT KHARAGPUR FULL-WIDTH EXPANDED BANNER
          ============================================================ */}
-      <div className="w-full bg-[#05132d] py-1 sm:py-1.5 px-4 flex items-center justify-center relative overflow-hidden">
+      <div className="w-full h-[68px] sm:h-[85px] md:h-[100px] lg:h-[115px] bg-[#05132d] overflow-hidden leading-none relative p-0 m-0">
         <a 
           href="#home" 
           onClick={handleHomeClick}
-          className="block cursor-pointer select-none mx-auto"
+          className="w-full h-full block cursor-pointer select-none relative"
           title="Indian Institute of Technology Kharagpur"
         >
+          {/* Subtle Background Extension for ultrawide screens */}
+          <div className="absolute inset-0 bg-gradient-to-r from-[#041537] via-[#09264c] to-[#041537]" />
           <img
             src={headerBanner}
-            alt="Indian Institute of Technology Kharagpur - 75 Years Dedicated to the Service of the Nation"
-            className="h-[68px] sm:h-[85px] md:h-[100px] lg:h-[115px] w-auto max-w-full object-contain mx-auto block select-none"
+            alt=""
+            aria-hidden="true"
+            className="absolute inset-0 w-full h-full object-cover object-center opacity-30 filter blur-xs pointer-events-none select-none"
           />
+
+          {/* Desktop & Tablet: Multi-section edge-to-edge banner layout */}
+          <div className="hidden sm:flex relative z-10 w-full h-full items-center justify-between px-0 sm:px-2 md:px-4 lg:px-6">
+            {/* Left section: IIT Kharagpur Crest & Multilingual Name */}
+            <div className="h-full flex items-center justify-start flex-shrink-0">
+              <img
+                src={bannerSliceBrand}
+                alt="Indian Institute of Technology Kharagpur"
+                className="h-full w-auto max-w-full object-contain object-left select-none drop-shadow-xs"
+              />
+            </div>
+
+            {/* Center section: Iconic Clock Tower Campus Building */}
+            <div className="h-full hidden md:flex items-center justify-center flex-shrink-0">
+              <img
+                src={bannerSliceTower}
+                alt="IIT Kharagpur Main Building"
+                className="h-full w-auto max-w-full object-contain object-center select-none drop-shadow-xs"
+              />
+            </div>
+
+            {/* Right section: 75th Anniversary Milestone Emblem */}
+            <div className="h-full flex items-center justify-end flex-shrink-0">
+              <img
+                src={bannerSlice75th}
+                alt="75 Years Dedicated to the Service of the Nation"
+                className="h-full w-auto max-w-full object-contain object-right select-none drop-shadow-xs"
+              />
+            </div>
+          </div>
+
+          {/* Mobile Screens (<640px): Unified banner scaled to fit screen width */}
+          <div className="sm:hidden relative z-10 w-full h-full flex items-center justify-center px-1">
+            <img
+              src={headerBanner}
+              alt="Indian Institute of Technology Kharagpur - 75 Years Dedicated to the Service of the Nation"
+              className="h-full w-auto max-w-full object-contain mx-auto block select-none"
+            />
+          </div>
         </a>
 
         {/* Mobile Hamburger Menu Toggle on small screens */}
-        <div className="absolute right-3 top-1/2 -translate-y-1/2 lg:hidden z-20">
+        <div className="absolute right-2.5 top-1/2 -translate-y-1/2 lg:hidden z-30">
           <button
             type="button"
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            className="p-1.5 bg-black/50 hover:bg-black/70 text-white rounded-lg backdrop-blur-xs transition cursor-pointer border border-white/20 shadow-xs"
+            className="p-1.5 bg-black/60 hover:bg-black/80 text-white rounded-lg backdrop-blur-xs transition cursor-pointer border border-white/20 shadow-xs"
             aria-label="Toggle navigation menu"
           >
             {mobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5 text-white" />}
