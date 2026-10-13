@@ -10,7 +10,6 @@ import {
   Phone, 
   Mail, 
   MapPin, 
-  HelpCircle, 
   Clock, 
   CheckCircle2, 
   Award, 
@@ -344,17 +343,6 @@ export default function MasterHeader({
                   </button>
                   <button
                     type="button"
-                    onClick={() => { setShowFaqModal(true); closeDropdown(); }}
-                    className="w-full text-left px-4 py-2 hover:bg-slate-50 text-[#0f2942] transition flex items-center gap-1.5 cursor-pointer"
-                  >
-                    <HelpCircle className="w-3.5 h-3.5 text-slate-500" />
-                    <div>
-                      <div className="font-bold text-xs">Frequently Asked Questions</div>
-                      <div className="text-[11px] text-slate-500">Bilingual English &amp; Bengali assistance</div>
-                    </div>
-                  </button>
-                  <button
-                    type="button"
                     onClick={() => { setShowContactModal(true); closeDropdown(); }}
                     className="w-full text-left px-4 py-2 hover:bg-slate-50 text-[#0f2942] transition flex items-center gap-1.5 border-t border-slate-100 mt-1 cursor-pointer"
                   >
@@ -567,13 +555,6 @@ export default function MasterHeader({
                   className="w-full text-left py-1.5 text-blue-900 font-bold cursor-pointer"
                 >
                   Student Portal &amp; LMS
-                </button>
-                <button
-                  type="button"
-                  onClick={() => { setShowFaqModal(true); setMobileMenuOpen(false); }}
-                  className="w-full text-left py-1.5 text-slate-700 cursor-pointer"
-                >
-                  Frequently Asked Questions
                 </button>
                 <button
                   type="button"
