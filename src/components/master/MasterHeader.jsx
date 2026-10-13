@@ -108,28 +108,26 @@ export default function MasterHeader({
   };
 
   return (
-    <header ref={headerRef} className="w-full bg-white border-b border-slate-200/90 sticky top-0 z-50 shadow-xs select-none">
-      
+    <>
       {/* ============================================================
-          LEVEL 1: OFFICIAL IIT KHARAGPUR HEADER BANNER
+          LEVEL 1: OFFICIAL IIT KHARAGPUR HEADER BANNER (Short & scrolls down with page)
          ============================================================ */}
-      <div className="w-full bg-[#fdfaf2] overflow-hidden leading-none relative p-0 m-0 border-b border-amber-100/70">
+      <header className="w-full bg-[#fdfaf2] overflow-hidden leading-none relative p-0 m-0 border-b border-amber-100/70 select-none">
         <a 
           href="#home" 
           onClick={handleHomeClick}
-          className="block w-full cursor-pointer leading-none p-0 m-0"
+          className="block w-full cursor-pointer leading-none p-0 m-0 text-center"
           title="Indian Institute of Technology Kharagpur"
         >
           <img
             src={headerBanner}
             alt="IIT Kharagpur - বাংলা মাধ্যমে পড়াশোনার সুযোগ বিশ্বমানের শিক্ষার পথে"
-            className="w-full h-auto block select-none p-0 m-0"
-            style={{ width: '100%', height: 'auto', display: 'block' }}
+            className="w-full h-auto max-h-[75px] sm:max-h-[90px] md:max-h-[105px] lg:max-h-[120px] object-contain mx-auto block select-none p-0 m-0"
           />
         </a>
 
         {/* Mobile Hamburger Menu Toggle on small screens */}
-        <div className="absolute right-3 top-3 lg:hidden z-20">
+        <div className="absolute right-3 top-1/2 -translate-y-1/2 lg:hidden z-20">
           <button
             type="button"
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
@@ -139,13 +137,16 @@ export default function MasterHeader({
             {mobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5 text-white" />}
           </button>
         </div>
-      </div>
+      </header>
 
       {/* ============================================================
-          LEVEL 2: HORIZONTAL NAVIGATION DOWNLINE (ALL WORKING)
+          LEVEL 2: HORIZONTAL NAVIGATION DOWNLINE (Sticky at top when scrolling down)
          ============================================================ */}
-      <nav className="w-full bg-[#f8fafc] border-t border-slate-200/90 px-4 sm:px-6 lg:px-8 py-1.5 sm:py-2">
-        <div className="max-w-[1380px] mx-auto flex items-center justify-between gap-3 sm:gap-4 flex-wrap sm:flex-nowrap">
+      <nav 
+        ref={headerRef} 
+        className="w-full bg-[#f8fafc] border-b border-slate-200/90 sticky top-0 z-50 shadow-xs select-none"
+      >
+        <div className="max-w-[1380px] mx-auto px-4 sm:px-6 lg:px-8 py-1.5 sm:py-2 flex items-center justify-between gap-3 sm:gap-4 flex-wrap sm:flex-nowrap">
           {/* Navigation Links (Home, Programme, Academics, Admissions, etc.) */}
           <div className="flex items-center flex-wrap gap-x-1 sm:gap-x-2 md:gap-x-3 text-[13.5px] sm:text-[14px]">
           
@@ -443,20 +444,31 @@ export default function MasterHeader({
           </button>
         </div>
 
-        {/* Active Apply Now Button alongside (Home, Programme, Academics, Admissions...) Navigation */}
-        <button
-          type="button"
-          onClick={() => {
-            if (onNavigate) onNavigate('student-login');
-          }}
-          className="inline-flex items-center justify-center gap-1.5 px-4 sm:px-5 py-1.5 sm:py-2 bg-[#003893] hover:bg-[#002b70] text-white text-[12.5px] sm:text-[13px] font-bold rounded-full shadow-sm hover:shadow-md transition-all transform hover:-translate-y-0.5 cursor-pointer uppercase tracking-wider flex-shrink-0"
-        >
-          <UserPlus className="w-3.5 h-3.5" />
-          <span>Apply Now</span>
-        </button>
+        <div className="flex items-center gap-2">
+          {/* Active Apply Now Button alongside (Home, Programme, Academics, Admissions...) Navigation */}
+          <button
+            type="button"
+            onClick={() => {
+              if (onNavigate) onNavigate('student-login');
+            }}
+            className="inline-flex items-center justify-center gap-1.5 px-4 sm:px-5 py-1.5 sm:py-2 bg-[#003893] hover:bg-[#002b70] text-white text-[12.5px] sm:text-[13px] font-bold rounded-full shadow-sm hover:shadow-md transition-all transform hover:-translate-y-0.5 cursor-pointer uppercase tracking-wider flex-shrink-0"
+          >
+            <UserPlus className="w-3.5 h-3.5" />
+            <span>Apply Now</span>
+          </button>
+
+          {/* Mobile Menu Toggle inside Sticky Nav */}
+          <button
+            type="button"
+            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+            className="lg:hidden p-1.5 text-slate-700 hover:text-[#003893] hover:bg-slate-100 rounded-lg transition cursor-pointer border border-slate-200"
+            aria-label="Toggle navigation menu"
+          >
+            {mobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+          </button>
+        </div>
 
       </div>
-    </nav>
 
       {/* ============================================================
           MOBILE DRAWER
@@ -635,6 +647,7 @@ export default function MasterHeader({
           </div>
         </div>
       )}
+    </nav>
 
       {/* ============================================================
           BUILT-IN CONTACT MODAL (WORKING)
@@ -789,6 +802,6 @@ export default function MasterHeader({
         </div>
       )}
 
-    </header>
+    </>
   );
 }
