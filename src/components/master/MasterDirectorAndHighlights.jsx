@@ -26,7 +26,7 @@ export default function MasterDirectorAndHighlights() {
   const pauseTimerRef = useRef(null);
 
   const getHighlightIcon = (iconType) => {
-    const iconClass = "w-6 h-6 sm:w-6.5 sm:h-6.5 text-[#1d4ed8] stroke-[1.8]";
+    const iconClass = "w-5 h-5 text-[#003893] stroke-[1.8]";
     switch (iconType) {
       case 'ai-chip':
         return <Cpu className={iconClass} />;
@@ -127,19 +127,19 @@ export default function MasterDirectorAndHighlights() {
               1. LEFT SIDE: COMPACT DIRECTOR'S MESSAGE CARD
                  (EQUAL SIZE TO PROGRAMME HIGHLIGHTS SECTION)
              ==================================================== */}
-          <div className="lg:col-span-5 xl:col-span-5 flex flex-col justify-between h-full bg-[#0a192f] text-white rounded-3xl p-5 sm:p-6 shadow-xl border border-slate-800">
+          <div className="lg:col-span-5 xl:col-span-5 flex flex-col justify-between h-full bg-[#091528] text-white rounded-3xl p-5 sm:p-6 shadow-md border border-slate-800/80">
             <div>
               {/* TOI Exclusive Feature Badge */}
               <div className="flex items-center gap-2 mb-3">
-                <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[10.5px] font-bold uppercase tracking-wider bg-red-950/80 text-red-300 border border-red-800/60">
-                  <Newspaper className="w-3 h-3 text-red-400" />
+                <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[10px] font-semibold uppercase tracking-wider bg-white/10 text-slate-200 border border-white/15">
+                  <Newspaper className="w-3 h-3 text-slate-300" />
                   <span>The Times of India Feature</span>
                 </span>
               </div>
 
               {/* Director Header: Photo, Name, Designation & Laureate Award */}
               <div className="flex items-center gap-3.5 mb-3 pb-3 border-b border-white/10">
-                <div className="relative w-14 h-14 sm:w-16 sm:h-16 rounded-xl overflow-hidden border-2 border-[#eab308] shadow-md flex-shrink-0">
+                <div className="relative w-14 h-14 sm:w-16 sm:h-16 rounded-xl overflow-hidden border border-white/20 shadow-xs flex-shrink-0">
                   <img
                     src={directorPic}
                     alt="Prof. Suman Chakraborty, Director, IIT Kharagpur"
@@ -147,7 +147,7 @@ export default function MasterDirectorAndHighlights() {
                   />
                 </div>
                 <div>
-                  <span className="text-[9.5px] font-bold uppercase tracking-widest text-amber-400 block leading-tight">
+                  <span className="text-[9.5px] font-semibold uppercase tracking-widest text-amber-400/90 block leading-tight">
                     Director's Address
                   </span>
                   <h3 className="text-white text-[15px] sm:text-[16px] font-bold font-serif-title leading-snug">
@@ -156,7 +156,7 @@ export default function MasterDirectorAndHighlights() {
                   <p className="text-slate-300 text-[11px] font-medium leading-tight mt-0.5">
                     Director, IIT Kharagpur
                   </p>
-                  <p className="text-amber-300/90 text-[10px] sm:text-[10.5px] mt-1 flex items-center gap-1 leading-tight">
+                  <p className="text-slate-300 text-[10px] sm:text-[10.5px] mt-1 flex items-center gap-1 leading-tight">
                     <Award className="w-3 h-3 text-amber-400 flex-shrink-0" />
                     <span>Shanti Swarup Bhatnagar Awardee &amp; Infosys Laureate</span>
                   </p>
@@ -165,7 +165,7 @@ export default function MasterDirectorAndHighlights() {
 
               {/* Director Visionary Message Preview (Compact 2 lines) */}
               <div className="text-slate-200">
-                <p className="font-serif italic text-[12px] sm:text-[12.5px] leading-relaxed text-slate-100">
+                <p className="font-serif italic text-[12px] sm:text-[12.5px] leading-relaxed text-slate-200/95">
                   “Artificial Intelligence and Data Science are the defining frontiers of our generation. 
                   Our vision with the 4-Year Bachelor of Science (BS) Degree is to make world-class education from 
                   India's first IIT universally accessible...”
@@ -175,7 +175,7 @@ export default function MasterDirectorAndHighlights() {
                 <button
                   type="button"
                   onClick={() => setShowDirectorModal(true)}
-                  className="inline-flex items-center gap-1.5 text-[11px] sm:text-[11.5px] font-bold text-amber-400 hover:text-amber-300 transition-colors mt-2 cursor-pointer focus:outline-none group"
+                  className="inline-flex items-center gap-1.5 text-[11px] sm:text-[11.5px] font-semibold text-amber-400 hover:text-amber-300 transition-colors mt-2 cursor-pointer focus:outline-none group"
                 >
                   <span>Read More</span>
                   <span className="text-amber-300 group-hover:translate-x-0.5 transition-transform">→</span>
@@ -185,16 +185,16 @@ export default function MasterDirectorAndHighlights() {
               {/* Compact Key Highlights */}
               <div className="mt-3 pt-2.5 border-t border-white/10 space-y-1.5 text-xs text-slate-300">
                 <div className="flex items-center gap-2">
-                  <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400 flex-shrink-0" />
-                  <span className="text-[11px] sm:text-[11.5px]">Universal Qualifier pathway without mandatory JEE cutoff</span>
+                  <CheckCircle2 className="w-3.5 h-3.5 text-amber-400/90 flex-shrink-0" />
+                  <span className="text-[11px] sm:text-[11.5px] text-slate-300">Universal Qualifier pathway without mandatory JEE cutoff</span>
                 </div>
                 <div className="flex items-center gap-2">
-                  <CheckCircle2 className="w-3.5 h-3.5 text-sky-400 flex-shrink-0" />
-                  <span className="text-[11px] sm:text-[11.5px]">Bilingual support (Bangla explanations + English terminology)</span>
+                  <CheckCircle2 className="w-3.5 h-3.5 text-amber-400/90 flex-shrink-0" />
+                  <span className="text-[11px] sm:text-[11.5px] text-slate-300">Bilingual support (Bangla explanations + English terminology)</span>
                 </div>
                 <div className="flex items-center gap-2">
-                  <CheckCircle2 className="w-3.5 h-3.5 text-amber-400 flex-shrink-0" />
-                  <span className="text-[11px] sm:text-[11.5px]">Permanent IIT Kharagpur Alumni Status &amp; Convocation Degree</span>
+                  <CheckCircle2 className="w-3.5 h-3.5 text-amber-400/90 flex-shrink-0" />
+                  <span className="text-[11px] sm:text-[11.5px] text-slate-300">Permanent IIT Kharagpur Alumni Status &amp; Convocation Degree</span>
                 </div>
               </div>
             </div>
@@ -202,10 +202,10 @@ export default function MasterDirectorAndHighlights() {
             {/* Bottom Institutional Seal */}
             <div className="mt-3 pt-2.5 border-t border-white/10 flex items-center justify-between text-xs text-slate-400">
               <div className="flex items-center gap-2">
-                <img src={iitKgpLogo} alt="IIT KGP" className="w-4 h-4 object-contain" />
-                <span className="font-serif text-amber-300 font-bold text-[11px]">योगঃ कर्मसु कौशलम्</span>
+                <img src={iitKgpLogo} alt="IIT KGP" className="w-4 h-4 object-contain opacity-90" />
+                <span className="font-serif text-slate-300 font-medium text-[11px]">योगঃ कर्मसु कौशलम्</span>
               </div>
-              <span className="text-[9.5px] text-emerald-400 font-bold bg-emerald-950/80 border border-emerald-700/60 px-2 py-0.5 rounded-full">
+              <span className="text-[9.5px] text-slate-300 font-medium bg-white/5 border border-white/10 px-2 py-0.5 rounded-full">
                 First IIT • Estd. 1951
               </span>
             </div>
@@ -220,11 +220,10 @@ export default function MasterDirectorAndHighlights() {
             {/* Section Header with Left/Right Navigation Arrows */}
             <div className="flex items-start justify-between gap-4 mb-3 sm:mb-4">
               <div>
-                <h2 className="text-[24px] sm:text-[28px] lg:text-[30px] font-extrabold text-[#0a2540] leading-tight">
+                <h2 className="text-[22px] sm:text-[26px] lg:text-[28px] font-bold text-slate-900 leading-tight">
                   Programme Highlights
                 </h2>
-                <div className="w-14 h-1.5 bg-[#eab308] rounded-full mt-1.5 mb-2" />
-                <p className="text-xs sm:text-[13px] text-[#475569] leading-relaxed max-w-lg">
+                <p className="text-xs sm:text-[13px] text-slate-500 leading-relaxed max-w-lg mt-1">
                   Key foundational pillars of the Bachelor of Science in Data Science &amp; Artificial Intelligence from IIT Kharagpur.
                 </p>
               </div>
@@ -297,17 +296,17 @@ export default function MasterDirectorAndHighlights() {
                     title={item.title}
                   >
                     {/* Clickable Icon */}
-                    <div className="mb-3 p-3.5 rounded-2xl bg-blue-50/90 group-hover/item:bg-blue-100 group-hover/item:shadow-xs transition-all flex items-center justify-center shadow-xs">
+                    <div className="mb-2.5 w-11 h-11 rounded-xl bg-slate-50 border border-slate-100 group-hover/item:bg-blue-50/80 group-hover/item:border-blue-100 transition-all flex items-center justify-center">
                       {getHighlightIcon(item.iconType)}
                     </div>
 
                     {/* Title */}
-                    <h4 className="font-bold text-[13px] sm:text-[13.5px] text-[#0f2942] group-hover/item:text-[#1d4ed8] leading-[1.3] mb-1.5 transition-colors line-clamp-2">
+                    <h4 className="font-semibold text-[13px] sm:text-[13.5px] text-slate-900 group-hover/item:text-[#003893] leading-[1.3] mb-1 transition-colors line-clamp-2">
                       {item.title}
                     </h4>
 
                     {/* Description Subtitle */}
-                    <p className="text-[11.5px] sm:text-[12px] text-[#64748b] leading-[1.4] line-clamp-2">
+                    <p className="text-[11.5px] text-slate-500 leading-relaxed line-clamp-2">
                       {item.description}
                     </p>
                   </a>
@@ -330,7 +329,7 @@ export default function MasterDirectorAndHighlights() {
           onClick={() => setShowDirectorModal(false)}
         >
           <div 
-            className="bg-[#0a192f] text-white rounded-3xl max-w-2xl w-full p-6 sm:p-8 shadow-2xl border border-slate-700 max-h-[90vh] overflow-y-auto animate-in zoom-in-95 duration-200 relative"
+            className="bg-[#091528] text-white rounded-3xl max-w-2xl w-full p-6 sm:p-8 shadow-2xl border border-slate-800 max-h-[90vh] overflow-y-auto animate-in zoom-in-95 duration-200 relative"
             onClick={(e) => e.stopPropagation()}
           >
             {/* Close Button */}
@@ -345,15 +344,15 @@ export default function MasterDirectorAndHighlights() {
 
             {/* TOI Exclusive Feature Badge */}
             <div className="flex items-center gap-2 mb-4">
-              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider bg-red-950/80 text-red-300 border border-red-800/60">
-                <Newspaper className="w-3.5 h-3.5 text-red-400" />
+              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold uppercase tracking-wider bg-white/10 text-slate-200 border border-white/15">
+                <Newspaper className="w-3.5 h-3.5 text-slate-300" />
                 <span>The Times of India Feature</span>
               </span>
             </div>
 
             {/* Director Header */}
             <div className="flex items-center gap-4 mb-5 pb-5 border-b border-white/10">
-              <div className="w-18 h-18 sm:w-20 sm:h-20 rounded-2xl overflow-hidden border-2 border-[#eab308] shadow-md flex-shrink-0">
+              <div className="w-16 h-16 sm:w-18 sm:h-18 rounded-2xl overflow-hidden border border-white/20 shadow-xs flex-shrink-0">
                 <img
                   src={directorPic}
                   alt="Prof. Suman Chakraborty, Director, IIT Kharagpur"
@@ -361,7 +360,7 @@ export default function MasterDirectorAndHighlights() {
                 />
               </div>
               <div>
-                <span className="text-[10px] font-bold uppercase tracking-widest text-amber-400 block mb-0.5">
+                <span className="text-[10px] font-semibold uppercase tracking-widest text-amber-400/90 block mb-0.5">
                   Director's Address
                 </span>
                 <h3 className="text-white text-lg sm:text-xl font-bold font-serif-title leading-snug">
@@ -370,7 +369,7 @@ export default function MasterDirectorAndHighlights() {
                 <p className="text-slate-300 text-xs font-medium mt-0.5">
                   Director, IIT Kharagpur
                 </p>
-                <p className="text-amber-300/90 text-xs mt-1 flex items-center gap-1">
+                <p className="text-slate-300 text-xs mt-1 flex items-center gap-1">
                   <Award className="w-3.5 h-3.5 text-amber-400 flex-shrink-0" />
                   <span>Shanti Swarup Bhatnagar Awardee &amp; Infosys Laureate</span>
                 </p>
@@ -394,15 +393,15 @@ export default function MasterDirectorAndHighlights() {
             {/* Key Highlights */}
             <div className="mt-6 pt-5 border-t border-white/10 space-y-2.5 text-xs sm:text-sm text-slate-300">
               <div className="flex items-center gap-2.5">
-                <CheckCircle2 className="w-4 h-4 text-emerald-400 flex-shrink-0" />
+                <CheckCircle2 className="w-4 h-4 text-amber-400/90 flex-shrink-0" />
                 <span>Universal Qualifier pathway without mandatory JEE cutoff</span>
               </div>
               <div className="flex items-center gap-2.5">
-                <CheckCircle2 className="w-4 h-4 text-sky-400 flex-shrink-0" />
+                <CheckCircle2 className="w-4 h-4 text-amber-400/90 flex-shrink-0" />
                 <span>Bilingual support (Bangla explanations + English terminology)</span>
               </div>
               <div className="flex items-center gap-2.5">
-                <CheckCircle2 className="w-4 h-4 text-amber-400 flex-shrink-0" />
+                <CheckCircle2 className="w-4 h-4 text-amber-400/90 flex-shrink-0" />
                 <span>Permanent IIT Kharagpur Alumni Status &amp; Convocation Degree</span>
               </div>
             </div>
@@ -410,13 +409,13 @@ export default function MasterDirectorAndHighlights() {
             {/* Footer */}
             <div className="mt-6 pt-4 border-t border-white/10 flex items-center justify-between text-xs text-slate-400">
               <div className="flex items-center gap-2">
-                <img src={iitKgpLogo} alt="IIT KGP" className="w-5 h-5 object-contain" />
-                <span className="font-serif text-amber-300 font-bold">योगঃ कर्मसु कौशलम्</span>
+                <img src={iitKgpLogo} alt="IIT KGP" className="w-5 h-5 object-contain opacity-90" />
+                <span className="font-serif text-slate-300 font-medium">योगঃ कर्मসু কৌশলম্</span>
               </div>
               <button
                 type="button"
                 onClick={() => setShowDirectorModal(false)}
-                className="px-4 py-1.5 rounded-lg bg-white/10 hover:bg-white/20 text-white font-semibold transition cursor-pointer"
+                className="px-4 py-1.5 rounded-lg bg-white/10 hover:bg-white/20 text-white font-medium transition cursor-pointer"
               >
                 Close
               </button>

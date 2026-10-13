@@ -146,29 +146,26 @@ export default function MasterHeader({
         ref={headerRef} 
         className="w-full bg-[#f8fafc] border-b border-slate-200/90 sticky top-0 z-50 shadow-xs select-none"
       >
-        <div className="max-w-[1380px] mx-auto px-4 sm:px-6 lg:px-8 py-1.5 sm:py-2 flex items-center justify-between gap-3 sm:gap-4 flex-wrap sm:flex-nowrap">
+        <div className="max-w-[1380px] mx-auto px-4 sm:px-6 lg:px-8 py-2 flex items-center justify-between gap-4 flex-wrap sm:flex-nowrap">
           {/* Navigation Links (Home, Programme, Academics, Admissions, etc.) */}
-          <div className="flex items-center flex-wrap gap-x-1 sm:gap-x-2 md:gap-x-3 text-[13.5px] sm:text-[14px]">
+          <div className="flex items-center flex-wrap gap-x-3 sm:gap-x-4 lg:gap-x-6 text-[13.5px] sm:text-[14px]">
           
           {/* 1. Home Link */}
           <a
             href="#home"
             onClick={handleHomeClick}
-            className="px-2.5 py-1 font-bold text-[#0f2942] hover:text-[#003893] transition-colors relative cursor-pointer"
+            className="px-2 py-1 font-bold text-[#003893] transition-colors cursor-pointer"
           >
             Home
-            <span className="absolute bottom-[-2px] left-2 right-2 h-[2.5px] bg-[#eab308] rounded-full" />
           </a>
-
-          <span className="text-slate-300 hidden sm:inline select-none">|</span>
 
           {/* 2. Programme Dropdown */}
           <div className="relative">
             <button
               type="button"
               onClick={(e) => handleDropdownTrigger('programme', e)}
-              className={`flex items-center gap-1 px-2.5 py-1 font-semibold transition cursor-pointer ${
-                openDropdown === 'programme' ? 'text-[#003893] font-bold' : 'text-[#0f2942] hover:text-[#003893]'
+              className={`flex items-center gap-1 px-2 py-1 font-medium transition cursor-pointer ${
+                openDropdown === 'programme' ? 'text-[#003893] font-bold' : 'text-slate-700 hover:text-[#003893]'
               }`}
               aria-expanded={openDropdown === 'programme'}
             >
@@ -216,15 +213,13 @@ export default function MasterHeader({
             )}
           </div>
 
-          <span className="text-slate-300 hidden sm:inline select-none">|</span>
-
           {/* 3. Academics Dropdown */}
           <div className="relative">
             <button
               type="button"
               onClick={(e) => handleDropdownTrigger('academics', e)}
-              className={`flex items-center gap-1 px-2.5 py-1 font-semibold transition cursor-pointer ${
-                openDropdown === 'academics' ? 'text-[#003893] font-bold' : 'text-[#0f2942] hover:text-[#003893]'
+              className={`flex items-center gap-1 px-2 py-1 font-medium transition cursor-pointer ${
+                openDropdown === 'academics' ? 'text-[#003893] font-bold' : 'text-slate-700 hover:text-[#003893]'
               }`}
               aria-expanded={openDropdown === 'academics'}
             >
@@ -265,15 +260,13 @@ export default function MasterHeader({
             )}
           </div>
 
-          <span className="text-slate-300 hidden sm:inline select-none">|</span>
-
           {/* 4. Admissions Dropdown */}
           <div className="relative">
             <button
               type="button"
               onClick={(e) => handleDropdownTrigger('admissions', e)}
-              className={`flex items-center gap-1 px-2.5 py-1 font-semibold transition cursor-pointer ${
-                openDropdown === 'admissions' ? 'text-[#003893] font-bold' : 'text-[#0f2942] hover:text-[#003893]'
+              className={`flex items-center gap-1 px-2 py-1 font-medium transition cursor-pointer ${
+                openDropdown === 'admissions' ? 'text-[#003893] font-bold' : 'text-slate-700 hover:text-[#003893]'
               }`}
               aria-expanded={openDropdown === 'admissions'}
             >
@@ -321,15 +314,13 @@ export default function MasterHeader({
             )}
           </div>
 
-          <span className="text-slate-300 hidden sm:inline select-none">|</span>
-
           {/* 5. Student Support Dropdown */}
           <div className="relative">
             <button
               type="button"
               onClick={(e) => handleDropdownTrigger('student-support', e)}
-              className={`flex items-center gap-1 px-2.5 py-1 font-semibold transition cursor-pointer ${
-                openDropdown === 'student-support' ? 'text-[#003893] font-bold' : 'text-[#0f2942] hover:text-[#003893]'
+              className={`flex items-center gap-1 px-2 py-1 font-medium transition cursor-pointer ${
+                openDropdown === 'student-support' ? 'text-[#003893] font-bold' : 'text-slate-700 hover:text-[#003893]'
               }`}
               aria-expanded={openDropdown === 'student-support'}
             >
@@ -378,15 +369,13 @@ export default function MasterHeader({
             )}
           </div>
 
-          <span className="text-slate-300 hidden sm:inline select-none">|</span>
-
           {/* 6. News & Events Dropdown */}
           <div className="relative">
             <button
               type="button"
               onClick={(e) => handleDropdownTrigger('news-events', e)}
-              className={`flex items-center gap-1 px-2.5 py-1 font-semibold transition cursor-pointer ${
-                openDropdown === 'news-events' ? 'text-[#003893] font-bold' : 'text-[#0f2942] hover:text-[#003893]'
+              className={`flex items-center gap-1 px-2 py-1 font-medium transition cursor-pointer ${
+                openDropdown === 'news-events' ? 'text-[#003893] font-bold' : 'text-slate-700 hover:text-[#003893]'
               }`}
               aria-expanded={openDropdown === 'news-events'}
             >
@@ -421,24 +410,20 @@ export default function MasterHeader({
             )}
           </div>
 
-          <span className="text-slate-300 hidden sm:inline select-none">|</span>
-
           {/* 7. Contact us Link */}
           <button
             type="button"
             onClick={() => setShowContactModal(true)}
-            className="px-2.5 py-1 font-semibold text-[#0f2942] hover:text-[#003893] transition-colors cursor-pointer"
+            className="px-2 py-1 font-medium text-slate-700 hover:text-[#003893] transition-colors cursor-pointer"
           >
             Contact us
           </button>
-
-          <span className="text-slate-300 hidden sm:inline select-none">|</span>
 
           {/* 8. FAQs Link */}
           <button
             type="button"
             onClick={() => setShowFaqModal(true)}
-            className="px-2.5 py-1 font-semibold text-[#0f2942] hover:text-[#003893] transition-colors cursor-pointer"
+            className="px-2 py-1 font-medium text-slate-700 hover:text-[#003893] transition-colors cursor-pointer"
           >
             FAQs
           </button>

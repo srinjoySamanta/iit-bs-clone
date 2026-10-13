@@ -12,33 +12,27 @@ import {
 import { FEATURE_CARDS } from '../../data/masterReferenceData';
 
 export default function MasterFeatureCards() {
-  const getCardIcon = (iconType, color) => {
+  const getCardIcon = (iconType) => {
+    const iconClass = "w-4 h-4 text-[#003893]";
     switch (iconType) {
       case 'book':
-        return <BookOpen className="w-5 h-5 flex-shrink-0" style={{ color }} />;
+        return <BookOpen className={iconClass} />;
       case 'chart':
-        return <TrendingUp className="w-5 h-5 flex-shrink-0" style={{ color }} />;
+        return <TrendingUp className={iconClass} />;
       case 'users':
-        return <Users className="w-5 h-5 flex-shrink-0" style={{ color }} />;
+        return <Users className={iconClass} />;
       case 'briefcase':
-        return <Briefcase className="w-5 h-5 flex-shrink-0" style={{ color }} />;
+        return <Briefcase className={iconClass} />;
       case 'faculty':
-        return <GraduationCap className="w-5 h-5 flex-shrink-0" style={{ color }} />;
+        return <GraduationCap className={iconClass} />;
       case 'campus':
-        return <Building2 className="w-5 h-5 flex-shrink-0" style={{ color }} />;
+        return <Building2 className={iconClass} />;
       case 'rupee':
-        return (
-          <span 
-            className="w-5 h-5 flex items-center justify-center font-bold text-base leading-none flex-shrink-0"
-            style={{ color }}
-          >
-            ₹
-          </span>
-        );
+        return <span className="font-bold text-sm text-[#003893] leading-none">₹</span>;
       case 'degree':
-        return <FileCheck2 className="w-5 h-5 flex-shrink-0" style={{ color }} />;
+        return <FileCheck2 className={iconClass} />;
       default:
-        return <BookOpen className="w-5 h-5 flex-shrink-0" style={{ color }} />;
+        return <BookOpen className={iconClass} />;
     }
   };
 
@@ -52,27 +46,20 @@ export default function MasterFeatureCards() {
             <a
               key={card.id}
               href={card.href}
-              className="flex flex-col justify-between p-3.5 sm:p-4 rounded-2xl border transition-all hover:shadow-md hover:-translate-y-0.5 text-left group cursor-pointer"
-              style={{
-                backgroundColor: card.theme.bg,
-                borderColor: card.theme.border,
-              }}
+              className="flex flex-col justify-between p-3.5 sm:p-4 rounded-2xl bg-white border border-slate-200/80 hover:border-slate-300 hover:bg-slate-50/60 transition-all hover:shadow-xs hover:-translate-y-0.5 text-left group cursor-pointer"
             >
               {/* Top: Icon + Title */}
               <div>
-                <div className="mb-2">
-                  {getCardIcon(card.iconType, card.theme.iconColor)}
+                <div className="mb-2.5 w-8 h-8 rounded-lg bg-blue-50/80 border border-blue-100/60 flex items-center justify-center group-hover:bg-blue-100/70 transition-colors">
+                  {getCardIcon(card.iconType)}
                 </div>
-                <h4 
-                  className="font-bold text-[12.5px] sm:text-[13px] leading-[1.25] mb-1.5"
-                  style={{ color: card.theme.titleColor }}
-                >
+                <h4 className="font-semibold text-[12.5px] sm:text-[13px] text-slate-900 group-hover:text-[#003893] leading-[1.3] mb-1.5 transition-colors">
                   {card.title}
                 </h4>
               </div>
 
               {/* Bottom: Description */}
-              <p className="text-[11px] sm:text-[11.5px] text-[#475569] leading-[1.4] mt-1">
+              <p className="text-[11px] sm:text-[11.5px] text-slate-500 leading-relaxed mt-1">
                 {card.description}
               </p>
             </a>

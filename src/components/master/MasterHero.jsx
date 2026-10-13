@@ -24,49 +24,26 @@ export default function MasterHero({ onExploreProgramme }) {
               {HERO_CONTENT.description}
             </p>
 
-            {/* Yellow Highlighted Box: Direct Entry for Top Rankers */}
-            <div className="bg-[#fef3c7]/85 border border-[#fcd34d] rounded-2xl p-4 sm:p-5 shadow-xs max-w-[520px] mb-6">
+            {/* Minimalist Card: Direct Entry for Top Rankers */}
+            <div className="bg-slate-50/90 border border-slate-200/80 rounded-2xl p-4 sm:p-5 max-w-[520px] mb-6 shadow-2xs">
               {/* Header inside Box */}
               <div className="flex items-center gap-2.5 mb-3">
-                <GraduationCap className="w-5 h-5 text-[#0f172a] flex-shrink-0" />
-                <h3 className="font-bold text-[#0f172a] text-[15px] sm:text-[16px] leading-tight">
+                <div className="w-7 h-7 rounded-lg bg-blue-50 text-[#003893] flex items-center justify-center flex-shrink-0">
+                  <GraduationCap className="w-4 h-4" />
+                </div>
+                <h3 className="font-semibold text-slate-900 text-[14.5px] sm:text-[15px] leading-tight">
                   {HERO_CONTENT.directEntryTitle}
                 </h3>
               </div>
 
-              {/* 2-Column List with Gold Checkmark Badges */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-4 gap-y-2 text-[13px] sm:text-[13.5px] text-[#1e293b] font-medium">
-                {/* WBJEE */}
-                <div className="flex items-center gap-2">
-                  <span className="w-4 h-4 rounded-full bg-[#f59e0b] text-white flex items-center justify-center flex-shrink-0 shadow-xs">
-                    <Check className="w-2.5 h-2.5 stroke-[3]" />
-                  </span>
-                  <span>{HERO_CONTENT.directEntryItems[0]}</span>
-                </div>
-
-                {/* Tripura JEE */}
-                <div className="flex items-center gap-2">
-                  <span className="w-4 h-4 rounded-full bg-[#f59e0b] text-white flex items-center justify-center flex-shrink-0 shadow-xs">
-                    <Check className="w-2.5 h-2.5 stroke-[3]" />
-                  </span>
-                  <span>{HERO_CONTENT.directEntryItems[1]}</span>
-                </div>
-
-                {/* JEE Main / Advanced */}
-                <div className="flex items-center gap-2">
-                  <span className="w-4 h-4 rounded-full bg-[#f59e0b] text-white flex items-center justify-center flex-shrink-0 shadow-xs">
-                    <Check className="w-2.5 h-2.5 stroke-[3]" />
-                  </span>
-                  <span>{HERO_CONTENT.directEntryItems[2]}</span>
-                </div>
-
-                {/* Teachers */}
-                <div className="flex items-center gap-2">
-                  <span className="w-4 h-4 rounded-full bg-[#f59e0b] text-white flex items-center justify-center flex-shrink-0 shadow-xs">
-                    <Check className="w-2.5 h-2.5 stroke-[3]" />
-                  </span>
-                  <span>{HERO_CONTENT.directEntryItems[3]}</span>
-                </div>
+              {/* 2-Column List with Clean Checkmarks */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-4 gap-y-2.5 text-[13px] text-slate-700 font-normal">
+                {HERO_CONTENT.directEntryItems.map((item, idx) => (
+                  <div key={idx} className="flex items-center gap-2">
+                    <Check className="w-3.5 h-3.5 text-[#003893] stroke-[2.5] flex-shrink-0" />
+                    <span>{item}</span>
+                  </div>
+                ))}
               </div>
             </div>
 
@@ -80,9 +57,10 @@ export default function MasterHero({ onExploreProgramme }) {
                     onExploreProgramme();
                   }
                 }}
-                className="inline-flex items-center justify-center px-7 py-2.5 rounded-full border-2 border-[#1d4ed8] text-[#1d4ed8] hover:bg-[#1d4ed8]/5 text-[15px] font-bold transition-all shadow-xs cursor-pointer"
+                className="inline-flex items-center justify-center gap-2 px-6 py-2.5 rounded-full border border-[#003893] text-[#003893] hover:bg-[#003893] hover:text-white text-[14px] font-semibold transition-all cursor-pointer group shadow-2xs"
               >
-                {HERO_CONTENT.exploreButton.label}
+                <span>Explore Programme</span>
+                <span className="group-hover:translate-x-1 transition-transform">→</span>
               </a>
             </div>
 
