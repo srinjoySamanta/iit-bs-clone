@@ -23,8 +23,8 @@ export const LoginPage = ({ onNavigate, onBackToHome, initialRole = 'admin' }) =
   
   // Login State
   const [selectedRoleTab, setSelectedRoleTab] = useState(initialRole);
-  const [username, setUsername] = useState('admin');
-  const [password, setPassword] = useState('Admin@123');
+  const [username, setUsername] = useState('');
+  const [password, setPassword] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
   const [isPendingNotice, setIsPendingNotice] = useState(false);
@@ -66,16 +66,8 @@ export const LoginPage = ({ onNavigate, onBackToHome, initialRole = 'admin' }) =
     setErrorMessage('');
     setIsPendingNotice(false);
     setIsRejectedNotice(false);
-    if (role === 'admin') {
-      setUsername('admin');
-      setPassword('Admin@123');
-    } else if (role === 'employee' || role === 'staff') {
-      setUsername('staff');
-      setPassword('Staff@123');
-    } else if (role === 'student') {
-      setUsername('student');
-      setPassword('Student@123');
-    }
+    setUsername('');
+    setPassword('');
   };
 
   const handleLoginSubmit = async (e) => {
@@ -91,16 +83,8 @@ export const LoginPage = ({ onNavigate, onBackToHome, initialRole = 'admin' }) =
     let loginPass = password.trim();
 
     if (!loginUser || !loginPass) {
-      if (selectedRoleTab === 'admin') {
-        loginUser = 'admin';
-        loginPass = 'Admin@123';
-      } else if (selectedRoleTab === 'employee' || selectedRoleTab === 'staff') {
-        loginUser = 'staff';
-        loginPass = 'Staff@123';
-      } else if (selectedRoleTab === 'student') {
-        loginUser = 'student';
-        loginPass = 'Student@123';
-      }
+      setErrorMessage('Please enter both your identifier/username and password.');
+      return;
     }
 
     // Role gate guard before network call

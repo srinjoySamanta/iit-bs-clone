@@ -8,9 +8,9 @@ import iitKgpLogo from '../assets/logo';
 import { adminLogin, generateStudentTestToken } from '../services/apiService';
 
 export default function AdminLoginPage({ onLoginSuccess, onBackToHome }) {
-  const [adminId, setAdminId] = useState('admin@iitkgp.ac.in');
-  const [adminPass, setAdminPass] = useState('Admin@KGP2026!');
-  const [securityPin, setSecurityPin] = useState('721302');
+  const [adminId, setAdminId] = useState('');
+  const [adminPass, setAdminPass] = useState('');
+  const [securityPin, setSecurityPin] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
   const [successNotice, setSuccessNotice] = useState('');

@@ -1,11 +1,14 @@
 import express from 'express';
 import cors from 'cors';
+import helmet from 'helmet';
+import rateLimit from 'express-rate-limit';
 import path from 'path';
 import fs from 'fs';
 import { fileURLToPath } from 'url';
 import dotenv from 'dotenv';
 import jwt from 'jsonwebtoken';
 import bcrypt from 'bcryptjs';
+import crypto from 'crypto';
 import { db } from './db.js';
 
 dotenv.config();
@@ -15,16 +18,196 @@ const __dirname = path.dirname(__filename);
 
 const app = express();
 const PORT = process.env.PORT || 5000;
-const JWT_SECRET = process.env.JWT_SECRET || 'iitkgp_super_secret_jwt_key_2026';
+const IS_PROD = process.env.NODE_ENV === 'production';
 
-// Middleware
-app.use(cors({
-  origin: '*',
-  methods: ['GET', 'POST', 'PATCH', 'PUT', 'DELETE'],
-  allowedHeaders: ['Content-Type', 'Authorization']
+// Cryptographically secure JWT Secret Resolution (Never rely on hardcoded fallback)
+let JWT_SECRET = process.env.JWT_SECRET;
+if (!JWT_SECRET || JWT_SECRET === 'iitkgp_super_secret_jwt_key_2026') {
+  if (IS_PROD) {
+    console.error('FATAL SECURITY ERROR: Insecure or default JWT_SECRET detected in production!');
+    process.exit(1);
+  } else {
+    JWT_SECRET = crypto.randomBytes(64).toString('hex');
+    console.warn('⚠️ SECURITY WARNING: Using dynamically generated ephemeral JWT_SECRET for this session.');
+  }
+}
+
+// -------------------------------------------------------------
+// 1. DEFENSE-IN-DEPTH: SECURITY HEADERS & FINGERPRINT REMOVAL
+// -------------------------------------------------------------
+app.disable('x-powered-by');
+
+app.use(helmet({
+  contentSecurityPolicy: {
+    directives: {
+      defaultSrc: ["'self'"],
+      scriptSrc: ["'self'", "'unsafe-inline'", "'unsafe-eval'"],
+      styleSrc: ["'self'", "'unsafe-inline'", 'https://fonts.googleapis.com'],
+      fontSrc: ["'self'", 'https://fonts.gstatic.com', 'data:'],
+      imgSrc: ["'self'", 'data:', 'https:', 'blob:'],
+      connectSrc: ["'self'", 'https:', 'http://localhost:*', 'ws:', 'wss:'],
+      objectSrc: ["'none'"],
+      frameAncestors: ["'self'"],
+      upgradeInsecureRequests: IS_PROD ? [] : null
+    }
+  },
+  crossOriginEmbedderPolicy: false,
+  crossOriginResourcePolicy: { policy: 'cross-origin' }
 }));
-app.use(express.json({ limit: '15mb' }));
-app.use(express.urlencoded({ extended: true, limit: '15mb' }));
+
+// Explicit HTTP Security Headers
+app.use((req, res, next) => {
+  res.setHeader('X-Content-Type-Options', 'nosniff');
+  res.setHeader('X-Frame-Options', 'SAMEORIGIN');
+  res.setHeader('X-XSS-Protection', '1; mode=block');
+  res.setHeader('Referrer-Policy', 'strict-origin-when-cross-origin');
+  res.setHeader('Permissions-Policy', 'camera=(), microphone=(), geolocation=()');
+  if (IS_PROD) {
+    res.setHeader('Strict-Transport-Security', 'max-age=31536000; includeSubDomains; preload');
+  }
+  next();
+});
+
+// -------------------------------------------------------------
+// 2. STRICT CORS WHITELISTING
+// -------------------------------------------------------------
+const defaultOrigins = ['http://localhost:5173', 'http://localhost:5000', 'http://127.0.0.1:5173', 'https://hcdskgp.com'];
+const allowedOrigins = process.env.CORS_ORIGIN
+  ? process.env.CORS_ORIGIN.split(',').map(o => o.trim()).filter(Boolean)
+  : defaultOrigins;
+
+app.use(cors({
+  origin: (origin, callback) => {
+    if (!origin) return callback(null, true);
+    if (!IS_PROD && allowedOrigins.includes('*')) return callback(null, true);
+
+    const isMatch = allowedOrigins.some(allowed => {
+      if (allowed === origin) return true;
+      if (allowed.startsWith('*.')) {
+        return origin.endsWith(allowed.slice(2));
+      }
+      return false;
+    });
+
+    if (isMatch) {
+      callback(null, true);
+    } else {
+      callback(new Error(`CORS Policy: Origin ${origin} is not allowed.`));
+    }
+  },
+  methods: ['GET', 'POST', 'PATCH', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With'],
+  credentials: true,
+  maxAge: 86400
+}));
+
+// Body parsing with safe size limits (prevents payload exhaustion)
+app.use(express.json({ limit: '10mb' }));
+app.use(express.urlencoded({ extended: true, limit: '10mb' }));
+
+// -------------------------------------------------------------
+// 3. RECURSIVE INPUT SANITIZATION & ANTI-XSS FILTER
+// -------------------------------------------------------------
+function sanitizeValue(value) {
+  if (typeof value === 'string') {
+    return value
+      .replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, '')
+      .replace(/javascript:/gi, '')
+      .replace(/data:\s*text\/html/gi, '')
+      .replace(/\bon\w+\s*=\s*(['"]).*?\1/gi, '')
+      .replace(/\0/g, '');
+  }
+  if (Array.isArray(value)) {
+    return value.map(sanitizeValue);
+  }
+  if (value !== null && typeof value === 'object') {
+    const cleanObj = {};
+    for (const key of Object.keys(value)) {
+      if (key === '__proto__' || key === 'constructor' || key === 'prototype') continue;
+      cleanObj[key] = sanitizeValue(value[key]);
+    }
+    return cleanObj;
+  }
+  return value;
+}
+
+app.use((req, res, next) => {
+  if (req.body) req.body = sanitizeValue(req.body);
+  if (req.query) req.query = sanitizeValue(req.query);
+  if (req.params) req.params = sanitizeValue(req.params);
+  next();
+});
+
+// -------------------------------------------------------------
+// 4. RATE LIMITING MIDDLEWARES
+// -------------------------------------------------------------
+// Global API rate limiter
+const apiLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: 300,
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: {
+    success: false,
+    error: 'Too many requests from this IP address. Please try again after 15 minutes.',
+    code: 'RATE_LIMIT_EXCEEDED'
+  }
+});
+app.use('/api/', apiLimiter);
+
+// Strict Auth rate limiter (Brute-force protection)
+const authLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: 10,
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: {
+    success: false,
+    error: 'Too many login attempts. Your IP has been temporarily rate limited for 15 minutes.',
+    code: 'AUTH_RATE_LIMIT_EXCEEDED'
+  }
+});
+app.use('/api/auth/login', authLimiter);
+
+// AI Chat rate limiter
+const aiChatLimiter = rateLimit({
+  windowMs: 1 * 60 * 1000,
+  max: 25,
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: {
+    success: false,
+    error: 'AI assistant request rate limit exceeded. Please wait a moment before sending more queries.',
+    code: 'AI_RATE_LIMIT_EXCEEDED'
+  }
+});
+app.use('/api/ai-chat', aiChatLimiter);
+
+// Lead submission rate limiter
+const leadLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: 15,
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: {
+    success: false,
+    error: 'Too many submissions from this IP address. Please try again later.',
+    code: 'LEAD_RATE_LIMIT_EXCEEDED'
+  }
+});
+app.use(['/api/visitor-info', '/api/leads'], leadLimiter);
+
+// Safe Production Error Response Helper (No stack trace or internal leakage)
+function safeErrorResponse(res, status, err, userMessage) {
+  if (err && !IS_PROD) {
+    console.error(`[Security Safe Error] ${userMessage}:`, err);
+  }
+  return res.status(status).json({
+    success: false,
+    error: IS_PROD ? userMessage : (err?.message || userMessage),
+    code: 'API_ERROR'
+  });
+}
 
 // Request logging middleware
 app.use((req, res, next) => {
@@ -364,12 +547,22 @@ app.get('/api/courses/:id', async (req, res) => {
 });
 
 // POST /api/lms/progress (Student updates video completion or logs practice quiz attempt)
-app.post('/api/lms/progress', async (req, res) => {
+app.post('/api/lms/progress', authenticateToken, async (req, res) => {
   try {
     const { roll, courseId, moduleId, video_progress_percentage, practice_increment } = req.body;
 
     if (!roll || !courseId || !moduleId) {
       return res.status(400).json({ error: 'roll, courseId, and moduleId are required.' });
+    }
+
+    // IDOR Defense: Only allow verified owner or staff/admin
+    const isStaffOrAdmin = req.user && ['admin', 'superadmin', 'employee'].includes(req.user.role);
+    const isOwner = req.user && req.user.roll_number === roll;
+    if (!isStaffOrAdmin && !isOwner) {
+      return res.status(403).json({
+        error: 'Forbidden: You cannot modify learning progress for another student account.',
+        code: 'FORBIDDEN_PROGRESS_UPDATE'
+      });
     }
 
     const result = await db.updateStudentModuleProgress({
@@ -382,7 +575,7 @@ app.post('/api/lms/progress', async (req, res) => {
 
     res.json({ success: true, progress: result });
   } catch (err) {
-    res.status(500).json({ error: err.message });
+    safeErrorResponse(res, 500, err, 'Failed to update student learning progress');
   }
 });
 
@@ -397,7 +590,7 @@ app.get('/api/exams', async (req, res) => {
     // Return sanitized quizzes (strip correct answers for student view if unauthenticated)
     res.json({ success: true, exams });
   } catch (err) {
-    res.status(500).json({ error: err.message });
+    safeErrorResponse(res, 500, err, 'Failed to load examinations');
   }
 });
 
@@ -422,12 +615,12 @@ app.get('/api/exams/:quizCode', async (req, res) => {
       }
     });
   } catch (err) {
-    res.status(500).json({ error: err.message });
+    safeErrorResponse(res, 500, err, 'Failed to retrieve examination content');
   }
 });
 
 // POST /api/exams/submit (Auto-Evaluation Pipeline)
-app.post('/api/exams/submit', async (req, res) => {
+app.post('/api/exams/submit', authenticateToken, async (req, res) => {
   try {
     const { quizCode, roll, studentName, studentEmail, category, responses } = req.body;
 
@@ -435,11 +628,21 @@ app.post('/api/exams/submit', async (req, res) => {
       return res.status(400).json({ error: 'quizCode, roll, and responses are required.' });
     }
 
+    // IDOR & Impersonation Defense: Candidate must match authenticated user or be admin
+    const isStaffOrAdmin = req.user && ['admin', 'superadmin', 'employee'].includes(req.user.role);
+    const isOwner = req.user && req.user.roll_number === roll;
+    if (!isStaffOrAdmin && !isOwner) {
+      return res.status(403).json({
+        error: 'Forbidden: You can only submit examination assessments under your verified account.',
+        code: 'FORBIDDEN_EXAM_SUBMISSION'
+      });
+    }
+
     const evaluation = await db.autoEvaluateExamSubmission({
       quizCode,
       roll,
-      studentName: studentName || 'Candidate',
-      studentEmail: studentEmail || '',
+      studentName: studentName || req.user.name || 'Candidate',
+      studentEmail: studentEmail || req.user.email || '',
       category: category || 'General',
       responses
     });
@@ -450,8 +653,7 @@ app.post('/api/exams/submit', async (req, res) => {
       evaluation
     });
   } catch (err) {
-    console.error('Exam evaluation error:', err);
-    res.status(500).json({ error: err.message });
+    safeErrorResponse(res, 500, err, 'Failed to evaluate examination submission');
   }
 });
 
@@ -534,16 +736,27 @@ app.get('/api/students', authenticateToken, requireStaffOrAdmin, async (req, res
   }
 });
 
-// GET /api/students/:roll
-app.get('/api/students/:roll', async (req, res) => {
+// GET /api/students/:roll (Secured against unauthorized PII scraping and IDOR)
+app.get('/api/students/:roll', authenticateToken, async (req, res) => {
   try {
-    const student = await db.getStudentByRoll(req.params.roll);
+    const targetRoll = req.params.roll;
+    const isStaffOrAdmin = req.user && ['admin', 'superadmin', 'employee'].includes(req.user.role);
+    const isOwner = req.user && req.user.roll_number === targetRoll;
+
+    if (!isStaffOrAdmin && !isOwner) {
+      return res.status(403).json({
+        error: 'Forbidden: You do not have authorization to view this student application.',
+        code: 'ACCESS_DENIED'
+      });
+    }
+
+    const student = await db.getStudentByRoll(targetRoll);
     if (!student) {
       return res.status(404).json({ error: 'Student application not found' });
     }
     res.json({ student });
   } catch (err) {
-    res.status(500).json({ error: err.message });
+    safeErrorResponse(res, 500, err, 'Failed to fetch student record');
   }
 });
 
@@ -558,7 +771,7 @@ app.post('/api/applications/verify', authenticateToken, requireStaffOrAdmin, asy
     const updated = await db.updateVerification(roll, status, rejectionReason, req.user.name);
     res.json({ success: true, application: updated });
   } catch (err) {
-    res.status(500).json({ error: err.message });
+    safeErrorResponse(res, 500, err, 'Failed to update application verification status');
   }
 });
 
@@ -573,21 +786,32 @@ app.post('/api/applications/payment-verify', authenticateToken, requireStaffOrAd
     const updated = await db.updatePayment(roll, paymentStatus, bankStatus, queryRemarks, req.user.name);
     res.json({ success: true, payment: updated });
   } catch (err) {
-    res.status(500).json({ error: err.message });
+    safeErrorResponse(res, 500, err, 'Failed to verify payment record');
   }
 });
 
-// POST /api/payments/simulate-checkout (Mock Razorpay / SBI MOPS Gateway Simulation)
-app.post('/api/payments/simulate-checkout', async (req, res) => {
+// POST /api/payments/simulate-checkout (Secured mock gateway with role check)
+app.post('/api/payments/simulate-checkout', authenticateToken, async (req, res) => {
   try {
     const { roll, amount, mode, bankName, category } = req.body;
 
-    const utr = `${(bankName || 'SBI').slice(0, 4).toUpperCase()}${Math.floor(100000000000 + Math.random() * 900000000000)}`;
+    const isStaffOrAdmin = req.user && ['admin', 'superadmin', 'employee'].includes(req.user.role);
+    const isOwner = req.user && req.user.roll_number === roll;
+
+    if (roll && !isStaffOrAdmin && !isOwner) {
+      return res.status(403).json({
+        error: 'Forbidden: You cannot settle payments for another student account.',
+        code: 'FORBIDDEN_PAYMENT'
+      });
+    }
+
+    const safeBankName = typeof bankName === 'string' ? bankName.replace(/[^a-zA-Z0-9 ]/g, '').slice(0, 30) : 'SBI';
+    const utr = `${safeBankName.slice(0, 4).toUpperCase()}${Math.floor(100000000000 + Math.random() * 900000000000)}`;
     const paymentRecord = {
-      amount: amount || 1500,
+      amount: Math.max(1, parseInt(amount || 1500, 10)),
       utr,
       mode: mode || 'UPI (Instant Clearing)',
-      bank: bankName || 'State Bank of India',
+      bank: safeBankName,
       date: new Date().toLocaleString(),
       status: 'Verified',
       bankStatus: 'Bank Settlement Confirmed (Simulated SBI MOPS Gateway)',
@@ -596,16 +820,16 @@ app.post('/api/payments/simulate-checkout', async (req, res) => {
     };
 
     if (roll) {
-      await db.updatePayment(roll, 'Verified', paymentRecord.bankStatus, '', 'Mock Payment Gateway');
+      await db.updatePayment(roll, 'Verified', paymentRecord.bankStatus, '', req.user.name || 'Mock Payment Gateway');
     }
 
     await db.logAudit({
       action: 'PAYMENT_GATEWAY_SETTLEMENT',
       entityType: 'PAYMENT',
       entityId: utr,
-      actorRole: 'Gateway Webhook',
-      actorName: 'SBI MOPS Payment Gateway',
-      details: `Simulated instant online settlement of INR ${amount} for Roll: ${roll || 'GUEST'}. UTR: ${utr}.`
+      actorRole: req.user.role || 'Student',
+      actorName: req.user.name || 'Candidate',
+      details: `Simulated instant online settlement of INR ${paymentRecord.amount} for Roll: ${roll || 'GUEST'}. UTR: ${utr}.`
     });
 
     res.json({
@@ -614,7 +838,7 @@ app.post('/api/payments/simulate-checkout', async (req, res) => {
       payment: paymentRecord
     });
   } catch (err) {
-    res.status(500).json({ error: err.message });
+    safeErrorResponse(res, 500, err, 'Payment settlement failed');
   }
 });
 
@@ -938,6 +1162,28 @@ app.get('/api/health', async (req, res) => {
   }
 });
 
+// 404 Fallback for unknown routes
+app.use((req, res) => {
+  res.status(404).json({
+    success: false,
+    error: 'Endpoint not found on this server.',
+    code: 'ROUTE_NOT_FOUND'
+  });
+});
+
+// Centralized Secure Error Handler (Suppresses stack traces & internal error details in production)
+app.use((err, req, res, next) => {
+  const status = err.status || 500;
+  if (!IS_PROD) {
+    console.error('Unhandled Application Exception:', err);
+  }
+  res.status(status).json({
+    success: false,
+    error: IS_PROD ? 'An unexpected server error occurred. Please contact the administrator.' : (err.message || 'Server error'),
+    code: err.code || 'INTERNAL_SERVER_ERROR'
+  });
+});
+
 // Start Express Server
 app.listen(PORT, () => {
   console.log(`=======================================================`);
@@ -945,5 +1191,6 @@ app.listen(PORT, () => {
   console.log(`📡 Listening on http://localhost:${PORT}`);
   console.log(`🔒 Security: RBAC Multi-Tier JWT & bcrypt Active`);
   console.log(`📋 DB Mode: ${db.isPg ? 'PostgreSQL Relational' : 'Local Fallback'}`);
+  console.log(`🛡️ Rate Limiting & Helmet Security Headers Active`);
   console.log(`=======================================================`);
 });

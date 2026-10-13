@@ -72,23 +72,10 @@ export async function adminLogin(identifier, password) {
     }
     return { success: false, error: data.error || 'Authentication failed' };
   } catch (err) {
-    // Standalone fallback: If offline/GitHub Pages, verify against demo credentials
-    if (identifier === 'admin@iitkgp.ac.in' || identifier === 'ADMIN-KGP-2026' || identifier === 'admin_kgp') {
-      if (password === 'Admin@KGP2026!' || password === 'IITKgp@Admin#Master') {
-        const mockUser = {
-          id: 1,
-          username: 'admin_kgp',
-          email: 'admin@iitkgp.ac.in',
-          role: 'admin',
-          name: 'Prof. Admissions Chair',
-          designation: 'Dean of Academic Affairs'
-        };
-        const mockToken = 'mock_admin_jwt_standalone_' + Date.now();
-        setAdminSession(mockToken, mockUser);
-        return { success: true, user: mockUser, token: mockToken };
-      }
-    }
-    return { success: false, error: 'Authentication failed. Please verify your administrator credentials.' };
+    return {
+      success: false,
+      error: 'Authentication server unavailable. Please ensure the backend API server is running.'
+    };
   }
 }
 

@@ -3,6 +3,8 @@ server/node_modules
 server/dist
 server/data/*.json
 .env
+.env.*
+!.env.example
 .DS_Store
 dist-ssr
 *.local
@@ -11,3 +13,22 @@ yarn-debug.log*
 yarn-error.log*
 pnpm-debug.log*
 lerna-debug.log*
+
+# Binaries & Executables (Security Hardening)
+*.exe
+cloudflared.exe
+*.dll
+*.so
+*.dylib
+*.zip
+*.tar.gz
+
+# Credentials & Sensitive Local Files
+*.pem
+*.key
+*.cert
+*.pfx
+*.p12
+credentials.json
+service-account*.json
+
