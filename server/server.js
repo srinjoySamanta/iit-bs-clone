@@ -41,11 +41,11 @@ app.use(helmet({
   contentSecurityPolicy: {
     directives: {
       defaultSrc: ["'self'"],
-      scriptSrc: ["'self'", "'unsafe-inline'", "'unsafe-eval'"],
-      styleSrc: ["'self'", "'unsafe-inline'", 'https://fonts.googleapis.com'],
+      scriptSrc: ["'self'", "'unsafe-inline'", "'unsafe-eval'", 'https://translate.google.com', 'https://translate.googleapis.com'],
+      styleSrc: ["'self'", "'unsafe-inline'", 'https://fonts.googleapis.com', 'https://translate.googleapis.com'],
       fontSrc: ["'self'", 'https://fonts.gstatic.com', 'data:'],
       imgSrc: ["'self'", 'data:', 'https:', 'blob:'],
-      connectSrc: ["'self'", 'https:', 'http://localhost:*', 'ws:', 'wss:'],
+      connectSrc: ["'self'", 'https:', 'http://localhost:*', 'ws:', 'wss:', 'https://translate.googleapis.com'],
       objectSrc: ["'none'"],
       frameAncestors: ["'self'"],
       upgradeInsecureRequests: IS_PROD ? [] : null
@@ -228,14 +228,12 @@ await db.init();
 // AUTHENTICATION & RBAC MIDDLEWARES
 // ==========================================
 
-// 1. Authenticate Token from Authorization Header or Query Param
+// 1. Authenticate Token from Authorization Header (Bearer JWT)
 function authenticateToken(req, res, next) {
   let token = null;
   const authHeader = req.headers['authorization'];
   if (authHeader && authHeader.startsWith('Bearer ')) {
     token = authHeader.split(' ')[1];
-  } else if (req.query && req.query.token) {
-    token = req.query.token;
   }
 
   if (!token) {
@@ -304,14 +302,15 @@ function requireStudentOrStaff(req, res, next) {
 
 // POST /api/auth/login
 app.post('/api/auth/login', async (req, res) => {
-  const { username, password } = req.body;
+  const identifier = (req.body.username || req.body.email || req.body.identifier || '').trim();
+  const password = req.body.password;
 
-  if (!username || !password) {
-    return res.status(400).json({ error: 'Username and password are required' });
+  if (!identifier || !password) {
+    return res.status(400).json({ error: 'Username/email and password are required' });
   }
 
   try {
-    const user = await db.getUserByUsername(username);
+    const user = await db.getUserByUsername(identifier);
 
     if (!user) {
       return res.status(401).json({ error: 'Invalid username or password' });
@@ -1161,6 +1160,37 @@ app.get('/api/health', async (req, res) => {
     res.status(500).json({ status: 'ERROR', error: err.message });
   }
 });
+
+// -------------------------------------------------------------
+// 8. STATIC ASSET SERVING & SPA ROUTING (Full-Stack Support)
+// -------------------------------------------------------------
+const candidateDistDirs = [
+  path.join(__dirname, 'dist'),
+  path.join(__dirname, '../dist')
+];
+const distDir = candidateDistDirs.find(d => fs.existsSync(d));
+
+if (distDir) {
+  // Serve static assets with caching headers
+  app.use(express.static(distDir, {
+    maxAge: IS_PROD ? '1y' : 0,
+    immutable: IS_PROD,
+    index: false
+  }));
+
+  // SPA fallback for non-API GET requests
+  app.get('*', (req, res, next) => {
+    if (req.path.startsWith('/api/')) {
+      return next();
+    }
+    const indexHtml = path.join(distDir, 'index.html');
+    if (fs.existsSync(indexHtml)) {
+      res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
+      return res.sendFile(indexHtml);
+    }
+    next();
+  });
+}
 
 // 404 Fallback for unknown routes
 app.use((req, res) => {

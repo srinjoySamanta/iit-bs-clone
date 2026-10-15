@@ -1,0 +1,18 @@
+# ========================================================
+# IIT Kharagpur BS Portal - Search Engine Crawling Policy
+# ========================================================
+
+User-agent: *
+Allow: /
+Allow: /#home
+Allow: /#programme
+Allow: /#qualifier
+Allow: /#student-login
+
+# Disallow internal administrative consoles & API endpoints
+Disallow: /api/
+Disallow: /#admin-portal
+Disallow: /#staff-portal
+Disallow: /server/
+
+Sitemap: https://hcdskgp.com/sitemap.xml

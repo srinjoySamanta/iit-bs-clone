@@ -17,7 +17,8 @@ import {
   Search,
   Filter,
   Check,
-  LogOut
+  LogOut,
+  Lock
 } from 'lucide-react';
 
 export const EmployeePortal: React.FC = () => {
@@ -174,6 +175,41 @@ export const EmployeePortal: React.FC = () => {
     const matchesStatus = taskStatusFilter === 'ALL' || t.status === taskStatusFilter;
     return matchesSearch && matchesPriority && matchesStatus;
   });
+
+  // RBAC Client-Side Gate Guard (Defense-in-Depth)
+  if (!user || (user.role !== 'employee' && user.role !== 'admin' && user.role !== 'superadmin')) {
+    return (
+      <div className="flex min-h-screen items-center justify-center bg-slate-100 p-4">
+        <div className="max-w-md w-full bg-white rounded-2xl shadow-xl p-8 border border-slate-200 text-center">
+          <div className="w-16 h-16 bg-red-100 text-red-600 rounded-full flex items-center justify-center mx-auto mb-4">
+            <Lock className="w-8 h-8" />
+          </div>
+          <h2 className="text-xl font-bold text-slate-900 mb-2">Access Denied (403 Forbidden)</h2>
+          <p className="text-sm text-slate-600 mb-6">
+            {!user
+              ? 'Staff verification required. Please sign in through the official IIT Kharagpur Staff Gate.'
+              : `Your account (${user.role}) is not authorized to access the Staff Operations Desk.`}
+          </p>
+          <div className="flex flex-col gap-2">
+            <button
+              type="button"
+              onClick={() => { window.location.hash = 'staff-login'; }}
+              className="w-full py-2.5 px-4 bg-[#800000] hover:bg-[#6b0000] text-white font-bold rounded-xl transition text-sm cursor-pointer"
+            >
+              Sign In to Staff Gate
+            </button>
+            <button
+              type="button"
+              onClick={() => { window.location.hash = 'home'; }}
+              className="w-full py-2 px-4 text-slate-600 hover:bg-slate-100 rounded-xl transition text-sm cursor-pointer"
+            >
+              Return to Website Home
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-[#f0f7ff] text-slate-800 pb-16">

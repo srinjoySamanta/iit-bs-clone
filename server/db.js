@@ -1072,12 +1072,20 @@ class DatabaseAdapter {
   // =============================================================
   // USERS & EMPLOYEES CRUD (RBAC)
   // =============================================================
-  async getUserByUsername(username) {
+  async getUserByUsername(identifier) {
+    if (!identifier) return null;
+    const cleanId = String(identifier).trim().toLowerCase();
     if (this.isPg) {
-      const res = await this.pgPool.query('SELECT * FROM users WHERE LOWER(username) = LOWER($1)', [username]);
+      const res = await this.pgPool.query(
+        'SELECT * FROM users WHERE LOWER(username) = LOWER($1) OR LOWER(email) = LOWER($1)',
+        [cleanId]
+      );
       return res.rows[0] || null;
     }
-    return this.memoryDb.users.find(u => u.username.toLowerCase() === username.toLowerCase()) || null;
+    return this.memoryDb.users.find(u => 
+      (u.username && u.username.toLowerCase() === cleanId) ||
+      (u.email && u.email.toLowerCase() === cleanId)
+    ) || null;
   }
 
   async getUserById(id) {

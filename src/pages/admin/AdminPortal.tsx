@@ -566,6 +566,41 @@ export const AdminPortal: React.FC = () => {
     { id: 'exams', label: 'Qualifier Examination', icon: GraduationCap, section: 'LEARNING & ASSESSMENT' },
   ];
 
+  // RBAC Client-Side Gate Guard (Defense-in-Depth)
+  if (!user || (user.role !== 'admin' && user.role !== 'superadmin')) {
+    return (
+      <div className="flex min-h-screen items-center justify-center bg-slate-100 p-4">
+        <div className="max-w-md w-full bg-white rounded-2xl shadow-xl p-8 border border-slate-200 text-center">
+          <div className="w-16 h-16 bg-red-100 text-red-600 rounded-full flex items-center justify-center mx-auto mb-4">
+            <Lock className="w-8 h-8" />
+          </div>
+          <h2 className="text-xl font-bold text-slate-900 mb-2">Access Denied (403 Forbidden)</h2>
+          <p className="text-sm text-slate-600 mb-6">
+            {!user
+              ? 'Administrator authentication required. Please sign in through the official IIT Kharagpur Institutional Gate.'
+              : `Your current session role (${user.role}) does not have administrative privileges.`}
+          </p>
+          <div className="flex flex-col gap-2">
+            <button
+              type="button"
+              onClick={() => { window.location.hash = 'admin-login'; }}
+              className="w-full py-2.5 px-4 bg-[#003893] hover:bg-[#002b70] text-white font-bold rounded-xl transition text-sm cursor-pointer"
+            >
+              Sign In to Admin Gate
+            </button>
+            <button
+              type="button"
+              onClick={() => { window.location.hash = 'home'; }}
+              className="w-full py-2 px-4 text-slate-600 hover:bg-slate-100 rounded-xl transition text-sm cursor-pointer"
+            >
+              Return to Website Home
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="flex min-h-screen bg-[#f8fafc] text-slate-800">
       {/* ================= 1. ENTERPRISE COLLAPSIBLE SIDEBAR ================= */}

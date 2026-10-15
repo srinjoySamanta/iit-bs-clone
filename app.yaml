@@ -2,12 +2,25 @@ runtime: nodejs20
 instance_class: F1
 
 handlers:
-  # Serve all static files in dist
+  # Serve all static files in dist with caching
   - url: /(.*\.(js|css|png|jpg|jpeg|gif|ico|svg|woff|woff2|ttf|eot))
     static_files: dist/\1
     upload: dist/(.*\.(js|css|png|jpg|jpeg|gif|ico|svg|woff|woff2|ttf|eot))
+    http_headers:
+      X-Content-Type-Options: "nosniff"
+      X-Frame-Options: "SAMEORIGIN"
+      Referrer-Policy: "strict-origin-when-cross-origin"
+      Cache-Control: "public, max-age=31536000, immutable"
 
-  # SPA Routing: all other URLs route to index.html
+  # SPA Routing: all other URLs route to index.html with security headers
   - url: /.*
     static_files: dist/index.html
     upload: dist/index.html
+    http_headers:
+      X-Content-Type-Options: "nosniff"
+      X-Frame-Options: "SAMEORIGIN"
+      X-XSS-Protection: "1; mode=block"
+      Referrer-Policy: "strict-origin-when-cross-origin"
+      Permissions-Policy: "camera=(), microphone=(), geolocation=()"
+      Strict-Transport-Security: "max-age=31536000; includeSubDomains; preload"
+      Cache-Control: "no-cache, no-store, must-revalidate"

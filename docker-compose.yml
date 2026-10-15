@@ -12,8 +12,9 @@ services:
       POSTGRES_USER: ${POSTGRES_USER:-iitkgp_admin}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-iitkgp_secure_password_2026}
       POSTGRES_DB: ${POSTGRES_DB:-iitkgp_bs_portal}
+    # Security: Bind database exclusively to localhost loopback, not 0.0.0.0 public interface
     ports:
-      - "${POSTGRES_PORT:-5432}:5432"
+      - "127.0.0.1:${POSTGRES_PORT:-5432}:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
       - ./server/schema.sql:/docker-entrypoint-initdb.d/init.sql:ro
@@ -41,7 +42,8 @@ services:
       PORT: 5000
       DATABASE_URL: postgres://${POSTGRES_USER:-iitkgp_admin}:${POSTGRES_PASSWORD:-iitkgp_secure_password_2026}@db:5432/${POSTGRES_DB:-iitkgp_bs_portal}
       SESSION_SECRET: ${SESSION_SECRET:-iit_kharagpur_super_secret_session_key_2026}
-      CORS_ORIGIN: ${CORS_ORIGIN:-*}
+      JWT_SECRET: ${JWT_SECRET:-f39a7b1c8e0d425791a3b8c2e4f6018357a92bc4e7d183029485716293847561}
+      CORS_ORIGIN: ${CORS_ORIGIN:-http://localhost:5173,https://hcdskgp.com}
     depends_on:
       db:
         condition: service_healthy

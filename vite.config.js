@@ -10,5 +10,18 @@ export default defineConfig({
     host: true,
     allowedHosts: true,
     open: false
+  },
+  build: {
+    sourcemap: false,
+    chunkSizeWarningLimit: 1000,
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          'vendor-react': ['react', 'react-dom'],
+          'vendor-charts': ['recharts'],
+          'vendor-ui': ['lucide-react', 'canvas-confetti']
+        }
+      }
+    }
   }
 })
