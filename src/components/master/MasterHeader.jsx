@@ -109,32 +109,46 @@ export default function MasterHeader({
   return (
     <>
       {/* ============================================================
-          LEVEL 1: OFFICIAL IIT KHARAGPUR HEADER BANNER (Short & scrolls down with page)
+          LEVEL 1: OFFICIAL IIT KHARAGPUR HEADER BANNER & MOTTO
          ============================================================ */}
       <header className="w-full bg-[#fdfaf2] overflow-hidden leading-none relative p-0 m-0 border-b border-amber-100/70 select-none">
-        <a 
-          href="#home" 
-          onClick={handleHomeClick}
-          className="block w-full cursor-pointer leading-none p-0 m-0 text-center"
-          title="Indian Institute of Technology Kharagpur"
-        >
-          <img
-            src={headerBanner}
-            alt="IIT Kharagpur - বাংলা মাধ্যমে পড়াশোনার সুযোগ বিশ্বমানের শিক্ষার পথে"
-            className="w-full h-auto max-h-[75px] sm:max-h-[90px] md:max-h-[105px] lg:max-h-[120px] object-contain mx-auto block select-none p-0 m-0"
-          />
-        </a>
-
-        {/* Mobile Hamburger Menu Toggle on small screens */}
-        <div className="absolute right-3 top-1/2 -translate-y-1/2 lg:hidden z-20">
-          <button
-            type="button"
-            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            className="p-1.5 bg-black/60 hover:bg-black/80 text-white rounded-lg backdrop-blur-xs transition cursor-pointer border border-white/20 shadow-md"
-            aria-label="Toggle navigation menu"
+        <div className="relative w-full">
+          <a 
+            href="#home" 
+            onClick={handleHomeClick}
+            className="block w-full cursor-pointer leading-none p-0 m-0 text-center"
+            title="Indian Institute of Technology Kharagpur"
           >
-            {mobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5 text-white" />}
-          </button>
+            <img
+              src={headerBanner}
+              alt="IIT Kharagpur - বাংলা মাধ্যমে পড়াশোনার সুযোগ বিশ্বমানের শিক্ষার পথে"
+              className="w-full h-auto max-h-[75px] sm:max-h-[90px] md:max-h-[105px] lg:max-h-[120px] object-contain mx-auto block select-none p-0 m-0"
+            />
+          </a>
+
+          {/* Mobile Hamburger Menu Toggle on small screens */}
+          <div className="absolute right-3 top-1/2 -translate-y-1/2 lg:hidden z-20">
+            <button
+              type="button"
+              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+              className="p-1.5 bg-black/60 hover:bg-black/80 text-white rounded-lg backdrop-blur-xs transition cursor-pointer border border-white/20 shadow-md"
+              aria-label="Toggle navigation menu"
+            >
+              {mobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5 text-white" />}
+            </button>
+          </div>
+        </div>
+
+        {/* Institutional One-Line Description & Historic Motto */}
+        <div className="w-full bg-[#002147] text-white py-1 px-3 sm:px-4 text-center border-t border-amber-900/10">
+          <p className="text-[11px] sm:text-[12px] md:text-[12.5px] font-serif tracking-wide leading-snug m-0 p-0 text-slate-100">
+            <span className="hidden sm:inline">
+              Indian Institute of Technology Kharagpur — Yogah karmasu kaushalam &nbsp;//&nbsp; <span className="font-sans font-medium text-amber-200">योगः कर्मसु कौशलम्.</span>
+            </span>
+            <span className="sm:hidden text-[10.5px]">
+              IIT Kharagpur — Yogah karmasu kaushalam // <span className="font-sans text-amber-200">योगः कर्मसु कौशलम्.</span>
+            </span>
+          </p>
         </div>
       </header>
 
